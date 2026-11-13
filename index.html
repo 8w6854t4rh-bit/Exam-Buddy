@@ -51,6 +51,19 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16p
 .brand .lg{width:20px;height:20px;flex:0 0 auto}
 h1{font-family:var(--display);font-size:28px;line-height:1;margin:0;letter-spacing:.4px;text-transform:uppercase}
 .top h1{font-family:inherit;font-size:10px;font-weight:600;letter-spacing:1.4px;opacity:.75;white-space:nowrap}
+.cscene{border-radius:12px;overflow:hidden;line-height:0;box-shadow:inset 0 0 0 1px rgba(20,30,80,.12);position:relative}.cscene svg{width:100%;height:auto;display:block}
+.csky{fill:#dfe8fb}.cfloor{fill:#b7c6ec}.cink{stroke:#23263a;fill:#23263a}
+.comic{display:grid;gap:14px}@media (min-width:640px){.comic{grid-template-columns:1fr 1fr}}
+.pn{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.pnh{display:flex;align-items:center;gap:8px}.pnh i{font-style:normal;font-weight:800;font-size:13px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on);flex:0 0 auto}
+.says{display:flex;flex-direction:column;gap:6px;margin-bottom:2px}
+.say{position:relative;max-width:84%;background:var(--raise);border:1px solid var(--line);border-radius:14px;padding:7px 11px;font-size:14px;line-height:1.3;font-weight:600}
+.say.l{align-self:flex-start}.say.r{align-self:flex-end}
+.say:last-child::after{content:"";position:absolute;bottom:-7px;border:7px solid transparent;border-top-color:var(--raise);border-bottom:0}
+.say.l:last-child::after{left:22px}.say.r:last-child::after{right:22px}
+.pn figcaption{font-size:14px;line-height:1.4}.pn code{display:block;margin-top:8px;white-space:pre-wrap;font-size:12.5px;background:var(--raise);border-left:3px solid var(--accent);border-radius:6px;padding:7px 9px}
+button.story{text-align:left;font:inherit;color:inherit;align-items:stretch;min-height:0;gap:8px}button.story b{font-size:17px;line-height:1.25}
+a.btn{align-self:flex-start;background:var(--accent);color:var(--on);text-decoration:none;font-weight:700;border-radius:12px;padding:11px 16px}
 main{max-width:760px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
 h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px;text-wrap:balance}
 p{margin:0}
@@ -171,7 +184,7 @@ const ICON={
  gear:'<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.6"/><circle cx="8" cy="17" r="2.6"/>'};
 const svg=n=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('fill','none');s.setAttribute('stroke','currentColor');s.setAttribute('stroke-width','2');s.setAttribute('stroke-linecap','round');s.setAttribute('stroke-linejoin','round');s.setAttribute('aria-hidden','true');s.innerHTML=ICON[n];return s};
 const MODES=[['start','Start'],['karten','Karten'],['quiz','Quiz'],['rechnen','Rechnen'],['buchen','Buchen'],['wissen','Wissen']];
-const TITLE={start:'Start',karten:'Karteikarten',quiz:'Quiz',rechnen:'Rechnen',buchen:'Buchen',wissen:'Wissen',lernfelder:'Lernfelder',pruefung:'Testprüfung',einstellungen:'Einstellungen'};
+const TITLE={start:'Start',karten:'Karteikarten',quiz:'Quiz',rechnen:'Rechnen',buchen:'Buchen',wissen:'Wissen',lernfelder:'Lernfelder',bilder:'In Bildern erklärt',pruefung:'Testprüfung',einstellungen:'Einstellungen'};
 document.getElementById('nav').append(...MODES.map(([m,n])=>$('a',{href:'#'+m,style:'--c:var(--c-'+m+')'},$('i',{},svg(m)),n)));
 const KEY='ak-trainer-v1';
 let S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0]};
@@ -226,7 +239,8 @@ function vStart(){
     $('h2',{text:'Nachschlagen'}),
     $('div',{class:'tiles'},
       tile('wissen','#wissen','Formeln',D.wissen.length+' Themen','Formeln und Schemata',100),
-      tile('wissen','#lernfelder','Lernfelder',D.lf.length+' Lernfelder','das Wichtigste kurz und knapp',100)),
+      tile('wissen','#lernfelder','Lernfelder',D.lf.length+' Lernfelder','das Wichtigste kurz und knapp',100),
+      tile('wissen','#bilder','In Bildern',STORIES.length+' Geschichten','Abläufe als Comic erklärt',100,'wide')),
     $('div',{class:'sheet'},$('b',{text:'Abschlussprüfung Teil 2 in Kürze'}),
       tbl(['Bereich','LF','Zeit','Anteil'],[['Kaufm. Unter­stützungs­prozesse','2, 9, 10','90 min','25 %'],['Fahrzeug­vertrieb, Finanz­dienste','6, 7, 8','90 min','25 %'],['Wirtschafts- und Sozial­kunde','1, 9, 11','60 min','10 %'],['Fach­gespräch (mündlich)','5, 12','20 min','20 %']]),
       $('p',{class:'muted',text:'Die restlichen 20 % kommen aus Teil 1 (Lernfelder 3, 4, 5), der schon geschrieben ist. Stand der Werte in der App: November 2026. Maßgeblich sind immer die Angaben in der Aufgabe.'})));
@@ -387,6 +401,250 @@ function vBuchen(){
 }
 
 /* ---------- Wissen: Formelsammlung und Lernfelder ---------- */
+/* ---------- In Bildern erklärt ---------- */
+const CX={ink:'#23263a',skin:['#f3cfae','#d9a57c','#a9714b','#f7dcc4'],hair:['#3b2a22','#151515','#b5651d','#d8b25c','#8a8f9c']};
+const cP=(x,o={})=>{const f=o.flip?-1:1,sk=CX.skin[o.skin||0],hr=CX.hair[o.hair||0],c=o.c||'#4c6fe0',tr=o.t||'#2e3350',ey=x+2*f;
+  const arm=(s,up)=>{const ax=x+14*s,[ex,ey2]=up==='up'?[x+31*s,73]:up==='out'?[x+36*s,103]:[x+19*s,122];return `<path d="M${ax} 97L${ex} ${ey2}" stroke="${c}" stroke-width="8.5" stroke-linecap="round"/><circle cx="${ex}" cy="${ey2}" r="5" fill="${sk}"/>`};
+  const hair=o.style==='long'?`<path d="M${x-17} 74a17 17 0 0 1 34 0v20q-4 3-7 0v-20q-10-8-20 0v20q-3 3-7 0z" fill="${hr}"/>`:o.style==='bun'?`<circle cx="${x}" cy="52" r="7.5" fill="${hr}"/><path d="M${x-16.5} 73a16.5 16.5 0 0 1 33 0q-16-11-33 0z" fill="${hr}"/>`:o.style==='bald'?'':`<path d="M${x-16.5} 72a16.5 16.5 0 0 1 33 0q-3-6-9-8q-6 5-15 4q-6 0-9 4z" fill="${hr}"/>`;
+  const mouth=o.mood==='wow'?`<ellipse cx="${ey}" cy="80.5" rx="2.8" ry="3.4" fill="${CX.ink}"/>`:o.mood==='flat'?`<path d="M${ey-4} 80.5h8" stroke="${CX.ink}" stroke-width="1.8" stroke-linecap="round"/>`:`<path d="M${ey-5} 78.5q5 6 10 0" stroke="${CX.ink}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+  const brow=o.mood==='wow'?`<path d="M${ey-8} 66q3-3 6-1M${ey+2} 65q3-2 6 1" stroke="${CX.ink}" stroke-width="1.4" fill="none" stroke-linecap="round"/>`:'';
+  return `<g><ellipse cx="${x}" cy="150.5" rx="17" ry="3.6" fill="#1a2250" opacity=".16"/><rect x="${x-11}" y="120" width="10" height="29" rx="4" fill="${tr}"/><rect x="${x+1}" y="120" width="10" height="29" rx="4" fill="${tr}"/><rect x="${x-13+(f<0?-2:0)}" y="145" width="12" height="6" rx="3" fill="#15172a"/><rect x="${x+1+(f<0?0:2)}" y="145" width="12" height="6" rx="3" fill="#15172a"/>${arm(-f,o.arm2)}<rect x="${x-15}" y="89" width="30" height="40" rx="11" fill="${c}"/><path d="M${x-15} 118h30v2a9 9 0 0 1-9 9h-12a9 9 0 0 1-9-9z" fill="#000" opacity=".1"/><path d="M${x-6} 89h12l-6 8z" fill="#fff"/>${o.tie?`<path d="M${x-2} 95h4l1.5 13-3.5 4-3.5-4z" fill="${o.tie}"/>`:''}${o.badge?`<rect x="${x+3}" y="102" width="8" height="5" rx="1.2" fill="#fff" opacity=".9"/>`:''}${arm(f,o.arm)}<rect x="${x-4}" y="82" width="8" height="9" fill="${sk}"/><circle cx="${x-15}" cy="74" r="3.2" fill="${sk}"/><circle cx="${x+15}" cy="74" r="3.2" fill="${sk}"/><circle cx="${x}" cy="72" r="15" fill="${sk}"/>${hair}<circle cx="${ey-8}" cy="78" r="2.8" fill="#ef7f72" opacity=".3"/><circle cx="${ey+8}" cy="78" r="2.8" fill="#ef7f72" opacity=".3"/>${brow}<circle cx="${ey-5}" cy="73" r="1.9" fill="${CX.ink}"/><circle cx="${ey+5}" cy="73" r="1.9" fill="${CX.ink}"/>${mouth}</g>`};
+const cCar=(x,y,c='#e4472b')=>`<g><ellipse cx="${x+61}" cy="${y+57}" rx="62" ry="4" fill="#1a2250" opacity=".18"/><path d="M${x+24} ${y+24}l13-21h44l18 21z" fill="${c}"/><path d="M${x+31} ${y+22}l9-15h17v15zM${x+61} ${y+7}h18l12 15h-30z" fill="#d6ecfb"/><path d="M${x+33} ${y+22}l8-13h6l-8 13z" fill="#fff" opacity=".55"/><rect x="${x}" y="${y+22}" width="122" height="24" rx="10" fill="${c}"/><rect x="${x+3}" y="${y+38}" width="116" height="8" rx="4" fill="#000" opacity=".14"/><path d="M${x+59} ${y+24}v20" stroke="#000" stroke-opacity=".18" stroke-width="1.4"/><rect x="${x+64}" y="${y+28}" width="9" height="2.6" rx="1.3" fill="#fff" opacity=".7"/><rect x="${x+112}" y="${y+28}" width="10" height="6" rx="3" fill="#ffe08a"/><rect x="${x}" y="${y+28}" width="5" height="6" rx="2" fill="#ff8f8f"/><circle cx="${x+27}" cy="${y+47}" r="11.5" fill="#1c1e2e"/><circle cx="${x+27}" cy="${y+47}" r="5" fill="#d5d9e8"/><circle cx="${x+27}" cy="${y+47}" r="1.6" fill="#1c1e2e"/><circle cx="${x+95}" cy="${y+47}" r="11.5" fill="#1c1e2e"/><circle cx="${x+95}" cy="${y+47}" r="5" fill="#d5d9e8"/><circle cx="${x+95}" cy="${y+47}" r="1.6" fill="#1c1e2e"/></g>`;
+const cDoc=(x,y,t,c='#4c6fe0')=>`<g><rect x="${x+2}" y="${y+2.5}" width="40" height="50" rx="4" fill="#1a2250" opacity=".12"/><rect x="${x}" y="${y}" width="40" height="50" rx="4" fill="#fff" stroke="#c3c8dc" stroke-width="1.2"/><rect x="${x+4}" y="${y+5}" width="32" height="10" rx="2.5" fill="${c}"/><text x="${x+20}" y="${y+12.2}" font-size="${t.length>8?4.2:5.2}" font-weight="700" fill="#fff" text-anchor="middle">${t}</text><path d="M${x+6} ${y+23}h28M${x+6} ${y+30}h28M${x+6} ${y+37}h18" stroke="#c9cee0" stroke-width="2" stroke-linecap="round"/></g>`;
+const cHouse=(x,t,c='#7f8bb5',w=96)=>`<g><rect x="${x}" y="78" width="${w}" height="70" fill="${c}"/><rect x="${x}" y="78" width="${w}" height="70" fill="url(#cgs)"/><path d="M${x-6} 78l${w/2+6}-30l${w/2+6} 30z" fill="${c}"/><path d="M${x-6} 78l${w/2+6}-30l${w/2+6} 30z" fill="#fff" opacity=".22"/>${[0,1,2,3].map(i=>`<rect x="${x+10+i*(w-28)/3}" y="98" width="8" height="46" rx="1" fill="#fff" opacity=".88"/>`).join('')}<rect x="${x-4}" y="143" width="${w+8}" height="6" rx="1.5" fill="#fff" opacity=".75"/><rect x="${x+6}" y="80" width="${w-12}" height="14" rx="3" fill="#fff"/><text x="${x+w/2}" y="90.6" font-size="9.5" font-weight="700" fill="${CX.ink}" text-anchor="middle">${t}</text></g>`;
+const cDesk=(x,mon,w=84)=>`<g>${mon?`<rect x="${x+22}" y="84" width="38" height="26" rx="3" fill="#2e3350"/><rect x="${x+25}" y="87" width="32" height="20" rx="1.5" fill="#bfe3ff"/><path d="M${x+29} 93h18M${x+29} 98h24M${x+29} 103h12" stroke="#fff" stroke-width="2" stroke-linecap="round"/><rect x="${x+38}" y="110" width="6" height="6" fill="#2e3350"/>`:''}<rect x="${x}" y="115" width="${w}" height="7" rx="3" fill="#c08a58"/><rect x="${x}" y="120" width="${w}" height="2" fill="#000" opacity=".12"/><rect x="${x+6}" y="122" width="6" height="27" fill="#9b6b40"/><rect x="${x+w-12}" y="122" width="6" height="27" fill="#9b6b40"/></g>`;
+const cPC=(x,title,S,H,hs=['Soll','Haben'])=>{const w=150,m=x+w/2,col=(a,cx)=>a.map((r,i)=>`<text x="${cx}" y="${58+i*19}" font-size="6.3" fill="#4a5070">${r[0]}</text><text x="${cx}" y="${66.5+i*19}" font-size="7.6" font-weight="700" fill="${CX.ink}">${r[1]}</text>`).join('');
+  return `<g><rect x="${x+w/2-9}" y="104" width="18" height="10" fill="#2e3350"/><rect x="${x+w/2-24}" y="111" width="48" height="5" rx="2.5" fill="#2e3350"/><rect x="${x}" y="14" width="${w}" height="92" rx="7" fill="#2e3350"/><rect x="${x+4}" y="18" width="${w-8}" height="84" rx="4" fill="#fff"/><path d="M${x+4} 22a4 4 0 0 1 4-4h${w-16}a4 4 0 0 1 4 4v9h-${w-8}z" fill="#4c6fe0"/><circle cx="${x+11}" cy="24.5" r="1.8" fill="#fff" opacity=".7"/><circle cx="${x+17}" cy="24.5" r="1.8" fill="#fff" opacity=".7"/><text x="${m}" y="27.3" font-size="7" font-weight="700" fill="#fff" text-anchor="middle">${title}</text><text x="${x+10}" y="43" font-size="7.4" font-weight="800" fill="#0a8a73">${hs[0]}</text><text x="${x+w-10}" y="43" font-size="7.4" font-weight="800" fill="#d12f6f" text-anchor="end">${hs[1]}</text><path d="M${x+9} 47h${w-18}M${m} 47v50" stroke="${CX.ink}" stroke-width="1.6" stroke-linecap="round"/>${col(S,x+10)}${col(H,m+5)}</g>${cDesk(x-8,0,w+16)}`};
+const cCoin=(x,y)=>`<g><circle cx="${x}" cy="${y+1.5}" r="10" fill="#c98d14"/><circle cx="${x}" cy="${y}" r="10" fill="#f6c443"/><circle cx="${x}" cy="${y}" r="7.3" fill="none" stroke="#dba021" stroke-width="1.4"/><text x="${x}" y="${y+4}" font-size="11" font-weight="800" fill="#8a5a00" text-anchor="middle">€</text></g>`;
+const cArrow=(x1,y,x2)=>{const d=x2>x1?1:-1;return `<g fill="${CX.ink}" stroke="${CX.ink}"><path d="M${x1} ${y}H${x2-10*d}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="1 8"/><path d="M${x2} ${y}l${-11*d}-7v14z" stroke="none"/></g>`};
+const cSign=(x,y,t,w=92,c='#fff')=>`<g><rect x="${x+1.5}" y="${y+2.5}" width="${w}" height="24" rx="8" fill="#1a2250" opacity=".12"/><rect x="${x}" y="${y}" width="${w}" height="24" rx="8" fill="${c}"/><text x="${x+w/2}" y="${y+16.3}" font-size="11.5" font-weight="700" fill="${CX.ink}" text-anchor="middle">${t}</text></g>`;
+const cCal=(x,y,t)=>`<g><rect x="${x+2}" y="${y+2.5}" width="46" height="44" rx="6" fill="#1a2250" opacity=".12"/><rect x="${x}" y="${y}" width="46" height="44" rx="6" fill="#fff"/><path d="M${x} ${y+6}a6 6 0 0 1 6-6h34a6 6 0 0 1 6 6v7h-46z" fill="#e4472b"/><text x="${x+23}" y="${y+36}" font-size="18" font-weight="800" fill="${CX.ink}" text-anchor="middle">${t}</text></g>`;
+const cBox=(x,y,n)=>Array.from({length:n},(_,i)=>`<rect x="${x+i*30}" y="${y}" width="26" height="22" rx="3" fill="#d9a066"/><rect x="${x+i*30+10}" y="${y}" width="6" height="22" fill="#b97f47"/>`).join('');
+const cS=(x,y,t,c)=>cSign(x,y,t,Math.round(t.length*6.2+20),c);
+const cChart=(x,y,l)=>{const ly=l==='hi'?y+34:y+86;return `<g><rect x="${x+2}" y="${y+3}" width="140" height="124" rx="10" fill="#1a2250" opacity=".12"/><rect x="${x}" y="${y}" width="140" height="124" rx="10" fill="#fff"/><path d="M${x+22} ${y+14}v94h106" fill="none" stroke="${CX.ink}" stroke-width="2" stroke-linecap="round"/><text x="${x+8}" y="${y+64}" font-size="9" font-weight="700" fill="${CX.ink}">€</text><text x="${x+104}" y="${y+119}" font-size="7.5" font-weight="700" fill="${CX.ink}">Menge</text>${l?`<path d="M${x+22} ${ly}h104" stroke="#e4472b" stroke-width="2" stroke-dasharray="5 4"/>`:''}<path d="M${x+30} ${y+100}L${x+120} ${y+22}" stroke="#0a8a73" stroke-width="3.5" stroke-linecap="round"/><path d="M${x+30} ${y+22}L${x+120} ${y+100}" stroke="#d12f6f" stroke-width="3.5" stroke-linecap="round"/><text x="${x+134}" y="${y+15}" font-size="7.5" font-weight="700" fill="#0a8a73" text-anchor="end">Angebot</text><text x="${x+28}" y="${y+15}" font-size="7.5" font-weight="700" fill="#d12f6f">Nachfrage</text><circle cx="${x+75}" cy="${y+61}" r="5.5" fill="#f6c443" stroke="${CX.ink}" stroke-width="1.6"/></g>`};
+const cWave=(x,y)=>`<g><rect x="${x+2}" y="${y+3}" width="210" height="92" rx="10" fill="#1a2250" opacity=".12"/><rect x="${x}" y="${y}" width="210" height="92" rx="10" fill="#fff"/><path d="M${x+12} ${y+66}L${x+198} ${y+34}" stroke="#c3c8dc" stroke-width="2" stroke-dasharray="5 4"/><path d="M${x+12} ${y+70}C${x+36} ${y+70} ${x+42} ${y+22} ${x+64} ${y+22}S${x+104} ${y+70} ${x+130} ${y+70}S${x+170} ${y+26} ${x+198} ${y+18}" fill="none" stroke="#4c6fe0" stroke-width="3.5" stroke-linecap="round"/><g font-size="7.4" font-weight="700" fill="${CX.ink}"><text x="${x+156}" y="${y+66}">Aufschwung</text><text x="${x+64}" y="${y+15}" text-anchor="middle">Boom</text><text x="${x+100}" y="${y+40}">Abschwung</text><text x="${x+130}" y="${y+84}" text-anchor="middle">Tiefstand</text></g><circle cx="${x+64}" cy="${y+22}" r="4" fill="#0a8a73"/><circle cx="${x+130}" cy="${y+70}" r="4" fill="#e4472b"/></g>`;
+const CBG={
+ out:`<rect width="320" height="162" fill="url(#cgk)"/><circle cx="278" cy="30" r="15" fill="#ffe7a3"/><circle cx="278" cy="30" r="22" fill="#ffe7a3" opacity=".35"/><g fill="#fff" opacity=".85"><ellipse cx="62" cy="30" rx="24" ry="8"/><ellipse cx="80" cy="24" rx="16" ry="8"/><ellipse cx="196" cy="44" rx="20" ry="6.5"/></g><path d="M0 148V118h18v-10h22v18h20v-22h16v30h30v-14h20v-12h18v20h26v-16h22v24h24v-18h20v12h26v-20h18v38z" fill="#8fa3d6" opacity=".2"/><rect y="148" width="320" height="14" fill="#a3b2d6"/><path d="M0 155h320" stroke="#fff" stroke-opacity=".5" stroke-width="1.5" stroke-dasharray="14 12"/>`,
+ in:`<rect width="320" height="162" fill="#e9edf9"/><rect y="112" width="320" height="36" fill="#dbe2f5"/><rect y="110" width="320" height="2.5" fill="#fff" opacity=".8"/><rect y="148" width="320" height="14" fill="#cdb898"/><path d="M0 148h320" stroke="#b39c7a" stroke-width="1.5"/>`,
+ show:`<rect width="320" height="162" fill="#e9edf9"/><g><rect x="12" y="18" width="296" height="92" rx="5" fill="url(#cgk)"/><path d="M12 110V96h30v-10h26v14h32v-18h20v18h40v-12h30v12h28v-16h24v16h40v-8h26v18z" fill="#8fa3d6" opacity=".22"/><path d="M110 18v92M210 18v92" stroke="#fff" stroke-width="5"/><rect x="12" y="18" width="296" height="92" rx="5" fill="none" stroke="#fff" stroke-width="4"/><path d="M30 30l22-8M38 44l30-12" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/></g><rect y="148" width="320" height="14" fill="#c9d1e8"/><rect y="148" width="320" height="3" fill="#fff" opacity=".55"/>`};
+const cScene=(s,bg)=>{const d=document.createElement('div');d.className='cscene';d.innerHTML=`<svg viewBox="0 0 320 162" aria-hidden="true"><defs><linearGradient id="cgk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c3dbff"/><stop offset="1" stop-color="#f1f6ff"/></linearGradient><linearGradient id="cgs" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".14"/></linearGradient></defs>${CBG[bg||'in']}${s}</svg>`;return d};
+const ST={vk:{c:'#0a8a73',hair:1,badge:1},bh:{c:'#8a5ad6',style:'bun',hair:3,skin:3,badge:1},chef:{c:'#2e3350',t:'#3d4466',hair:4,tie:'#e4472b'},ku:{c:'#d9822b',style:'long',hair:2,skin:1},neu:{c:'#e4472b',style:'long',hair:0,skin:1},kd:{c:'#4c6fe0',hair:0,skin:2},bank:{c:'#3d4f7c',t:'#2a3350',hair:1,tie:'#f6c443'}};
+const cp=(x,k,o)=>cP(x,Object.assign({},ST[k],o));
+const STORIES=[
+ {tag:'KUP · Lernfeld 2',title:'Ein Neuwagen wird verkauft: Was macht die Buchhaltung?',why:'Fast jede Prüfung in den Unterstützungsprozessen lässt dich einen Fahrzeugverkauf buchen. Wer den Ablauf einmal gesehen hat, weiß, welches Konto wann dran ist.',
+  go:['#buchen','Jetzt selbst buchen'],merke:['Beim Einkauf kommt das Auto in den Bestand, beim Verkauf wieder raus (VAK an Bestand).','Der Erlös ist immer der Nettobetrag, die Umsatzsteuer steht auf einem eigenen Konto.','Umsatzsteuer minus Vorsteuer ergibt die Zahllast ans Finanzamt.'],
+  p:[
+  {h:'Das Auto kommt an',bg:'out',s:cHouse(8,'Hersteller','#8d99c4',86)+cArrow(100,128,150)+cCar(150,94,'#4c6fe0')+cp(292,'vk',{flip:1,arm:'up'})+cDoc(248,20,'RECHNUNG'),say:[['r','Der Neuwagen ist da. Die Rechnung auch: 26.000 € netto.']],
+   t:'Eingangsrechnung: Das Auto steht jetzt im Lager, bezahlt ist es noch nicht.',b:'Bestand Neuwagen 26.000 + Vorsteuer 4.940\nan Verbindlichkeiten 30.940'},
+  {h:'Die Kundin schlägt zu',bg:'show',s:cCar(98,94,'#4c6fe0')+cp(52,'vk',{arm:'out'})+cp(272,'ku',{flip:1,arm:'up'}),say:[['l','Für 30.000 € netto gehört er Ihnen.'],['r','Abgemacht!']],
+   t:'Rechnung an die Kundin: 30.000 € + 19 % Umsatzsteuer 5.700 € = 35.700 €. Sie zahlt später, also entsteht eine Forderung.',b:'Forderungen 35.700\nan Erlöse Neuwagen 30.000 + Umsatzsteuer 5.700'},
+  {h:'Das Auto verlässt den Hof',bg:'out',s:cp(48,'vk',{arm:'up'})+cSign(14,20,'Lager: −1',86)+cCar(150,94,'#4c6fe0')+cArrow(282,112,314),say:[['l','Gute Fahrt!']],
+   t:'Das Auto ist weg, also muss es auch aus dem Bestand raus. Sein Einstandspreis wird jetzt zum Aufwand. VAK heißt verrechnete Anschaffungskosten.',b:'VAK Neuwagen 26.000\nan Bestand Neuwagen 26.000'},
+  {h:'Das Geld ist da',s:cPC(26,'Zahlungseingang',[['Bank','35.700,00']],[['Forderungen','35.700,00']])+cp(232,'bh',{flip:1,arm:'out'})+cCoin(276,126)+cCoin(294,138)+cCoin(288,112),say:[['r','35.700 € sind auf dem Konto. Ich buche das gleich.']],
+   t:'Zahlungseingang: Die Forderung ist damit erledigt.',b:'Bank 35.700\nan Forderungen 35.700'},
+  {h:'Das Finanzamt will seinen Teil',bg:'out',s:cp(40,'bh',{arm:'out'})+cCoin(96,104)+cArrow(114,104,196)+cHouse(204,'Finanzamt','#a08a6a',100),say:[['l','Die Umsatzsteuer gehört nicht uns. Wir reichen sie nur weiter.']],
+   t:'Umsatzsteuer 5.700 € minus Vorsteuer 4.940 € = Zahllast 760 €. Nur diese Differenz wird überwiesen.',b:'Umsatzsteuer 5.700\nan Vorsteuer 4.940 + Bank 760'},
+  {h:'Was bleibt hängen?',s:cSign(26,24,'Erlös 30.000 €',124)+cSign(26,56,'− Einsatz 26.000 €',124)+cSign(26,94,'= 4.000 €',124,'#bff0dc')+cp(230,'chef',{flip:1,arm:'out'})+cCoin(282,124)+cCoin(296,138),say:[['r','4.000 € Bruttoertrag. Davon zahlen wir Löhne, Miete und Strom.']],
+   t:'Erlös minus Wareneinsatz ergibt den Bruttoertrag. Gewinn ist das erst, wenn auch alle übrigen Kosten gedeckt sind.'}]},
+ {tag:'KUP · Lernfeld 2',title:'Von der Inventur zur Bilanz und wieder zurück',why:'Inventur, Inventar und Bilanz werden gern verwechselt. In der Prüfung musst du die Reihenfolge kennen und wissen, was auf welcher Seite steht.',
+  go:['#karten','Karten dazu lernen'],merke:['Inventur ist die Tätigkeit, Inventar die ausführliche Liste, Bilanz die Kurzfassung in Kontenform.','Aktiva zeigen, wo das Geld steckt. Passiva zeigen, woher es kommt.','Aktivkonten mehren sich im Soll, Passivkonten im Haben.'],
+  p:[
+  {h:'Zählen, messen, wiegen',s:cBox(150,126,5)+cBox(165,104,4)+cBox(180,82,3)+cp(70,'vk',{arm:'out'})+cDoc(96,60,'ZÄHLLISTE','#0a8a73'),say:[['l','Regal 4: 38 Ölfilter, 12 Bremsscheiben.']],
+   t:'Inventur: Zum Ende des Geschäftsjahres wird alles erfasst, was da ist. Fahrzeuge und Teile werden gezählt, Bankguthaben, Forderungen und Schulden anhand der Belege geprüft.'},
+  {h:'Das Inventar',s:cDoc(84,34,'VERMÖGEN','#0a8a73')+cDoc(140,34,'SCHULDEN','#d12f6f')+cDoc(196,34,'REINVERMÖGEN')+cp(40,'bh',{arm:'out'})+cArrow(128,112,138)+cArrow(184,112,194),say:[['l','Alles in eine Liste, mit Menge und Wert.']],
+   t:'Das Inventar ist die ausführliche Aufstellung: Vermögen (nach Flüssigkeit geordnet) minus Schulden (nach Fälligkeit geordnet) ergibt das Reinvermögen, also das Eigenkapital.'},
+  {h:'Die Bilanz',s:cPC(26,'Bilanz zum 31.12.',[['Anlagevermögen','400.000'],['Umlaufvermögen','600.000']],[['Eigenkapital','300.000'],['Fremdkapital','700.000']],['Aktiva','Passiva'])+cp(236,'bh',{flip:1,arm:'out'}),say:[['r','Links und rechts steht dieselbe Summe. Immer.']],
+   t:'Die Bilanz ist die Kurzfassung in Kontenform. Links die Aktiva: Wofür wurde das Geld verwendet? Rechts die Passiva: Woher stammt es?'},
+  {h:'Aus der Bilanz werden Konten',s:cPC(26,'Konto Bank',[['Anfangsbestand','50.000'],['Zugänge','+']],[['Abgänge','−'],['Schlussbestand','?']])+cp(236,'bh',{flip:1,arm:'up'}),say:[['r','Jeder Posten bekommt zu Jahresbeginn sein eigenes Konto.']],
+   t:'Aktivkonten haben Anfangsbestand und Zugänge im Soll. Bei Passivkonten ist es umgekehrt: Anfangsbestand und Zugänge stehen im Haben.'},
+  {h:'Das Jahr über wird gebucht',s:cDoc(40,50,'BELEG','#d9822b')+cArrow(88,76,112)+cSign(118,62,'Soll an Haben',104)+cp(268,'bh',{flip:1,arm:'out'})+cDesk(196,1,60),say:[['r','Keine Buchung ohne Beleg.']],
+   t:'Jeder Geschäftsfall wird mit Beleg gebucht. Aufwände und Erträge laufen über Erfolgskonten und landen am Jahresende im Gewinn- und Verlustkonto.'},
+  {h:'Der Jahresabschluss',s:cSign(20,30,'GuV: Gewinn',104,'#bff0dc')+cArrow(128,42,150)+cSign(156,30,'Eigenkapital',104)+cSign(88,76,'Schlussbilanz',112,'#ffe9a8')+cp(266,'chef',{flip:1,arm:'up'}),say:[['r','Und dann geht es mit der Inventur wieder von vorn los.']],
+   t:'Der Gewinn aus der GuV erhöht das Eigenkapital. Die Schlussbestände aller Konten ergeben die Schlussbilanz, und die muss zu den Werten der Inventur passen.'}]},
+ {tag:'KUP und WiSo · Lernfeld 9',title:'Von der Stellenanzeige zum ersten Arbeitstag',why:'Personalbeschaffung kommt in beiden Prüfungen vor. Gefragt werden vor allem die Reihenfolge, die Unterlagen und was im Gespräch erlaubt ist.',
+  go:['#karten','Karten dazu lernen'],merke:['Reihenfolge: Bedarf, Ausschreibung, Auswahl, Gespräch, Vertrag, Einarbeitung.','Das AGG verbietet Benachteiligung, zum Beispiel wegen Alter, Geschlecht, Herkunft oder Religion.','Die wesentlichen Vertragsbedingungen müssen nachweisbar festgehalten werden (Nachweisgesetz).'],
+  p:[
+  {h:'Eine Stelle wird frei',s:cDesk(30)+cp(72,'chef',{mood:'flat',arm:'up'})+cCal(150,30,'?')+cP(248,{c:'#d9822b',flip:1,style:'long',hair:4,skin:3}),say:[['l','Unsere Serviceberaterin geht in Rente. Wir brauchen Ersatz.']],
+   t:'Personalbedarf klären: Wie viele Leute fehlen, mit welcher Qualifikation, ab wann? Daraus entsteht die Stellenbeschreibung.'},
+  {h:'Intern oder extern suchen?',s:cSign(18,30,'Intern: Aushang',124)+cSign(178,30,'Extern: Anzeige',124)+cp(80,'vk',{arm:'up'})+cp(240,'chef',{flip:1,arm:'up'}),say:[['r','Erst hängen wir die Stelle intern aus, dann schalten wir die Anzeige.']],
+   t:'Intern: schnell, günstig, motiviert die Belegschaft. Extern: größere Auswahl und frische Ideen. Der Betriebsrat kann eine interne Ausschreibung verlangen.'},
+  {h:'Bewerbungen sichten',s:cDoc(120,44,'LEBENSLAUF','#8a5ad6')+cDoc(140,54,'ZEUGNIS','#0a8a73')+cDoc(160,64,'ANSCHREIBEN')+cp(60,'bh',{arm:'out'})+cSign(198,26,'passt zum Profil?',114),say:[['l','Anschreiben, Lebenslauf, Zeugnisse. Wer passt zum Anforderungsprofil?']],
+   t:'Vorauswahl nach dem Anforderungsprofil. Niemand darf wegen Alter, Geschlecht, Herkunft oder Religion aussortiert werden (AGG).'},
+  {h:'Das Vorstellungsgespräch',bg:'show',s:cDesk(118)+cp(70,'chef',{arm:'out'})+cp(250,'neu',{flip:1,arm:'up'}),say:[['l','Warum möchten Sie zu uns?'],['r','Ich mag Autos und Menschen.']],
+   t:'Erlaubt sind Fragen, die mit der Stelle zu tun haben. Unzulässig sind etwa Fragen nach Schwangerschaft, Religion oder Partei. Darauf muss man nicht wahrheitsgemäß antworten.'},
+  {h:'Der Arbeitsvertrag',s:cDoc(140,28,'VERTRAG','#0a8a73')+cp(118,'chef',{arm:'out'})+cp(202,'neu',{flip:1,arm:'out'}),say:[['l','Willkommen im Team!']],
+   t:'Im Vertrag stehen Beginn, Tätigkeit, Entgelt, Arbeitszeit, Urlaub und Kündigungsfristen. Die Probezeit dauert höchstens sechs Monate.'},
+  {h:'Der erste Arbeitstag',s:cCal(24,34,'1.')+cDesk(96,1)+cp(70,'bh')+cp(240,'neu',{flip:1,arm:'out'})+cDoc(192,72,'UNTERLAGEN','#d9822b'),say:[['r','Hier sind meine Unterlagen.']],
+   t:'Die Personalabteilung braucht unter anderem Steuer-ID, Sozialversicherungsnummer, Krankenkasse und Bankverbindung und meldet die Neue an. Dann beginnt die Einarbeitung.'}]},
+ {tag:'KUP und WiSo · Lernfeld 9',title:'Vom Brutto zum Netto: die Gehaltsabrechnung',why:'Die Entgeltabrechnung ist eine typische Rechenaufgabe. Du musst wissen, was abgezogen wird, wer es bezahlt und wohin es fließt.',
+  go:['#rechnen','Jetzt selbst rechnen'],merke:['Netto = Brutto minus Steuern minus Arbeitnehmeranteil zur Sozialversicherung.','Kranken-, Pflege-, Renten- und Arbeitslosenversicherung werden geteilt, die Unfallversicherung zahlt der Betrieb allein.','Den Betrieb kostet eine Stelle mehr als das Brutto: Der Arbeitgeberanteil kommt obendrauf.'],
+  p:[
+  {h:'3.000 € stehen im Vertrag',s:cDoc(140,36,'VERTRAG','#0a8a73')+cp(96,'neu',{arm:'up',mood:'wow'})+cSign(190,44,'3.000 € brutto',112,'#ffe9a8'),say:[['l','3.000 €! Und wie viel kommt davon bei mir an?']],
+   t:'Brutto ist das vereinbarte Entgelt. Ausgezahlt wird das Netto. Die Beträge in dieser Geschichte sind gerundete Beispielwerte.'},
+  {h:'Erst kommen die Steuern',bg:'out',s:cp(50,'neu',{arm:'out',mood:'flat'})+cCoin(104,104)+cArrow(122,104,196)+cHouse(204,'Finanzamt','#a08a6a',100)+cSign(100,30,'− 350 € Steuern',118),say:[['l','Lohnsteuer, eventuell Kirchensteuer und Soli.']],
+   t:'Wie viel Lohnsteuer anfällt, hängt vor allem von der Steuerklasse und den Kinderfreibeträgen ab. Der Betrieb behält sie ein und führt sie ab.'},
+  {h:'Dann die Sozialversicherung',s:cSign(14,22,'Kranken',70)+cSign(90,22,'Pflege',64)+cSign(160,22,'Rente',60)+cSign(226,22,'Arbeitslos',82)+cp(100,'neu',{arm:'up'})+cp(220,'chef',{flip:1,arm:'up'})+cSign(118,84,'halbe-halbe',86,'#bff0dc'),say:[['r','Diese vier Beiträge teilen wir uns.']],
+   t:'Arbeitnehmer und Arbeitgeber tragen die Beiträge grundsätzlich je zur Hälfte. Im Beispiel gehen 630 € vom Brutto ab. Die Unfallversicherung zahlt der Betrieb allein.'},
+  {h:'Das bleibt übrig',s:cPC(26,'Entgeltabrechnung',[['Brutto','3.000,00'],['Netto','2.020,00']],[['Steuern','− 350,00'],['Sozialversicherung','− 630,00']],['Verdienst','Abzüge'])+cp(236,'bh',{flip:1,arm:'out'}),say:[['r','2.020 € netto. Die überweisen wir zum Monatsende.']],
+   t:'3.000 − 350 − 630 = 2.020 € netto. Gehen davon noch Vorschüsse oder vermögenswirksame Leistungen ab, bleibt der Auszahlungsbetrag.'},
+  {h:'Was kostet die Stelle den Betrieb?',s:cSign(30,30,'Brutto 3.000 €',124)+cSign(30,62,'+ AG-Anteil 630 €',124)+cSign(30,100,'≈ 3.630 €',124,'#ffd3cc')+cp(232,'chef',{flip:1,arm:'out',mood:'flat'}),say:[['r','Mich kostet die Stelle mehr als 3.000 €.']],
+   t:'Der Arbeitgeber zahlt seinen Anteil zur Sozialversicherung zusätzlich zum Brutto. Diese Personalkosten gehören in jede Kalkulation.'},
+  {h:'Wohin fließt das Geld?',bg:'out',s:cp(36,'neu',{arm:'up'})+cCoin(70,70)+cHouse(100,'Finanzamt','#a08a6a',92)+cHouse(212,'Krankenkasse','#6f9bd6',98)+cSign(104,20,'Lohnsteuer',86)+cSign(212,20,'alle SV-Beiträge',104),say:[['l','Mein Netto kommt aufs Konto.']],
+   t:'Der Betrieb überweist drei Mal: das Netto an die Mitarbeiterin, die Steuern ans Finanzamt und sämtliche Sozialversicherungsbeiträge an die Krankenkasse, die sie weiterverteilt.'}]},
+ {tag:'FF · Lernfeld 7',title:'Ein Gebrauchter von privat: die Differenzbesteuerung',why:'In der Prüfung zum Fahrzeugvertrieb musst du erkennen, wie ein Gebrauchtwagen besteuert wird, und die Umsatzsteuer aus der Differenz herausrechnen.',
+  go:['#rechnen','Jetzt selbst rechnen'],merke:['Ankauf von privat: keine Vorsteuer, deshalb Differenzbesteuerung nach § 25a UStG.','Die Differenz aus Verkaufs- und Einkaufspreis ist ein Bruttobetrag: durch 1,19 teilen.','Auf der Rechnung wird keine Umsatzsteuer ausgewiesen.'],
+  p:[
+  {h:'Ein Kunde bietet sein Auto an',bg:'out',s:cCar(100,94,'#d9822b')+cp(48,'kd',{arm:'out'})+cp(276,'vk',{flip:1}),say:[['l','Ich möchte meinen Wagen verkaufen. 11.000 € hätte ich gern.']],
+   t:'Der Verkäufer ist Privatperson. Auf seinem Kaufvertrag steht keine Umsatzsteuer, also kann das Autohaus auch keine Vorsteuer abziehen.'},
+  {h:'Prüfen und bewerten',bg:'out',s:cCar(96,94,'#d9822b')+cp(250,'vk',{flip:1,arm:'out'})+cDoc(26,38,'CHECKLISTE','#0a8a73')+cSign(170,24,'Händler-EK: 10.000 €',136),say:[['r','Scheckheft gepflegt, zwei Kratzer. Ich biete 10.000 €.']],
+   t:'Vor dem Ankauf: Papiere, Scheckheft, Unfallschäden, Probefahrt. Der Händlereinkaufswert stammt aus einer Bewertung, zum Beispiel DAT oder Schwacke, abzüglich Aufbereitung.'},
+  {h:'Der Ankauf wird gebucht',s:cPC(26,'Ankauf GW von privat',[['Bestand GW','differenzbest.'],['','10.000,00']],[['Bank','10.000,00']])+cp(236,'bh',{flip:1,arm:'out'}),say:[['r','Kein Vorsteuerkonto, weil keine Umsatzsteuer drauf war.']],
+   t:'Der Wagen kommt mit dem vollen Kaufpreis in den Bestand der differenzbesteuerten Gebrauchtwagen.',b:'Bestand GW differenzbesteuert 10.000\nan Bank 10.000'},
+  {h:'Der Wagen wird verkauft',bg:'show',s:cCar(98,94,'#d9822b')+cp(52,'vk',{arm:'out'})+cp(272,'ku',{flip:1,arm:'up'})+cSign(104,28,'12.380 €',84,'#ffe9a8'),say:[['l','Aufbereitet und mit neuer HU: 12.380 €.'],['r','Den nehme ich.']],
+   t:'Besteuert wird nur die Differenz: Verkaufspreis 12.380 € minus Einkaufspreis 10.000 € = 2.380 €. Dieser Betrag enthält die Umsatzsteuer bereits.'},
+  {h:'Die Steuer steckt in der Differenz',s:cSign(24,24,'Differenz 2.380 €',130)+cSign(24,56,'÷ 1,19 = 2.000 €',130)+cSign(24,94,'USt = 380 €',130,'#ffd3cc')+cp(226,'bh',{flip:1,arm:'out'}),say:[['r','Nur 380 € Umsatzsteuer statt 19 % auf alles.']],
+   t:'2.380 ÷ 1,19 = 2.000 € Rohgewinn netto, 380 € Umsatzsteuer. Auf der Rechnung steht keine Umsatzsteuer, sondern der Hinweis auf die Sonderregelung für Gebrauchtgegenstände.',b:'Forderungen 12.380\nan Erlöse GW differenzbest. 10.000\n+ Mehrerlöse 2.000 + Umsatzsteuer 380'},
+  {h:'Und wenn der Wagen von einer Firma kommt?',bg:'out',s:cHouse(14,'Firma','#8d99c4',80)+cCar(104,94,'#8a8f9c')+cp(270,'vk',{flip:1,arm:'up'})+cSign(190,24,'mit 19 % USt',104),say:[['r','Dann gilt die Regelbesteuerung.']],
+   t:'Weist der Verkäufer Umsatzsteuer aus, zieht das Autohaus die Vorsteuer ab und berechnet beim Verkauf 19 % auf den gesamten Nettopreis.'}]},
+ {tag:'FF · Lernfeld 6',title:'Bestellt, geliefert, reklamiert: Kaufvertrag und Mängel',why:'Kaufvertragsrecht ist ein Dauerbrenner in der Prüfung: Wie kommt der Vertrag zustande, und welche Rechte hat der Kunde bei einem Mangel in welcher Reihenfolge?',
+  go:['#karten','Karten dazu lernen'],merke:['Kaufvertrag = Antrag und Annahme, zwei übereinstimmende Willenserklärungen.','Bei Mängeln zuerst Nacherfüllung, erst danach Rücktritt oder Minderung.','Gewährleistung ist gesetzlich, Garantie ist ein freiwilliges Zusatzversprechen.'],
+  p:[
+  {h:'Antrag und Annahme',bg:'show',s:cDesk(118)+cDoc(140,64,'BESTELLUNG')+cp(70,'kd',{arm:'out'})+cp(250,'vk',{flip:1,arm:'up'}),say:[['l','Ich bestelle den Wagen verbindlich.'],['r','Die Auftragsbestätigung kommt per Post.']],
+   t:'Die unterschriebene Bestellung ist der Antrag des Kunden. Der Vertrag steht, sobald das Autohaus annimmt: durch Auftragsbestätigung oder durch Lieferung.'},
+  {h:'Wer muss was?',s:cSign(20,26,'Verkäufer: liefern',128)+cSign(172,26,'Käufer: zahlen',128)+cp(84,'vk',{arm:'out'})+cp(236,'kd',{flip:1,arm:'out'})+cCoin(196,100),say:[['l','Mangelfreies Auto gegen Kaufpreis.']],
+   t:'Der Verkäufer übergibt das Auto mangelfrei und verschafft das Eigentum. Der Käufer zahlt und nimmt ab. Beim Eigentumsvorbehalt bleibt das Autohaus Eigentümer, bis alles bezahlt ist.'},
+  {h:'Die Übergabe',bg:'out',s:cCar(100,94,'#4c6fe0')+cp(50,'vk',{arm:'out'})+cp(274,'kd',{flip:1,arm:'up'})+cCal(232,20,'2 J.'),say:[['l','Schlüssel, Papiere, viel Freude!']],
+   t:'Mit der Übergabe beginnt die Gewährleistung: zwei Jahre beim Neuwagen. Bei Gebrauchtwagen kann sie gegenüber Verbrauchern auf ein Jahr verkürzt werden.'},
+  {h:'Ein Mangel taucht auf',bg:'out',s:cCar(110,94,'#4c6fe0')+cSign(120,40,'ruckel, ruckel',100,'#ffd3cc')+cp(56,'kd',{arm:'up',mood:'wow'}),say:[['l','Nach drei Monaten ruckelt das Getriebe!']],
+   t:'Ein Sachmangel liegt vor, wenn das Auto nicht so ist wie vereinbart oder üblich. Zeigt er sich im ersten Jahr, wird beim Verbraucher vermutet, dass er schon bei der Übergabe da war.'},
+  {h:'Zuerst: Nacherfüllung',s:cCar(96,94,'#4c6fe0')+cp(250,'vk',{flip:1,arm:'out',c:'#3d4f7c'})+cSign(20,24,'Reparatur',90,'#bff0dc')+cSign(120,24,'oder Ersatz',96),say:[['r','Wir reparieren das, für Sie kostenlos.']],
+   t:'Der Käufer kann Nachbesserung oder Ersatzlieferung verlangen. Die Kosten trägt der Verkäufer. Nach dem zweiten erfolglosen Versuch gilt die Nachbesserung in der Regel als gescheitert.'},
+  {h:'Wenn das nicht klappt',s:cSign(20,26,'Rücktritt',86)+cSign(110,26,'Minderung',90)+cSign(206,26,'Schadensersatz',108)+cp(100,'kd',{arm:'up',mood:'flat'})+cp(220,'chef',{flip:1,arm:'out'}),say:[['l','Dann möchte ich mein Geld zurück.']],
+   t:'Erst jetzt darf der Käufer vom Vertrag zurücktreten oder den Preis mindern, gegebenenfalls zusätzlich Schadensersatz verlangen.'}]},
+ {tag:'FF · Lernfeld 8',title:'Finanzieren oder leasen? Zwei Wege zum Neuwagen',why:'Im Verkaufsgespräch und in der Prüfung musst du beide Wege erklären und sagen können, wem das Auto jeweils gehört und wer welches Risiko trägt.',
+  go:['#karten','Karten dazu lernen'],merke:['Finanzierung: Die Bank ist Sicherungseigentümerin, am Ende gehört das Auto dem Kunden.','Leasing: Der Leasinggeber bleibt Eigentümer, der Kunde zahlt für die Nutzung.','Restwertleasing: Das Restwertrisiko trägt der Leasingnehmer. Kilometerleasing: der Leasinggeber.'],
+  p:[
+  {h:'Der Wunsch',bg:'show',s:cCar(98,94,'#0a8a73')+cp(52,'ku',{arm:'up',mood:'flat'})+cp(274,'vk',{flip:1,arm:'out'})+cSign(110,28,'30.000 €',84,'#ffe9a8'),say:[['l','So viel habe ich nicht auf einmal.'],['r','Dann schauen wir uns zwei Wege an.']],
+   t:'Wer nicht bar zahlt, kann finanzieren (Kredit) oder leasen (Nutzung auf Zeit). Das Autohaus vermittelt meist die Bank oder Leasinggesellschaft des Herstellers.'},
+  {h:'Weg 1: die Finanzierung',bg:'out',s:cHouse(10,'Bank','#6f9bd6',84)+cArrow(98,112,128)+cCoin(142,112)+cp(190,'ku',{arm:'out'})+cDoc(232,54,'ZB TEIL II','#d12f6f')+cSign(186,20,'bleibt bei der Bank',128),say:[['r','Ich zahle monatliche Raten an die Bank.']],
+   t:'Die Bank zahlt den Kaufpreis ans Autohaus. Die Kundin ist Halterin und Besitzerin, die Bank bis zur letzten Rate Sicherungseigentümerin. Deshalb behält sie die Zulassungsbescheinigung Teil II.'},
+  {h:'Was kostet der Kredit?',s:cSign(20,24,'Sollzins',80)+cSign(108,24,'+ Nebenkosten',108)+cSign(60,60,'= effektiver Jahreszins',160,'#ffe9a8')+cp(266,'vk',{flip:1,arm:'out'}),say:[['r','Vergleichen Sie immer den effektiven Jahreszins.']],
+   t:'Der effektive Jahreszins enthält alle Kreditkosten und macht Angebote vergleichbar. Varianten: klassischer Ratenkredit, Schlussratenfinanzierung und Drei-Wege-Finanzierung (am Ende zahlen, weiterfinanzieren oder zurückgeben).'},
+  {h:'Weg 2: das Leasing',bg:'out',s:cHouse(10,'Leasing','#8a5ad6',84)+cCar(110,94,'#0a8a73')+cp(280,'ku',{flip:1,arm:'up'})+cSign(104,34,'gehört dem Leasinggeber',168),say:[['r','Ich fahre das Auto, aber es gehört mir nicht.']],
+   t:'Die Leasinggesellschaft kauft das Auto und bleibt Eigentümerin. Die Kundin zahlt für die Nutzung: oft eine Sonderzahlung, dann feste Monatsraten über die vereinbarte Laufzeit.'},
+  {h:'Kilometer oder Restwert?',s:cSign(8,20,'Kilometerleasing',146)+cSign(166,20,'Restwertleasing',146)+cSign(8,52,'Mehr-km kosten extra',146,'#bff0dc')+cSign(166,52,'Wertverlust: Kunde zahlt',146,'#ffd3cc')+cCar(100,94,'#0a8a73'),say:[['l','Bei der Rückgabe wird abgerechnet.']],
+   t:'Kilometerleasing: Abgerechnet werden nur Mehr- und Minderkilometer und Schäden. Restwertleasing: Ist das Auto am Ende weniger wert als kalkuliert, zahlt der Leasingnehmer die Differenz.'},
+  {h:'Was passt zu wem?',bg:'show',s:cp(60,'ku',{arm:'up'})+cSign(96,30,'Kaufen = behalten',128)+cSign(96,62,'Leasen = wechseln',128)+cp(266,'vk',{flip:1,arm:'out'}),say:[['l','Ich will das Auto lange fahren. Also finanzieren.']],
+   t:'Finanzierung: Das Auto gehört am Ende dem Kunden. Leasing: niedrigere Raten und regelmäßig ein neues Auto, dafür Bindung an Laufzeit, Kilometer und Rückgabezustand. Unternehmer setzen die Leasingraten als Betriebsausgaben ab.'}]},
+ {tag:'WiSo und KUP · Lernfeld 9',title:'Die Kündigung: Form, Fristen und Schutz',why:'Kündigungsfristen und Kündigungsschutz kommen in fast jeder WiSo-Prüfung vor, meist als kleiner Fall mit Datum.',
+  go:['#quiz','Im Quiz testen'],merke:['Kündigung nur schriftlich auf Papier mit Unterschrift.','Grundfrist: vier Wochen zum 15. oder zum Monatsende, in der Probezeit zwei Wochen.','Klage gegen eine Kündigung: innerhalb von drei Wochen beim Arbeitsgericht.'],
+  p:[
+  {h:'Die Kündigung kommt',s:cDoc(140,40,'KÜNDIGUNG','#d12f6f')+cp(96,'chef',{arm:'out',mood:'flat'})+cp(224,'kd',{flip:1,mood:'wow',arm:'up'}),say:[['r','Per WhatsApp wäre das gar nicht gültig gewesen?']],
+   t:'Eine Kündigung muss schriftlich erfolgen: auf Papier und eigenhändig unterschrieben. Mündlich, per E-Mail oder per Messenger ist sie unwirksam.'},
+  {h:'Welche Frist gilt?',s:cCal(40,40,'15.')+cCal(104,40,'30.')+cSign(30,96,'4 Wochen vorher',130,'#ffe9a8')+cp(240,'bh',{flip:1,arm:'out'}),say:[['r','Vier Wochen zum 15. oder zum Monatsende.']],
+   t:'Das ist die gesetzliche Grundfrist. Kündigt der Arbeitgeber, verlängert sie sich mit der Betriebszugehörigkeit, zum Beispiel auf einen Monat zum Monatsende ab zwei Jahren. In der Probezeit gelten zwei Wochen.'},
+  {h:'Ordentlich oder fristlos?',s:cSign(8,26,'ordentlich: mit Frist',138)+cSign(152,26,'fristlos: wichtiger Grund',162,'#ffd3cc')+cp(90,'chef',{arm:'up'})+cp(236,'vk',{flip:1,mood:'flat'}),say:[['l','Fristlos geht nur bei schweren Verstößen.']],
+   t:'Für die außerordentliche Kündigung braucht es einen wichtigen Grund, etwa Diebstahl. Sie muss innerhalb von zwei Wochen nach Bekanntwerden erklärt werden. Bei Fehlverhalten ist vorher in der Regel eine Abmahnung nötig.'},
+  {h:'Das Kündigungsschutzgesetz',s:cSign(16,24,'personenbedingt',120)+cSign(16,54,'verhaltensbedingt',120)+cSign(16,84,'betriebsbedingt',120)+cp(256,'bh',{flip:1,arm:'up'})+cSign(184,26,'ein Grund muss her',128),say:[['r','Ohne einen dieser Gründe ist die Kündigung sozial ungerechtfertigt.']],
+   t:'Das Gesetz gilt, wenn jemand länger als sechs Monate im Betrieb ist und dort mehr als zehn Beschäftigte arbeiten. Bei betriebsbedingten Kündigungen kommt die Sozialauswahl dazu.'},
+  {h:'Wer ist besonders geschützt?',s:cP(50,{c:'#d12f6f',style:'long',hair:2})+cP(112,{c:'#0a8a73',hair:1,skin:2,arm:'up'})+cP(174,{c:'#d9822b',style:'bun',hair:0,skin:1})+cP(236,{c:'#4c6fe0',hair:3,arm:'up'})+cSign(76,20,'Sonderkündigungsschutz',168,'#bff0dc'),say:[['l','Für uns gelten strengere Regeln.']],
+   t:'Schwangere und Mütter bis vier Monate nach der Geburt, Eltern in Elternzeit, schwerbehinderte Menschen (nur mit Zustimmung des Integrationsamts), Betriebsräte und Jugendvertreter, Auszubildende nach der Probezeit.'},
+  {h:'Was tun nach der Kündigung?',bg:'out',s:cp(46,'kd',{arm:'out'})+cHouse(96,'Arbeitsgericht','#a08a6a',100)+cHouse(212,'Agentur','#6f9bd6',96)+cCal(120,6,'3 W.'),say:[['l','Ich lasse das prüfen, und zwar schnell.']],
+   t:'Der Betriebsrat muss vor jeder Kündigung angehört werden, sonst ist sie unwirksam. Wer klagen will, hat drei Wochen Zeit. Außerdem: sofort bei der Agentur für Arbeit arbeitsuchend melden.'}]}
+ ,{tag:'KUP · Lernfeld 10',title:'Lohnt sich die Aktion? Deckungsbeitrag und Gewinnschwelle',why:'Deckungsbeitrag, Preisuntergrenze und Break-even sind sichere Rechenpunkte. Die Formeln sind kurz, man muss nur wissen, welche Kosten wohin gehören.',
+  go:['#rechnen','Jetzt selbst rechnen'],merke:['Deckungsbeitrag = Preis minus variable Kosten.','Gewinnschwelle = Fixkosten geteilt durch den Deckungsbeitrag je Stück.','Kurzfristige Preisuntergrenze = variable Kosten.'],
+  p:[
+  {h:'Die Idee',s:cDesk(30)+cp(72,'chef',{arm:'up'})+cS(120,30,'Wintercheck 60 €','#ffe9a8')+cp(250,'bh',{flip:1,mood:'flat'}),say:[['l','Ein Wintercheck für 60 € netto. Rechnet sich das?']],
+   t:'Um das zu beantworten, werden die Kosten getrennt: Welche entstehen mit jedem einzelnen Check, und welche fallen ohnehin an?'},
+  {h:'Variabel oder fix?',s:cS(14,26,'variabel: 35 € je Check','#bff0dc')+cS(14,58,'fix: 1.500 € Werbung','#ffd3cc')+cp(250,'bh',{flip:1,arm:'out'}),say:[['r','Material und Lohn je Check sind variabel, die Werbung ist fix.']],
+   t:'Variable Kosten steigen mit jeder verkauften Einheit. Fixkosten bleiben gleich, egal ob 10 oder 100 Checks verkauft werden, zum Beispiel Werbung, Miete und Gehälter.'},
+  {h:'Der Deckungsbeitrag',s:cS(26,24,'Preis 60 €')+cS(26,56,'− variable Kosten 35 €')+cS(26,94,'= 25 € je Check','#bff0dc')+cp(250,'bh',{flip:1,arm:'out'}),say:[['r','Jeder Check bringt 25 €, um die Fixkosten zu decken.']],
+   t:'Der Deckungsbeitrag zeigt, was nach Abzug der variablen Kosten übrig bleibt. Erst wenn alle Fixkosten gedeckt sind, entsteht Gewinn.'},
+  {h:'Ab wann lohnt es sich?',s:cPC(26,'Gewinnschwelle',[['Fixkosten','1.500,00'],['DB je Check','25,00']],[['1.500 ÷ 25','= 60'],['Checks','Break-even']],['Zahlen','Rechnung'])+cp(236,'bh',{flip:1,arm:'up'}),say:[['r','Mit dem 60. Check sind wir bei null, ab dem 61. im Plus.']],
+   t:'Gewinnschwelle (Break-even) = Fixkosten ÷ Deckungsbeitrag je Stück. Hier: 1.500 ÷ 25 = 60 Checks.'},
+  {h:'Wie tief darf der Preis sinken?',s:cS(20,26,'Untergrenze: 35 €','#ffd3cc')+cp(90,'kd',{arm:'up'})+cp(240,'chef',{flip:1,arm:'out',mood:'flat'}),say:[['l','Geht da noch was am Preis?'],['r','Unter 35 € lege ich bei jedem Check drauf.']],
+   t:'Kurzfristige Preisuntergrenze sind die variablen Kosten. Langfristig muss der Preis auch die Fixkosten decken, sonst macht der Betrieb Verlust.'},
+  {h:'Die Aktion läuft',s:cS(22,24,'100 Checks × 25 € = 2.500 €')+cS(22,56,'− Fixkosten 1.500 €')+cS(22,94,'= 1.000 € Ergebnis','#bff0dc')+cp(266,'chef',{flip:1,arm:'up'}),say:[['r','100 Checks verkauft. Das hat sich gelohnt.']],
+   t:'Betriebsergebnis = gesamter Deckungsbeitrag minus Fixkosten. Im Autohaus wird das stufenweise gerechnet: DB 1 (Bruttoertrag), dann DB 2 und DB 3 nach Abzug weiterer zurechenbarer Kosten.'}]}
+ ,{tag:'KUP · Lernfeld 10',title:'Wie gesund ist das Autohaus? Kennzahlen aus der Bilanz',why:'Kennzahlen kommen fast immer als Rechenaufgabe mit anschließender Beurteilung. Du brauchst die Formel und einen Satz dazu, was das Ergebnis bedeutet.',
+  go:['#rechnen','Jetzt selbst rechnen'],merke:['Eigenkapitalquote = Eigenkapital ÷ Gesamtkapital × 100.','Goldene Bilanzregel: Anlagevermögen langfristig finanzieren.','Liquidität: flüssige Mittel im Verhältnis zu den kurzfristigen Schulden.'],
+  p:[
+  {h:'Die Bank fragt nach',bg:'show',s:cDesk(118)+cDoc(140,64,'BILANZ','#0a8a73')+cp(70,'bank',{arm:'out'})+cp(250,'chef',{flip:1,mood:'flat'}),say:[['l','Bevor wir den Kredit verlängern, schauen wir in Ihre Bilanz.']],
+   t:'Kennzahlen machen Betriebe vergleichbar: mit dem Vorjahr, mit der Branche und mit den Anforderungen der Bank.'},
+  {h:'Die Ausgangszahlen',s:cPC(26,'Bilanz (in Tsd. €)',[['Anlagevermögen','400'],['Umlaufvermögen','600']],[['Eigenkapital','300'],['Fremdkapital','700']],['Aktiva','Passiva'])+cp(236,'bh',{flip:1,arm:'out'}),say:[['r','Vom Fremdkapital sind 300 langfristig und 400 kurzfristig.']],
+   t:'Gesamtkapital 1.000 Tsd. €. Im Umlaufvermögen stecken 400 Vorräte, 120 Forderungen und 80 flüssige Mittel.'},
+  {h:'Eigenkapitalquote',s:cS(24,26,'300 ÷ 1.000 × 100')+cS(24,60,'= 30 %','#bff0dc')+cp(240,'bh',{flip:1,arm:'up'}),say:[['r','30 % gehören uns selbst.']],
+   t:'Eigenkapitalquote = Eigenkapital ÷ Gesamtkapital × 100. Je höher sie ist, desto unabhängiger von Banken und desto krisenfester ist der Betrieb.'},
+  {h:'Goldene Bilanzregel',s:cS(14,24,'Deckung I: 300 ÷ 400 = 75 %')+cS(14,56,'Deckung II: 600 ÷ 400 = 150 %','#bff0dc')+cp(266,'bank',{flip:1,arm:'up'}),say:[['r','Langfristiges Vermögen ist langfristig finanziert. Gut.']],
+   t:'Anlagendeckung I = Eigenkapital ÷ Anlagevermögen. Anlagendeckung II nimmt das langfristige Fremdkapital dazu. Liegt sie über 100 %, ist die goldene Bilanzregel erfüllt.'},
+  {h:'Liquidität',s:cS(14,22,'Liquidität 1: 80 ÷ 400 = 20 %')+cS(14,54,'Liquidität 2: 200 ÷ 400 = 50 %','#ffd3cc')+cS(14,86,'Liquidität 3: 600 ÷ 400 = 150 %')+cp(276,'bank',{flip:1,mood:'flat'}),say:[['r','Kurzfristig ist es bei Ihnen eng.']],
+   t:'Stufe 1: flüssige Mittel, Stufe 2: plus Forderungen, Stufe 3: gesamtes Umlaufvermögen, jeweils geteilt durch die kurzfristigen Schulden. Als Faustregel sollte Stufe 2 bei etwa 100 % liegen.'},
+  {h:'Rentabilität und Leverage',s:cS(14,24,'EK-Rendite: 45 ÷ 300 = 15 %','#bff0dc')+cS(14,56,'GK-Rendite: 80 ÷ 1.000 = 8 %')+cS(14,88,'FK-Zins: 35 ÷ 700 = 5 %')+cp(276,'chef',{flip:1,arm:'up'}),say:[['r','Der Kredit kostet 5 % und bringt 8 %.']],
+   t:'Gewinn 45, Fremdkapitalzinsen 35. Gesamtkapitalrentabilität = (Gewinn + Zinsen) ÷ Gesamtkapital. Solange sie über dem Fremdkapitalzins liegt, hebt zusätzliches Fremdkapital die Eigenkapitalrendite (Leverage-Effekt). Kippt das Verhältnis, wirkt der Hebel nach unten.'}]}
+ ,{tag:'WiSo · Lernfeld 11',title:'Wie entsteht ein Preis? Angebot und Nachfrage',why:'Preisbildung ist ein Klassiker der WiSo-Prüfung: Gleichgewichtspreis, Käufer- und Verkäufermarkt, Marktformen und staatliche Eingriffe.',
+  go:['#quiz','Im Quiz testen'],merke:['Gleichgewichtspreis: angebotene Menge = nachgefragte Menge, der Markt wird geräumt.','Angebotsüberhang = Käufermarkt, Nachfrageüberhang = Verkäufermarkt.','Höchstpreis liegt unter, Mindestpreis über dem Gleichgewichtspreis.'],
+  p:[
+  {h:'Der Markt',bg:'out',s:cCar(96,94,'#d9822b')+cp(46,'vk',{arm:'out'})+cp(250,'ku',{flip:1,arm:'up'})+cp(292,'kd',{flip:1}),say:[['l','Ich will möglichst viel dafür.'],['r','Und wir möglichst wenig zahlen.']],
+   t:'Auf dem Markt treffen Angebot und Nachfrage zusammen. Steigt der Preis, wird mehr angeboten und weniger nachgefragt. Sinkt er, ist es umgekehrt.'},
+  {h:'Der Gleichgewichtspreis',s:cChart(24,14)+cp(236,'bh',{flip:1,arm:'out'}),say:[['r','Wo sich die Kurven schneiden, sind alle zufrieden, die zu diesem Preis kaufen oder verkaufen wollen.']],
+   t:'Beim Gleichgewichtspreis sind angebotene und nachgefragte Menge gleich groß. Der Markt wird geräumt, die umgesetzte Menge ist am größten.'},
+  {h:'Preis zu hoch',s:cChart(24,14,'hi')+cp(220,'vk',{flip:1,mood:'flat'})+cS(176,22,'Angebotsüberhang','#ffd3cc'),say:[['r','Meine Autos stehen sich die Reifen platt.']],
+   t:'Liegt der Preis über dem Gleichgewicht, wird mehr angeboten als gekauft. Es entsteht ein Käufermarkt, die Anbieter müssen mit dem Preis runter.'},
+  {h:'Preis zu niedrig',s:cChart(24,14,'lo')+cp(220,'ku',{flip:1,arm:'up',mood:'wow'})+cS(172,22,'Nachfrageüberhang','#ffd3cc'),say:[['r','Schon wieder alle weg!']],
+   t:'Liegt der Preis darunter, wollen mehr Leute kaufen, als Ware da ist. Im Verkäufermarkt steigen die Preise. Beispiel: Fehlen Neuwagen, werden Gebrauchte teurer.'},
+  {h:'Wie viele Anbieter gibt es?',s:cS(10,24,'Polypol: viele')+cS(112,24,'Oligopol: wenige')+cS(230,24,'Monopol: 1')+cp(56,'vk')+cp(92,'kd')+cp(160,'chef')+cp(196,'bank')+cp(268,'bh'),say:[['l','Je weniger Anbieter, desto mehr Macht über den Preis.']],
+   t:'Polypol: viele Anbieter und Nachfrager, etwa bei Gebrauchtwagen. Oligopol: wenige große Anbieter, etwa Autohersteller oder Tankstellen. Monopol: ein einziger Anbieter.'},
+  {h:'Der Staat greift ein',bg:'out',s:cp(44,'bank',{arm:'out'})+cS(96,26,'Höchstpreis: schützt Käufer','#bff0dc')+cS(96,58,'Mindestpreis: schützt Anbieter')+cS(96,96,'Kartellamt wacht','#ffe9a8'),say:[['l','Und Preisabsprachen sind verboten.']],
+   t:'Ein Höchstpreis liegt unter dem Gleichgewichtspreis (Beispiel Mietpreisbremse), ein Mindestpreis darüber (Beispiel Mindestlohn). Das Kartellamt verbietet Absprachen und kontrolliert Fusionen.'}]}
+ ,{tag:'WiSo · Lernfeld 11',title:'Auf und ab: Konjunktur, Staat und Zentralbank',why:'Konjunkturphasen, das magische Viereck und die Geldpolitik der EZB werden meist als Zuordnungs- oder Ankreuzaufgabe gefragt.',
+  go:['#quiz','Im Quiz testen'],merke:['Vier Phasen: Aufschwung, Boom, Abschwung, Tiefstand.','Antizyklisch: Der Staat gibt im Abschwung mehr aus und spart im Boom.','EZB: Hauptziel Preisstabilität. Leitzins runter belebt, Leitzins rauf bremst.'],
+  p:[
+  {h:'Die Wirtschaft schwankt',s:cWave(20,24,0)+cp(266,'bh',{flip:1,arm:'out'}),say:[['r','Mal läuft es besser, mal schlechter. Das ist normal.']],
+   t:'Die Konjunktur verläuft in Wellen um den langfristigen Wachstumstrend: Aufschwung, Boom (Hochkonjunktur), Abschwung (Rezession) und Tiefstand (Depression). Gemessen wird am realen Bruttoinlandsprodukt.'},
+  {h:'Boom im Autohaus',bg:'show',s:cCar(98,94,'#e4472b')+cp(50,'vk',{arm:'up'})+cp(240,'ku',{flip:1,arm:'up'})+cp(284,'kd',{flip:1,arm:'up'}),say:[['l','Lieferzeit sechs Monate, und trotzdem unterschreiben alle.']],
+   t:'Im Boom sind die Betriebe ausgelastet, Löhne und Preise steigen, Arbeitskräfte werden knapp. Frühindikatoren wie Auftragseingänge und Geschäftsklima zeigen schon vorher, wohin es geht.'},
+  {h:'Der Abschwung',bg:'show',s:cCar(40,94,'#8a8f9c')+cCar(170,94,'#4c6fe0')+cp(160,'vk',{mood:'flat'}),say:[['l','Die Kunden halten ihr Geld zusammen.']],
+   t:'Die Nachfrage sinkt, Lager füllen sich, es wird weniger investiert. Arbeitslosigkeit und Preise reagieren erst mit Verzögerung, sie sind Spätindikatoren.'},
+  {h:'Der Staat steuert gegen',bg:'out',s:cHouse(14,'Staat','#8d99c4',90)+cCoin(124,104)+cCoin(142,116)+cArrow(158,110,196)+cCar(196,94,'#0a8a73'),say:[['l','Im Abschwung geben wir mehr aus und senken Steuern.']],
+   t:'Antizyklische Fiskalpolitik: Im Abschwung stützt der Staat die Nachfrage, etwa mit Investitionen oder einer Kaufprämie. Im Boom soll er sparen und Schulden abbauen.'},
+  {h:'Die EZB dreht am Zins',bg:'out',s:cHouse(14,'EZB','#6f9bd6',90)+cS(112,14,'Leitzins runter: belebt','#bff0dc')+cS(112,44,'Leitzins rauf: bremst','#ffd3cc')+cp(284,'bank',{flip:1}),say:[['r','Unser Hauptziel ist Preisstabilität.']],
+   t:'Sinkt der Leitzins, werden Kredite billiger, es wird mehr gekauft und investiert (expansiv). Steigt er, wird Geld teurer und die Inflation gebremst (kontraktiv). Angestrebt werden rund 2 % Inflation.'},
+  {h:'Das magische Viereck',s:cS(10,22,'stabile Preise')+cS(124,22,'hohe Beschäftigung')+cS(10,56,'Wachstum')+cS(86,56,'Gleichgewicht im Außenhandel')+cp(294,'chef',{flip:1,mood:'flat'}),say:[['r','Alle vier gleichzeitig? Das wäre Zauberei.']],
+   t:'Die vier Ziele der Wirtschaftspolitik lassen sich nie alle zugleich voll erreichen, deshalb „magisch“. Mit gerechter Verteilung und Umweltschutz wird daraus das magische Sechseck.'}]}
+ ,{tag:'WiSo · Lernfeld 1',title:'Ein Autohaus wird gegründet: Rechtsform, Register, Vollmachten',why:'Haftung, Handelsregister und Vollmachten gehören zum festen Stoff in WiSo. Gefragt wird meist: Wer haftet womit, und wer darf was unterschreiben?',
+  go:['#karten','Karten dazu lernen'],merke:['Einzelunternehmen und OHG: Haftung auch mit dem Privatvermögen. GmbH: nur mit dem Gesellschaftsvermögen.','Handelsregister Abteilung A: Einzelkaufleute und Personengesellschaften. Abteilung B: Kapitalgesellschaften.','Prokura (ppa.) geht weiter als Handlungsvollmacht (i. V.) und steht im Handelsregister.'],
+  p:[
+  {h:'Die Idee',s:cp(100,'kd',{arm:'up'})+cp(220,'neu',{flip:1,arm:'up'})+cS(96,26,'Unser Autohaus','#ffe9a8'),say:[['l','Wir machen uns selbstständig!'],['r','Aber in welcher Rechtsform?']],
+   t:'Die Rechtsform entscheidet über Haftung, Startkapital, Leitung und Gewinnverteilung.'},
+  {h:'Wer haftet womit?',s:cS(10,22,'Einzelunternehmen, OHG: privat')+cS(10,54,'KG: Komplementär voll')+cS(10,86,'GmbH: nur Firmenvermögen','#bff0dc')+cp(276,'bank',{flip:1,arm:'out'}),say:[['r','Bei der GmbH bleibt Ihr Privatvermögen geschützt.']],
+   t:'Einzelunternehmer und OHG-Gesellschafter haften unbeschränkt, auch privat. In der KG haftet der Komplementär voll, der Kommanditist nur mit seiner Einlage. Die GmbH braucht 25.000 € Stammkapital und haftet nur mit dem Gesellschaftsvermögen.'},
+  {h:'Notar und Handelsregister',s:cDesk(118)+cDoc(140,64,'VERTRAG','#0a8a73')+cp(70,'chef',{arm:'out'})+cp(250,'kd',{flip:1,arm:'out'})+cS(150,22,'HRB: Abteilung B'),say:[['l','Erst mit der Eintragung gibt es Ihre GmbH.']],
+   t:'Der Gesellschaftsvertrag der GmbH wird notariell beurkundet. Das Handelsregister führt das Amtsgericht, jeder darf es einsehen. Abteilung A: Einzelkaufleute, OHG, KG. Abteilung B: GmbH und AG.'},
+  {h:'Die Firma',bg:'out',s:cHouse(90,'Autohaus Rhein GmbH','#0a8a73',140)+cp(40,'kd',{arm:'up'})+cp(276,'neu',{flip:1,arm:'up'}),say:[['r','Der Name steht. Mit Rechtsformzusatz.']],
+   t:'Die Firma ist der Name, unter dem ein Kaufmann seine Geschäfte betreibt und unterschreibt. Sie muss wahr und klar sein, sich von anderen am Ort unterscheiden und den Rechtsformzusatz tragen.'},
+  {h:'Wer darf was unterschreiben?',s:cS(12,22,'Prokura: ppa.','#ffe9a8')+cS(12,54,'Handlungsvollmacht: i. V.')+cp(210,'bh',{arm:'up'})+cp(270,'vk',{flip:1,arm:'up'}),say:[['r','Mit Prokura darf ich fast alles, aber keine Bilanz unterschreiben.']],
+   t:'Prokura erlaubt alle gerichtlichen und außergerichtlichen Geschäfte eines Handelsgewerbes und wird ins Handelsregister eingetragen. Nicht erlaubt: Grundstücke verkaufen oder belasten, Bilanz unterschreiben, Prokura erteilen. Handlungsvollmacht deckt nur die gewöhnlichen Geschäfte dieses Betriebs.'},
+  {h:'Händler oder Agent?',bg:'show',s:cCar(98,94,'#0a8a73')+cp(50,'kd',{arm:'out'})+cS(140,26,'Händler: eigene Rechnung')+cS(140,58,'Agent: Provision','#bff0dc'),say:[['l','Als Vertragshändler kaufe ich die Autos selbst ein.']],
+   t:'Der Vertragshändler kauft und verkauft im eigenen Namen auf eigene Rechnung und trägt das Absatzrisiko. Der Agent vermittelt im Namen und auf Rechnung des Herstellers und erhält dafür Provision.'}]}
+];
+STORIES.splice(0,STORIES.length,...[0,1,8,9,2,3,5,4,6,12,7,10,11].map(i=>STORIES[i]));
+let BST=null;
+function vBilder(){
+  if(BST==null||!STORIES[BST]){const GN={KUP:'Kaufmännische Unterstützungsprozesse',FF:'Fahrzeugvertrieb und Finanzdienstleistungen',WiSo:'Wirtschafts- und Sozialkunde'},out=[$('p',{class:'muted',style:'margin:0',text:'Typische Abläufe aus der Prüfung als kurze Bildgeschichten. Jede dauert etwa zwei Minuten.'})];
+    for(const g of ['KUP','FF','WiSo']){out.push($('h2',{style:'font-size:18px;margin:6px 0 0',text:GN[g]}),$('div',{class:'comic'},STORIES.map((s,i)=>s.tag.startsWith(g)?$('button',{class:'sheet story',onclick:()=>{BST=i;vWissen();scrollTo(0,0)}},cScene(s.p[0].s,s.p[0].bg),$('div',{class:'tag',text:s.tag}),$('b',{text:s.title}),$('span',{class:'muted',text:s.p.length+' Bilder'})):null)))}
+    return out}
+  const s=STORIES[BST],nx=(BST+1)%STORIES.length;
+  return [$('button',{class:'chip',style:'align-self:flex-start',onclick:()=>{BST=null;vWissen();scrollTo(0,0)}},'‹ Alle Geschichten'),
+    $('div',{class:'sheet'},$('div',{class:'tag',text:s.tag}),$('h2',{style:'margin:0;font-size:20px',text:s.title}),$('p',{class:'muted',style:'margin:0'},$('b',{text:'Warum ist das wichtig? '}),s.why)),
+    $('div',{class:'comic'},s.p.map((p,i)=>$('figure',{class:'pn'},
+      $('div',{class:'pnh'},$('i',{text:String(i+1)}),$('b',{text:p.h})),
+      $('div',{class:'says'},p.say.map(([d,t])=>$('div',{class:'say '+d,text:t}))),
+      cScene(p.s,p.bg),
+      $('figcaption',{},p.t,p.b?$('code',{text:p.b}):null)))),
+    $('div',{class:'sheet'},$('b',{text:'Merke'}),$('ul',{style:'margin:0;padding-left:20px'},s.merke.map(m=>$('li',{text:m}))),
+      $('div',{class:'row'},$('a',{class:'btn',href:s.go[0],text:s.go[1]}),$('button',{onclick:()=>{BST=nx;vWissen();scrollTo(0,0)}},'Nächste Geschichte ›')))];
+}
+
 let WQ='', WSEG='formeln';
 function block(x){
   if(x.k==='f')return $('div',{},x.rows.map(r=>$('div',{class:'frow'},$('b',{text:r[0]}),$('code',{text:r[1]}))));
@@ -413,8 +671,10 @@ function wissenList(){
   box.replaceChildren(...(out.length?out:[$('p',{class:'muted',text:'Nichts gefunden. Anderes Stichwort probieren, zum Beispiel „Liquidität“ oder „Skonto“.'})]));
 }
 function vWissen(){
-  const seg=(k,n)=>$('button',{class:'chip grow','aria-pressed':String(WSEG===k),onclick:()=>{location.hash=k==='formeln'?'wissen':'lernfelder'}},n);
-  R($('div',{class:'row',role:'group','aria-label':'Ansicht'},seg('formeln','Formeln und Schemata'),seg('lernfelder','Lernfelder kurz und knapp')),
+  const seg=(k,n)=>$('button',{class:'chip grow','aria-pressed':String(WSEG===k),onclick:()=>{if(k==='bilder')BST=null;location.hash=k==='formeln'?'wissen':k}},n);
+  const segs=$('div',{class:'row',role:'group','aria-label':'Ansicht'},seg('formeln','Formeln'),seg('lernfelder','Lernfelder'),seg('bilder','In Bildern'));
+  if(WSEG==='bilder')return R(segs,vBilder());
+  R(segs,
     WSEG==='formeln'?areaChips(vWissen,true):null,
     $('input',{type:'search',id:'wq',placeholder:WSEG==='formeln'?'Formel oder Begriff suchen':'Stichwort in den Lernfeldern suchen',value:WQ,'aria-label':'Suchen',autocomplete:'off',oninput:e=>{WQ=e.target.value;wissenList()}}),
     $('div',{id:'wlist',style:'display:flex;flex-direction:column;gap:14px'}),
@@ -529,8 +789,8 @@ function vSettings(){const t=S.theme||'system';
     $('div',{class:'sheet'},$('b',{text:'Über die App'}),$('p',{class:'muted',text:'Inhalte aus den Lernfeldern 1 bis 11. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.'})));
 }
 
-const V={start:vStart,karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,pruefung:vExam,einstellungen:vSettings};
-function route(){let h=(location.hash||'#start').slice(1);if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'?'wissen':v==='einstellungen'?'start':v;F.topic='Alle';if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':'formeln';if(g!==WSEG){WSEG=g;WQ=''}}
+const V={start:vStart,karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,bilder:vWissen,pruefung:vExam,einstellungen:vSettings};
+function route(){let h=(location.hash||'#start').slice(1);if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'||v==='bilder'?'wissen':v==='einstellungen'?'start':v;F.topic='Alle';if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':v==='bilder'?'bilder':'formeln';if(g!==WSEG){WSEG=g;WQ=''}}
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+m)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   V[v]();window.scrollTo(0,0)}
