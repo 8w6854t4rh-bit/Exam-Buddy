@@ -1,14 +1,14 @@
 {
- "name": "Prüfungstrainer Automobilkaufleute",
- "short_name": "Prüfungstrainer",
- "description": "Karteikarten, Quiz, Rechnen und Buchen für die Abschlussprüfung Teil 2",
+ "name": "Exam Buddy",
+ "short_name": "Exam Buddy",
+ "description": "Prüfungstrainer für Automobilkaufleute: Karteikarten, Quiz, Rechnen, Buchen und Formelsammlung",
  "lang": "de",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
  "orientation": "portrait",
- "background_color": "#eef1f4",
- "theme_color": "#0b6e99",
+ "background_color": "#0f1120",
+ "theme_color": "#0f1120",
  "icons": [
   {
    "src": "icons/icon-192.png",
