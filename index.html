@@ -162,6 +162,16 @@ button.sug{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)
 html{touch-action:manipulation}button,a,input,textarea,select,summary,[role=button]{touch-action:manipulation}
 main,.top>div,#pbar{zoom:var(--z,1)}main{overflow-x:clip}
 html[data-fs="small"] input,html[data-fs="small"] textarea,html[data-fs="small"] select{font-size:17.8px}
+#tut{position:fixed;inset:0;z-index:50}
+#tut.twel{background:rgba(8,10,20,.6);display:grid;place-items:center;padding:20px}
+.tcard{background:var(--surface);color:var(--ink);border-radius:20px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:10px;max-width:460px;width:100%;position:relative}
+.tcen{align-items:center;text-align:center}.tcen h2{margin:4px 0 0;font-size:24px}.tcen p{margin:0}.tcen .phi{width:56px;height:56px;border-radius:16px}.tcen .phi svg{width:30px;height:30px}
+.tx{position:absolute;top:10px;right:10px;width:38px;height:38px;min-height:0;padding:0;border-radius:50%;font-size:16px;line-height:1;display:grid;place-items:center}
+#tut.trun .tcard{position:fixed;left:12px;right:12px;margin:0 auto;width:auto}
+.thd{display:flex;justify-content:space-between;align-items:center}.thd .tx{position:static}
+.tt{font-size:19px}.tcard p{margin:0;font-size:15px;line-height:1.45}
+.tspot{position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(8,10,20,.62),0 0 0 3px var(--accent);transition:all .25s ease;pointer-events:none}
+.tdots{display:flex;gap:5px;justify-content:center}.tdots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.tdots i.on{background:var(--accent);width:18px;border-radius:4px}.tdots i.d{background:color-mix(in srgb,var(--accent) 50%,var(--line))}
 main{max-width:760px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
 h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px;text-wrap:balance}
 p{margin:0}
@@ -448,7 +458,7 @@ function goTask(si,ti){const t=S.plan.sessions[si].tasks[ti];PT={si,ti};let h;
   else if(t.k==='exam')h='pruefung';
   if(location.hash==='#'+h)route();else location.hash=h}
 function toggleTask(si,ti,v){const t=S.plan.sessions[si].tasks[ti];t.done=v===undefined?!t.done:v;save()}
-function pbar(v){const el=document.getElementById('pbar');if(!PT||!S.plan||v==='plan'||v==='start'){el.hidden=true;document.body.classList.remove('haspbar');return}
+function pbar(v){const el=document.getElementById('pbar');if(TI>=0||!PT||!S.plan||v==='plan'||v==='start'){el.hidden=true;document.body.classList.remove('haspbar');return}
   const t=S.plan.sessions[PT.si]&&S.plan.sessions[PT.si].tasks[PT.ti];if(!t){PT=null;el.hidden=true;return}
   el.hidden=false;document.body.classList.add('haspbar');
   el.replaceChildren($('div',{class:'pbi'},$('div',{class:'pbt'},$('span',{class:'tag',text:'Lernplan'}),$('b',{text:t.t})),
@@ -571,6 +581,52 @@ function vWizard(){
           if(W.edit&&S.plan){S.plan.ans=a;replan()}else{S.plan={ans:a,created:today(),sessions:prev}}
           W=null;save();vPlan();scrollTo(0,0)}},W.edit?'Plan aktualisieren':'Lernplan starten'))]}
   R(head,body)}
+
+
+/* ---------- Tutorial ---------- */
+const TUT=[
+ ['start','.hp','Dein Lernplan','Beantworte 5 kurze Fragen, dann bekommst du einen Plan bis zur Prüfung. Hier siehst du, was heute dran ist, und kommst mit einem Tipp weiter.'],
+ ['start','.hero','Dein Lernstand','Zeigt, wie gut du den Stoff von Teil 2 schon kannst. Mit jeder richtigen Antwort wird es grüner, egal ob im Plan oder frei gelernt.'],
+ ['start','nav.tabs','Frei lernen','Über diese Leiste kommst du jederzeit in jeden Bereich, auch ganz ohne Lernplan.'],
+ ['karten','.card','Karteikarten','Frage lesen, Antwort überlegen, Karte antippen zum Umdrehen. Dann ehrlich sagen: „Wusste ich“ oder „Noch nicht“. Was du nicht kannst, kommt öfter dran.'],
+ ['karten','.ktog','Antwort eintippen','Wenn du magst, schreibst du deine Antwort auf. Die App zeigt dir, welche Stichworte der Musterantwort du getroffen hast.'],
+ ['quiz','main .sheet','Quiz','Zehn Ankreuzfragen wie in der Prüfung, mit Erklärung nach jeder Antwort. Oben wählst du den Prüfungsbereich.'],
+ ['rechnen','.cpad','Rechnen mit Taschenrechner','Jede Rechenaufgabe hat ihren eigenen Taschenrechner mit Verlauf. Das Ergebnis trägst du selbst oben ins Feld ein.'],
+ ['buchen','.tk','Buchen','Zieh die Konten auf die Soll- und die Haben-Seite, genau wie im T-Konto. Statt Ziehen geht auch Antippen.'],
+ ['wissen','main .row','Wissen','Formelsammlung, Lernfelder kurz und knapp und die Bildgeschichten, in denen Abläufe als Comic erklärt sind.'],
+ ['pruefung','button.pick','Testprüfung','Wähle einen Prüfungsbereich und schreib eine Prüfung nach IHK-Schema: auf Zeit, 100 Punkte, am Ende mit Note. Ideal für die letzten Tage vor der Prüfung.'],
+ ['start','#gear','Einstellungen','Hier stellst du deinen Prüfungstermin, die Schriftgröße und Hell oder Dunkel ein. Das Tutorial findest du hier auch wieder.']];
+let TI=-1;
+function tutEl(){let el=document.getElementById('tut');if(!el){el=$('div',{id:'tut',role:'dialog','aria-modal':'true','aria-label':'Tutorial'});document.body.append(el)}return el}
+function tutClose(){TI=-1;S.tut='seen';save();const el=document.getElementById('tut');if(el)el.remove();removeEventListener('resize',tutPos);removeEventListener('keydown',tutKey);if(location.hash!=='#start')location.hash='start'}
+function tutKey(e){if(e.key==='Escape')tutClose();if(TI>=0&&e.key==='ArrowRight')tutGo(TI+1);if(TI>0&&e.key==='ArrowLeft')tutGo(TI-1)}
+function tutWelcome(){const el=tutEl();el.className='twel';
+  el.replaceChildren($('div',{class:'tcard tcen'},
+    $('button',{class:'tx','aria-label':'Schließen',onclick:tutClose},'✕'),
+    $('div',{class:'phi'},svg('start')),
+    $('h2',{text:'Willkommen bei Exam Buddy'}),
+    $('p',{text:'Möchtest du eine kurze Tour durch die App? Dauert etwa eine Minute.'}),
+    $('button',{class:'primary wide',onclick:()=>tutGo(0)},'Tour starten'),
+    $('button',{class:'wide',onclick:tutClose},'Nein danke'),
+    $('p',{class:'muted',style:'font-size:12.5px;margin:0',text:'Du findest die Tour jederzeit in den Einstellungen.'})));
+  addEventListener('keydown',tutKey);el.querySelector('.primary').focus()}
+function tutGo(i){if(i>=TUT.length)return tutClose();TI=i;const[h]=TUT[i];
+  if(location.hash!=='#'+h){location.hash=h}else route();
+  setTimeout(()=>{const t=document.querySelector(TUT[i][1]);if(t&&t.scrollIntoView){const big=t.getBoundingClientRect().height>innerHeight*.38;t.style.scrollMarginTop='70px';t.scrollIntoView({block:big?'start':'center'})}setTimeout(tutShow,120)},160);
+  addEventListener('resize',tutPos)}
+function tutShow(){if(TI<0)return;const[,sel,title,text]=TUT[TI],el=tutEl();el.className='trun';
+  el.replaceChildren($('div',{class:'tspot'}),$('div',{class:'tcard'},
+    $('div',{class:'thd'},$('span',{class:'tag',text:'Tour · '+(TI+1)+' von '+TUT.length}),$('button',{class:'tx','aria-label':'Tour beenden',onclick:tutClose},'✕')),
+    $('b',{class:'tt',text:title}),$('p',{text:text}),
+    $('div',{class:'tdots'},TUT.map((_,j)=>$('i',{class:j===TI?'on':j<TI?'d':null}))),
+    $('div',{class:'row'},TI>0?$('button',{onclick:()=>tutGo(TI-1)},'Zurück'):null,$('button',{class:'primary grow',onclick:()=>tutGo(TI+1)},TI===TUT.length-1?'Fertig':'Weiter'))));
+  tutPos();el.querySelector('.primary').focus({preventScroll:true})}
+function tutPos(){if(TI<0)return;const el=document.getElementById('tut');if(!el)return;const sp=el.querySelector('.tspot'),cd=el.querySelector('.tcard');const t=document.querySelector(TUT[TI][1]);
+  if(!t){sp.style.cssText='left:50%;top:50%;width:0;height:0';cd.style.cssText='bottom:calc(84px + env(safe-area-inset-bottom))';return}
+  const r=t.getBoundingClientRect(),pad=6,top=Math.max(4,r.top-pad),bot=Math.min(innerHeight-4,r.bottom+pad);
+  sp.style.cssText=`left:${Math.max(4,r.left-pad)}px;top:${top}px;width:${Math.min(innerWidth-8,r.width+pad*2)}px;height:${bot-top}px`;
+  const nav=84,above=top,below=innerHeight-nav-bot;cd.style.cssText=above>below?'top:calc(12px + env(safe-area-inset-top))':'bottom:calc('+nav+'px + env(safe-area-inset-bottom))';
+  if(TUT[TI][1]==='nav.tabs')cd.style.cssText='bottom:'+(innerHeight-top+12)+'px'}
 
 /* ---------- Karteikarten ---------- */
 let cur=null, shown=false;
@@ -1197,6 +1253,7 @@ function vSettings(){const t=S.theme||'system';
     $('div',{class:'sheet'},$('b',{text:'Karteikarten'}),
       $('button',{class:'ktog','aria-pressed':String(!!S.kType),onclick:()=>{S.kType=!S.kType;save();vSettings()}},$('i'),'Antwort eintippen und abgleichen'),
       $('p',{class:'muted',text:'Du schreibst deine Antwort auf, die App markiert, welche Stichworte der Musterantwort du getroffen hast. Lässt sich auch direkt bei den Karteikarten ein- und ausschalten.'})),
+    $('div',{class:'sheet'},$('b',{text:'Hilfe'}),$('p',{class:'muted',style:'margin:0',text:'Eine kurze Tour zeigt dir, was du wo in der App machen kannst.'}),$('button',{class:'primary',onclick:()=>tutGo(0)},'Tour starten')),
     $('div',{class:'sheet'},$('b',{text:'Darstellung'}),$('div',{class:'row',role:'group','aria-label':'Farbschema'},b('system','Automatisch'),b('light','Hell'),b('dark','Dunkel')),$('p',{class:'muted',text:'Automatisch folgt der Einstellung deines Geräts.'})),
     $('div',{class:'sheet'},$('b',{text:'Lernstand'}),
       $('p',{class:'muted',text:'Der Lernstand wird nur auf diesem Gerät gespeichert. Nach dem ersten Öffnen läuft die App auch ohne Internet.'}),
@@ -1209,7 +1266,7 @@ function route(){let h=(location.hash||'#start').slice(1);if(h==='kannliste')h='
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+m)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   V[v]();pbar(v);window.scrollTo(0,0)}
-addEventListener('hashchange',route);applyFs();route();
+addEventListener('hashchange',route);applyFs();route();if(!S.tut&&!location.hash.slice(1).match(/^(pruefung)$/))setTimeout(tutWelcome,400);
 </script>
 <script>
 if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
