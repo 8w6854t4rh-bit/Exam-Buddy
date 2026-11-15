@@ -143,7 +143,11 @@ a.sheet.qlink{flex-direction:row;align-items:center;gap:12px;text-decoration:non
 .qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.qt2{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
 .qt2 b{font-size:14.5px}.qt2 .muted{font-size:12px;line-height:1.3}
 .tiles.t3{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.tiles.t3 .tile{min-width:0;padding:10px}.tiles.t3 .tile b{font-size:26px}.tiles.t3 .tile .hd{font-size:13px;gap:6px;flex-direction:column;align-items:flex-start}.tiles.t3 .tile .ic{width:30px;height:30px}.tiles.t3 .tile .ic svg{width:18px;height:18px}.tiles.t3 .tile span{font-size:12px}
-.hp{border-left:5px solid var(--accent)}
+.meter.slim{height:6px}
+.hsum{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-size:14.5px}.hsum>span:first-child{font-weight:700;flex-basis:100%}.hsum .muted{font-size:13px}.hsum .cdown{margin-left:auto}
+button.go2{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 14px}button.go2 b{font-size:16px}button.go2 small{font-size:12.5px;font-weight:600;opacity:.8;line-height:1.3;text-align:center}
+.hexp{background:none;border:0;min-height:36px;padding:4px 0;font-size:13.5px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px;align-self:center}
+.hexp::after{content:'▾';transition:transform .15s}.hexp[aria-expanded="true"]::after{transform:rotate(180deg)}
 main{max-width:760px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
 h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px;text-wrap:balance}
 p{margin:0}
@@ -449,16 +453,19 @@ function planHero(){const P=S.plan,e=EXD(),dt=e.d1?daysTo(e.d1):null,cd=dt!=null
   if(!P)return $('div',{class:'sheet hp'},$('div',{class:'hph'},$('div',{class:'phi'},svg('plan')),$('div',{class:'grow'},$('b',{text:'Persönlicher Lernplan'}),$('span',{class:'muted',text:'5 kurze Fragen, dann weißt du jeden Tag, was dran ist.'}))),
     cd,$('a',{class:'btn wide',href:'#plan',text:'Lernplan erstellen'}));
   const st=planStats(P),s=st.cur>=0?P.sessions[st.cur]:null;
-  const head=$('div',{class:'hph'},$('div',{class:'phi'},svg('plan')),$('div',{class:'grow'},$('b',{text:'Lernplan · '+st.pct+' %'}),$('span',{class:'muted',text:st.sd+' von '+P.sessions.length+' Einheiten erledigt'})),$('a',{class:'chip',href:'#plan',text:'Plan ›'}));
+  const head=$('div',{class:'hph'},$('div',{class:'phi'},svg('plan')),$('div',{class:'grow'},$('b',{text:'Dein Lernplan'}),$('span',{class:'muted',text:st.pct+' % geschafft · '+st.sd+' von '+P.sessions.length+' Einheiten'})),$('a',{class:'chip',href:'#plan',text:'Plan ›'}));
   if(!s)return $('div',{class:'sheet hp'},head,$('div',{class:'meter big'},$('i',{style:'width:100%'})),$('div',{class:'note ok',text:'Plan komplett abgearbeitet. Stark!'}));
   const open=s.tasks.map((t,ti)=>({t,ti})).filter(x=>!x.t.done),mins=open.reduce((n,x)=>n+x.t.m,0);
   const lab=s.ph==='pruefung'?'Prüfungstraining':s.ph==='final'?'Generalprobe':s.lfs&&s.lfs.length>1?s.lfs.map(k=>LFM[k].n).join(' und '):LFM[s.lf].n+' · '+LFM[s.lf].t;
-  const when=s.d===today()?'Heute':s.d<today()?'Nachholen':'Als Nächstes, '+dl(s.d);
-  return $('div',{class:'sheet hp'},head,cd,$('div',{class:'meter big'},$('i',{style:'width:'+st.pct+'%'})),
-    $('div',{class:'hnext'},$('div',{class:'tag',text:when+' · noch '+mins+' Min'}),$('b',{text:lab}),
-      $('ul',{class:'hlist'},s.tasks.map((t,ti)=>$('li',{class:t.done?'done':null},$('button',{class:'hck','aria-label':t.done?'Als offen markieren':'Als erledigt markieren','aria-pressed':String(!!t.done),onclick:()=>{toggleTask(st.cur,ti);vStart()}}),$('span',{text:t.t}))))),
-    st.behind>1?$('p',{class:'muted',style:'margin:0;font-size:13px',text:st.behind+' Einheiten sind liegen geblieben. Im Plan kannst du sie neu verteilen.'}):null,
-    $('button',{class:'primary wide',onclick:()=>goTask(st.cur,open[0].ti)},'Weiterlernen: '+open[0].t.t.replace(/^Einstieg: /,'')))}
+  const when=s.d===today()?'Heute':s.d<today()?'Nachholen':dl(s.d);
+  const exp=!!S.planOpen,dn=s.tasks.length-open.length;
+  return $('div',{class:'sheet hp'},head,
+    st.pct>0?$('div',{class:'meter slim'},$('i',{style:'width:'+st.pct+'%'})):null,
+    $('div',{class:'hsum'},$('span',{text:when+': '+lab}),$('span',{class:'muted',text:dn+'/'+s.tasks.length+' · noch '+mins+' Min'}),cd),
+    $('button',{class:'primary wide go2',onclick:()=>goTask(st.cur,open[0].ti)},$('b',{text:'Weiter im Lernplan'}),$('small',{text:'Als Nächstes: '+open[0].t.t.replace(/^Einstieg: /,'')})),
+    $('button',{class:'hexp','aria-expanded':String(exp),onclick:()=>{S.planOpen=!exp;save();vStart()}},exp?'Aufgaben ausblenden':'Alle Aufgaben für '+(when==='Heute'?'heute':'diese Einheit')+' anzeigen'),
+    exp?$('ul',{class:'hlist'},s.tasks.map((t,ti)=>$('li',{class:t.done?'done':null},$('button',{class:'hck','aria-label':t.done?'Als offen markieren':'Als erledigt markieren','aria-pressed':String(!!t.done),onclick:()=>{toggleTask(st.cur,ti);vStart()}}),$('span',{text:t.t})))):null,
+    st.behind>1?$('p',{class:'muted',style:'margin:0;font-size:13px',text:st.behind+' Einheiten sind liegen geblieben. Im Plan kannst du sie neu verteilen.'}):null)}
 function vPlan(){
   if(!S.plan||W)return vWizard();
   const P=S.plan,st=planStats(P),sw=styleW(P.ans),top=Object.entries(sw).sort((a,b)=>b[1]-a[1]),w=lfWeights(P.ans),foc=LFK.slice().sort((a,b)=>w[b]-w[a]).slice(0,3);
