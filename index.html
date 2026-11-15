@@ -163,15 +163,67 @@ html{touch-action:manipulation}button,a,input,textarea,select,summary,[role=butt
 main,.top>div,#pbar{zoom:var(--z,1)}main{overflow-x:clip}
 html[data-fs="small"] input,html[data-fs="small"] textarea,html[data-fs="small"] select{font-size:17.8px}
 #tut{position:fixed;inset:0;z-index:50}
-#tut.twel{background:rgba(8,10,20,.6);display:grid;place-items:center;padding:20px}
+#tut.twel{background:rgba(8,10,20,.6);display:grid;grid-template-columns:minmax(0,460px);justify-content:center;align-content:center;padding:16px}#tut .tcard{min-width:0;box-sizing:border-box}
 .tcard{background:var(--surface);color:var(--ink);border-radius:20px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:10px;max-width:460px;width:100%;position:relative}
 .tcen{align-items:center;text-align:center}.tcen h2{margin:4px 0 0;font-size:24px}.tcen p{margin:0}.tcen .phi{width:56px;height:56px;border-radius:16px}.tcen .phi svg{width:30px;height:30px}
 .tx{position:absolute;top:10px;right:10px;width:38px;height:38px;min-height:0;padding:0;border-radius:50%;font-size:16px;line-height:1;display:grid;place-items:center}
-#tut.trun .tcard{position:fixed;left:12px;right:12px;margin:0 auto;width:auto}
 .thd{display:flex;justify-content:space-between;align-items:center}.thd .tx{position:static}
 .tt{font-size:19px}.tcard p{margin:0;font-size:15px;line-height:1.45}
-.tspot{position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(8,10,20,.62),0 0 0 3px var(--accent);transition:all .25s ease;pointer-events:none}
 .tdots{display:flex;gap:5px;justify-content:center}.tdots i{width:7px;height:7px;border-radius:50%;background:var(--line)}.tdots i.on{background:var(--accent);width:18px;border-radius:4px}.tdots i.d{background:color-mix(in srgb,var(--accent) 50%,var(--line))}
+.tsl{padding:14px 0 16px;gap:12px;max-height:calc(100dvh - 40px)}.tsl>.thd,.tsl>.row,.tsl>.tdots{padding:0 16px}
+.tslides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}.tslides::-webkit-scrollbar{display:none}
+.tslide{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;display:flex;flex-direction:column;gap:14px;padding:0 16px;box-sizing:border-box;min-width:0}
+.ttext{display:flex;flex-direction:column;gap:4px;min-height:132px}.ttext p{margin:0;font-size:15px;line-height:1.45}
+.tsl .tdots i.on{background:var(--c)}.tsl .tdots i.d{background:color-mix(in srgb,var(--c) 45%,var(--line))}.tsl button.primary{background:var(--c);border-color:var(--c)}
+.tmock{height:190px;border-radius:16px;background:color-mix(in srgb,var(--c) 15%,var(--raise));display:grid;place-items:center;padding:14px;overflow:hidden}
+.mcard{background:var(--surface);border-radius:14px;padding:12px;width:100%;max-width:280px;display:flex;flex-direction:column;gap:7px;box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:13px}.mcard>b{font-size:14.5px;line-height:1.3}
+.mr{display:flex;gap:8px;align-items:center}.mr i{width:14px;height:14px;border-radius:50%;border:2px solid var(--muted);flex:0 0 auto}.mr.d i{background:var(--good);border-color:var(--good)}.mr.d span{text-decoration:line-through;color:var(--muted)}
+.mbtn{background:var(--c);color:#132209;border-radius:10px;text-align:center;font-weight:800;padding:7px;font-size:13px}
+.mrow2{display:flex;gap:16px;align-items:center;width:100%;max-width:300px}.mring{flex:0 0 auto;width:86px;height:86px;border-radius:50%;display:grid;place-items:center}.mring span{width:66px;height:66px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-weight:800;font-size:17px}
+.mbars{flex:1;display:flex;flex-direction:column;gap:6px}.mb small{font-size:11.5px;font-weight:700}.mb .meter{height:7px}
+.mtabs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;width:100%;background:var(--surface);border-radius:14px;padding:10px 6px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.mtabs>div{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted)}.mtabs i{width:34px;height:26px;border-radius:999px;display:grid;place-items:center}.mtabs svg{width:18px;height:18px}.mtabs small{font-size:9.5px;font-weight:700}
+.mtabs .on{color:var(--ink)}.mtabs .on i{background:var(--c);color:#fff}
+.mtag{font-size:10px;font-weight:800;letter-spacing:.6px;color:var(--c)}.mtwo{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.mtwo span{text-align:center;border-radius:9px;padding:6px;font-weight:700;font-size:12px}.mno{border:1.5px solid var(--bad);color:var(--bad)}.myes{background:var(--good);color:#fff}
+.mopt{border:1px solid var(--line);border-radius:9px;padding:6px 9px;font-size:12.5px}.mopt.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--surface));font-weight:700}
+.mdisp{background:var(--raise);border-radius:8px;padding:6px 9px;text-align:right;font-family:var(--mono);font-size:13px}.mpad{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.mpad span{background:var(--raise);border-radius:7px;text-align:center;padding:4px 0;font-weight:700;font-size:12.5px}.mpad .op{color:var(--c);background:color-mix(in srgb,var(--c) 18%,var(--surface))}
+.mtk{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;position:relative;padding-top:2px}.mtk::before{content:'';position:absolute;left:50%;top:0;bottom:0;border-left:2px solid var(--ink)}.mtk>b{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:4px;font-size:14px}
+.mch{font-family:var(--mono);font-size:11px;background:color-mix(in srgb,var(--c) 18%,var(--surface));border:1px solid color-mix(in srgb,var(--c) 40%,var(--line));border-radius:8px;padding:5px 6px}
+.mtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:300px}.mtiles>div{background:var(--surface);border-radius:14px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(0,0,0,.12)}.mtiles i{font-style:normal;width:40px;height:40px;border-radius:12px;background:var(--c);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:800}.mtiles small{font-weight:700;font-size:12px}
+.mex{align-items:flex-start}.mtime{font-weight:800;font-size:12.5px;background:var(--raise);border-radius:999px;padding:4px 10px}.mgrade{display:flex;justify-content:space-between;align-items:center;width:100%;border-top:1px dashed var(--line);padding-top:8px}.mgrade b{font-size:20px;color:var(--good)}
+.mset{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}.mset:last-child{border:0}.mchips{display:flex;gap:4px}.mchips i{font-style:normal;font-size:11px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:3px 8px}.mchips i.on{background:var(--c);border-color:var(--c);color:#132209}
+.xcard{background:linear-gradient(140deg,#4a5f96,#2c3a63);color:#fff;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 18px rgba(44,58,99,.35)}
+.xh{display:flex;gap:12px;align-items:center}.xh b{display:block;font-size:18px}.xh span{font-size:13px;opacity:.85;display:block;line-height:1.3}
+.xi{flex:0 0 auto;width:44px;height:44px;border-radius:13px;background:color-mix(in srgb,#fff 18%,transparent);display:grid;place-items:center}.xi svg{width:24px;height:24px}
+.xbadge{flex:0 0 auto;font-size:11px!important;font-weight:800;text-transform:uppercase;letter-spacing:.5px;background:#f6c443;color:#3b2a00;border-radius:999px;padding:4px 9px;opacity:1!important}
+.xgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.xq{background:color-mix(in srgb,#fff 14%,transparent);border:1px solid color-mix(in srgb,#fff 26%,transparent);color:inherit;border-radius:13px;padding:10px 12px;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-height:58px;min-width:0}
+.xq b{font-size:14.5px;line-height:1.2;overflow-wrap:anywhere}.xq small{font-size:12px;opacity:.8;font-weight:600}.xq:active{transform:scale(.98)}
+.xrun{background:#fff;color:#2c3a63;border:0;font-weight:800;border-radius:13px}
+.xlast{color:inherit;font-size:13px;font-weight:600;opacity:.85;text-decoration:none}
+.dhero{background:var(--accent);color:var(--on);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.dtop{display:flex;gap:16px;align-items:center}.dtop small{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.75}.dtop b{display:block;font-family:var(--display);font-size:30px;line-height:1.05;text-transform:uppercase;margin:2px 0 6px}
+.dcd{display:inline-block;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--on) 14%,transparent);color:inherit;text-decoration:none}
+.dmini{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.dmini a{background:var(--surface);color:var(--ink);border-radius:13px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;min-width:0}
+.dmini i{width:30px;height:30px;border-radius:9px;background:var(--c);color:var(--on-ic);display:grid;place-items:center}.dmini svg{width:17px;height:17px}.dmini small{font-size:11px;font-weight:700;color:var(--muted)}.dmini b{font-size:15px}
+.dtile{border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);min-width:0}
+.dth{display:flex;align-items:center;gap:10px}.dth>i{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:0 0 auto}.dth svg{width:20px;height:20px}.dth b{font-size:17px;flex:1}.dth em{margin-left:auto;font-style:normal;font-size:10.5px;font-weight:800;text-transform:uppercase;background:#f6c443;color:#3b2a00;border-radius:999px;padding:3px 8px}
+.dtile>b{font-size:16px;line-height:1.2}.dtile>span{font-size:13.5px;color:var(--muted);line-height:1.35}
+.dplan .dth>i{background:var(--c-start);color:#132209}.dlink{font-size:13px;font-weight:700;color:var(--muted);text-decoration:none}
+.dgo{margin-top:4px;background:var(--c-start);color:#132209;border:0;border-radius:12px;padding:11px;font-weight:800;text-align:center;font-size:15px;width:100%}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dex{background:linear-gradient(140deg,#4a5f96,#2c3a63);color:#fff;border:0}.dex .dth>i{background:rgba(255,255,255,.18)}.dex>span{color:rgba(255,255,255,.82)}
+.dwi .dth>i{background:var(--c-wissen);color:var(--on-ic)}
+.hseg{flex-wrap:nowrap}.hseg .chip{min-width:0;flex:1 1 0;padding-left:6px;padding-right:6px}
+.hseg{position:sticky;top:calc(52px + env(safe-area-inset-top));z-index:3;background:var(--bg);padding:4px 0}
+.gauge{position:relative;display:block;width:100%;max-width:64px;margin:0 auto}.gauge svg{display:block;width:100%;height:auto;overflow:visible}
+.gauge .gk,.gauge .gv{fill:none;stroke-width:6;stroke-linecap:round}.gauge .gk{stroke:var(--raise)}
+.gauge .gv{stroke-dasharray:var(--v) 100;animation:gfill .9s cubic-bezier(.2,.8,.2,1)}@keyframes gfill{from{stroke-dasharray:0 100}}
+@media (prefers-reduced-motion:reduce){.gauge .gv{animation:none}}
+.gauge .gt{stroke:var(--muted);stroke-width:1.4;stroke-linecap:round;opacity:.6}
+.gauge b{position:absolute;left:0;right:0;top:60%;transform:translateY(-50%);text-align:center;font-size:14px;font-weight:800;letter-spacing:-.2px}
+.dmini a{container-type:inline-size}@container (max-width:68px){.dmini small i{display:none}.dmini small{font-size:10px}.gauge b{font-size:11.5px}}
+.dmini small{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:-2px}.dmini small i{width:16px;height:16px;border-radius:5px}.dmini small i svg{width:11px;height:11px}
 main{max-width:760px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
 h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px;text-wrap:balance}
 p{margin:0}
@@ -326,6 +378,20 @@ const pct=(a,b)=>b?Math.round(a/b*100):0;
 const tbl=(head,rows,mono)=>$('div',{class:'tw'},$('table',{class:mono?'mono':null},$('tr',{},head.map(h=>$('th',{text:h}))),rows.map(r=>$('tr',{},r.map(c=>$('td',{text:c}))))));
 
 /* ---------- Start ---------- */
+function examCard(){const last=(S.exams||[])[0],run=E&&!E.done,e=EXD(),dt=e.d1?daysTo(e.d1):null,end=dt!=null&&dt>=0&&dt<=7;
+  const go=k=>{if(!E||E.done){startExam(k)}location.hash='pruefung';if(location.hash==='#pruefung')route()};
+  const q=(k,n,m)=>$('button',{class:'xq',onclick:()=>go(k)},$('b',{text:n}),$('small',{text:m}));
+  return $('div',{class:'xcard'},
+    $('div',{class:'xh'},$('div',{class:'xi'},svg('pruefung')),$('div',{class:'grow'},$('b',{text:'Prüfung simulieren'}),$('span',{text:end?'Endspurt: noch '+dt+(dt===1?' Tag':' Tage')+' bis zur Prüfung':'Wie in der echten Prüfung: auf Zeit, mit Punkten und Note'})),end?$('span',{class:'xbadge',text:'Endspurt'}):null),
+    run?$('button',{class:'xrun',onclick:()=>{location.hash='pruefung'}},'Laufende Prüfung fortsetzen ›')
+      :$('div',{class:'xgrid'},q('KUP','Unterstützungs­prozesse','90 Min'),q('FF','Fahrzeug­vertrieb','90 Min'),q('WiSo','WiSo','60 Min'),q('mix','Kurztest','15 Aufgaben')),
+    last?$('a',{class:'xlast',href:'#pruefung'},'Zuletzt: '+(EX[last.k]?EX[last.k].name.replace('Kaufmännische ','').replace('prozesse und Finanzdienstleistungen','vertrieb'):last.k)+' · '+last.pct+' % · Note '+last.note+' ›'):null)}
+function gauge(v){const cx=30,cy=29,r=23,P=a=>{const t=a*Math.PI/180;return (cx+r*Math.cos(t)).toFixed(2)+' '+(cy+r*Math.sin(t)).toFixed(2)};
+  const arc='M'+P(150)+' A'+r+' '+r+' 0 1 1 '+P(30),h=Math.round(4+Math.min(v,100)*1.26),col=v>0?'hsl('+h+' 72% 48%)':'transparent';
+  const ticks=[0,25,50,75,100].map(k=>{const a=(150+2.4*k)*Math.PI/180;return '<path d="M'+(cx+(r+4.5)*Math.cos(a)).toFixed(2)+' '+(cy+(r+4.5)*Math.sin(a)).toFixed(2)+'L'+(cx+(r+7)*Math.cos(a)).toFixed(2)+' '+(cy+(r+7)*Math.sin(a)).toFixed(2)+'"/>'}).join('');
+  const el=document.createElement('span');el.className='gauge';
+  el.innerHTML='<svg viewBox="-2 -2 64 54" aria-hidden="true"><g class="gt">'+ticks+'</g><path class="gk" d="'+arc+'" pathLength="100"/><path class="gv" d="'+arc+'" pathLength="100" style="stroke:'+col+';--v:'+Math.max(0,Math.min(100,v))+'"/></svg><b>'+v+' %</b>';return el}
+let HSEG='heute';
 function vStart(){
   const qm=S.qm||{},cm=S.cm||{},bm=S.bm||{};
   const kI=D.karten.map((c,i)=>i).filter(i=>D.karten[i][0]!=='T1'),qI=D.quiz.map((q,i)=>i).filter(i=>D.quiz[i][0]!=='T1'),g2=G.filter(g=>g[0]!=='T1'),nB=D.buchungen.length;
@@ -339,16 +405,41 @@ function vStart(){
   const tile=(m,h,name,big,sub,p,cls)=>$('a',{class:'tile'+(cls?' '+cls:''),href:h,style:'--c:var(--c-'+m+')'},$('div',{class:'hd'},$('div',{class:'ic'},svg(m)),name),$('b',{text:big}),$('span',{text:sub}),$('div',{class:'meter'},$('i',{style:'width:'+p+'%'})));
   const mtile=([m,h,name,v,det])=>{const p=Math.round(v),show=p===0&&v>0?1:p;return $('a',{class:'tile',href:h,style:'--c:var(--c-'+m+')','aria-label':name+': '+show+' Prozent, '+lvlText(show)},$('div',{class:'hd'},$('div',{class:'ic'},svg(m)),name),
     $('b',{class:show?lvl(show):null,text:show+' %'}),$('span',{},$('span',{class:'lvl '+(show?lvl(show):''),text:lvlText(show)}),' · '+det),$('div',{class:'meter'},$('i',{class:lvl(show),style:'width:'+show+'%'})))};
-  R(planHero(),
+  const ovw=()=>$('details',{class:'sheet mini'},$('summary',{text:'Abschlussprüfung Teil 2 in Kürze'}),
+      tbl(['Bereich','LF','Zeit','Anteil'],[['Kaufm. Unter­stützungs­prozesse','2, 9, 10','90 min','25 %'],['Fahrzeug­vertrieb, Finanz­dienste','6, 7, 8','90 min','25 %'],['Wirtschafts- und Sozial­kunde','1, 9, 11','60 min','10 %'],['Fach­gespräch (mündlich)','5, 12','20 min','20 %']]),
+      $('p',{class:'muted',text:'Die restlichen 20 % kommen aus Teil 1 (Lernfelder 3, 4, 5), der schon geschrieben ist.'}));
+  const HV=S.homeV||'a';
+  if(HV!=='long'){
+    const e=EXD(),dt=e.d1?daysTo(e.d1):null,cdt=dt!=null&&dt>=0?(dt===0?'Prüfung heute':dt===1?'Prüfung morgen':'Prüfung in '+dt+' Tagen'):null;
+    const status=all>=90?'Prüfungsreif':all>=67?'Sitzt gut':all>=34?'Auf gutem Weg':all>0?'Guter Anfang':'Los geht’s';
+    const hero=$('div',{class:'dhero'},
+      $('div',{class:'dtop'},$('div',{class:'ring',style:'background:conic-gradient(var(--on) '+all+'%, color-mix(in srgb,var(--on) 28%,transparent) 0)'},$('span',{text:all+' %'})),
+        $('div',{},$('small',{text:'Dein Lernstand'}),$('b',{text:status}),cdt?$('span',{class:'dcd',text:cdt}):$('a',{class:'dcd',href:'#einstellungen',text:'Prüfungstermin eintragen ›'}))),
+      $('div',{class:'dmini'},mast.map(([m,h,name,v])=>{const p=Math.round(v),show=p===0&&v>0?1:p;return $('a',{href:h,style:'--c:var(--c-'+m+')','aria-label':name+' '+show+' Prozent'},gauge(show),$('small',{},$('i',{},svg(m)),name))})));
+    const P=S.plan,st=P?planStats(P):null,ses=st&&st.cur>=0?P.sessions[st.cur]:null,open=ses?ses.tasks.map((t,ti)=>({t,ti})).filter(x=>!x.t.done):[];
+    const planT=!P?$('a',{class:'dtile dplan',href:'#plan'},$('div',{class:'dth'},$('i',{},svg('plan')),$('b',{text:'Lernplan erstellen'})),$('span',{text:'5 kurze Fragen, dann weißt du jeden Tag, was dran ist.'}),$('div',{class:'dgo',text:'Los geht’s ›'}))
+      :$('div',{class:'dtile dplan'},$('div',{class:'dth'},$('i',{},svg('plan')),$('b',{text:'Lernplan · '+st.pct+' %'}),$('a',{class:'dlink',href:'#plan',text:'Plan ›'})),
+        $('div',{class:'meter slim'},$('i',{style:'width:'+Math.max(st.pct,2)+'%'})),
+        ses?$('span',{text:(ses.d===today()?'Heute':ses.d<today()?'Nachholen':dl(ses.d))+': '+(ses.ph==='pruefung'?'Prüfungstraining':ses.ph==='final'?'Generalprobe':(ses.lfs||[ses.lf]).map(k=>LFM[k].n).join(', '))+' · noch '+open.reduce((n,x)=>n+x.t.m,0)+' Min'}):$('span',{text:'Alles erledigt. Stark!'}),
+        open.length?$('button',{class:'dgo',onclick:()=>goTask(st.cur,open[0].ti)},'Weiter im Lernplan ›'):null);
+    const run=E&&!E.done,end=dt!=null&&dt>=0&&dt<=7;
+    const exT=$('a',{class:'dtile dex',href:'#pruefung'},$('div',{class:'dth'},$('i',{},svg('pruefung')),end?$('em',{text:'Endspurt'}):null),$('b',{text:'Prüfung simulieren'}),$('span',{text:run?'Läuft gerade, fortsetzen ›':last?'Zuletzt Note '+last.note+' · '+last.pct+' %':'Auf Zeit, mit Note'}));
+    const wiT=$('a',{class:'dtile dwi',href:'#wissen'},$('div',{class:'dth'},$('i',{},svg('wissen'))),$('b',{text:'Nachschlagen'}),$('span',{text:'Formeln, Lernfelder, Bildgeschichten'}));
+    if(HV==='a')return R(hero,planT,$('div',{class:'dgrid'},exT,wiT),ovw());
+    /* Variante B: Startseite mit Reitern */
+    const seg=k=>$('button',{class:'chip grow','aria-pressed':String(HSEG===k),onclick:()=>{HSEG=k;vStart()}},{heute:'Heute',stand:'Lernstand',pruef:'Prüfung'}[k]);
+    const top=$('div',{class:'row hseg',role:'group','aria-label':'Ansicht'},seg('heute'),seg('stand'),seg('pruef'));
+    if(HSEG==='stand')return R(top,$('div',{class:'hero'},$('div',{class:'ring',style:'background:conic-gradient(var(--on) '+all+'%, color-mix(in srgb,var(--on) 28%,transparent) 0)'},$('span',{text:all+' %'})),$('div',{},$('b',{text:status}),$('p',{text:'So gut beherrschst du den Stoff von Teil 2.'}))),$('div',{class:'tiles'},mast.map(mtile)));
+    if(HSEG==='pruef')return R(top,examCard(),ovw());
+    return R(top,planHero(),$('div',{class:'dgrid'},exT,wiT));
+  }
+  R(planHero(),examCard(),
     $('h2',{text:'Dein Lernstand'}),
     $('div',{class:'hero'},
       $('div',{class:'ring',style:'background:conic-gradient(var(--on) '+all+'%, color-mix(in srgb,var(--on) 28%,transparent) 0)'},$('span',{text:all+' %'})),
       $('div',{},$('b',{text:all>=90?'Prüfungsreif':all>=67?'Sitzt gut':all>=34?'Auf gutem Weg':all>0?'Guter Anfang':'Los geht’s'}),$('p',{text:'So gut beherrschst du den Stoff von Teil 2. Zählt alles, ob im Plan oder frei gelernt.'}))),
     $('div',{class:'tiles'},mast.map(mtile)),
     $('details',{class:'mini'},$('summary',{text:'Wie wird das berechnet?'}),$('p',{class:'muted',text:'Die Balken wandern von Rot über Gelb nach Grün. Eine Frage sitzt, wenn du sie zweimal hintereinander richtig hast, ein Aufgabentyp beim Rechnen nach dreimal. Ein Fehler nimmt eine Stufe zurück. Die Lernfelder 3, 4 und 5 aus Teil 1 zählen nicht mit.'})),
-    $('h2',{text:'Prüfung simulieren'}),
-    $('div',{class:'tiles'},
-      tile('pruefung','#pruefung','Testprüfung',last?last.pct+' %':'Jetzt starten',last?'letztes Ergebnis: Note '+last.note:'nach IHK-Schema: auf Zeit, 100 Punkte, mit Note',last?last.pct:0,'wide')),
     $('h2',{text:'Nachschlagen'}),
     $('div',{class:'tiles t3'},
       tile('wissen','#wissen','Formeln',String(D.wissen.length),'Themen',100),
@@ -584,22 +675,34 @@ function vWizard(){
 
 
 /* ---------- Tutorial ---------- */
-const TUT=[
- ['start','.hp','Dein Lernplan','Beantworte 5 kurze Fragen, dann bekommst du einen Plan bis zur Prüfung. Hier siehst du, was heute dran ist, und kommst mit einem Tipp weiter.'],
- ['start','.hero','Dein Lernstand','Zeigt, wie gut du den Stoff von Teil 2 schon kannst. Mit jeder richtigen Antwort wird es grüner, egal ob im Plan oder frei gelernt.'],
- ['start','nav.tabs','Frei lernen','Über diese Leiste kommst du jederzeit in jeden Bereich, auch ganz ohne Lernplan.'],
- ['karten','.card','Karteikarten','Frage lesen, Antwort überlegen, Karte antippen zum Umdrehen. Dann ehrlich sagen: „Wusste ich“ oder „Noch nicht“. Was du nicht kannst, kommt öfter dran.'],
- ['karten','.ktog','Antwort eintippen','Wenn du magst, schreibst du deine Antwort auf. Die App zeigt dir, welche Stichworte der Musterantwort du getroffen hast.'],
- ['quiz','main .sheet','Quiz','Zehn Ankreuzfragen wie in der Prüfung, mit Erklärung nach jeder Antwort. Oben wählst du den Prüfungsbereich.'],
- ['rechnen','.cpad','Rechnen mit Taschenrechner','Jede Rechenaufgabe hat ihren eigenen Taschenrechner mit Verlauf. Das Ergebnis trägst du selbst oben ins Feld ein.'],
- ['buchen','.tk','Buchen','Zieh die Konten auf die Soll- und die Haben-Seite, genau wie im T-Konto. Statt Ziehen geht auch Antippen.'],
- ['wissen','main .row','Wissen','Formelsammlung, Lernfelder kurz und knapp und die Bildgeschichten, in denen Abläufe als Comic erklärt sind.'],
- ['pruefung','button.pick','Testprüfung','Wähle einen Prüfungsbereich und schreib eine Prüfung nach IHK-Schema: auf Zeit, 100 Punkte, am Ende mit Note. Ideal für die letzten Tage vor der Prüfung.'],
- ['start','#gear','Einstellungen','Hier stellst du deinen Prüfungstermin, die Schriftgröße und Hell oder Dunkel ein. Das Tutorial findest du hier auch wieder.']];
 let TI=-1;
+const mk=(c,...k)=>$('div',{class:'tmock',style:'--c:var(--c-'+c+')'},...k);
+const mrow=(t,d)=>$('div',{class:'mr'+(d?' d':'')},$('i'),$('span',{text:t}));
+const mbar=(c,w,l)=>$('div',{class:'mb'},$('small',{text:l}),$('div',{class:'meter'},$('i',{class:c,style:'width:'+w+'%'})));
+const TSL=[
+ ['start','Dein Lernstand','Startseite, ganz oben','Zeigt, wie gut du den Stoff schon kannst. Mit jeder richtigen Antwort wandern die Balken von Rot über Gelb nach Grün.',
+  ()=>mk('start',$('div',{class:'mrow2'},$('div',{class:'mring',style:'background:conic-gradient(var(--c) 64%,var(--raise) 0)'},$('span',{text:'64 %'})),$('div',{class:'mbars'},mbar('good',82,'Karten'),mbar('warn',55,'Quiz'),mbar('good',70,'Rechnen'),mbar('bad',22,'Buchen'))))],
+ ['start','Dein Lernplan','Startseite','5 kurze Fragen zu Prüfungstermin, Wissensstand und Lerntyp, dann bekommst du einen Plan bis zur Prüfung. Jeden Tag siehst du, was dran ist, und kommst mit einem Tipp weiter.',
+  ()=>mk('start',$('div',{class:'mcard'},$('b',{text:'Heute: LF 10 · 30 Min'}),$('div',{class:'meter'},$('i',{style:'width:40%;background:var(--c)'})),mrow('Bildgeschichte lesen',1),mrow('Rechnen: Break-even',1),mrow('Karteikarten: KLR',0),$('div',{class:'mbtn',text:'Weiter im Lernplan'})))],
+ ['karten','Frei lernen','Leiste unten','Über die Leiste unten kommst du jederzeit in jeden Bereich, auch ganz ohne Lernplan. Oben links geht es zurück zur Startseite.',
+  ()=>mk('karten',$('div',{class:'mtabs'},[['start','Start'],['karten','Karten'],['quiz','Quiz'],['rechnen','Rechnen'],['buchen','Buchen'],['wissen','Wissen']].map(([m,n],i)=>$('div',{style:'--c:var(--c-'+m+')',class:i===1?'on':null},$('i',{},svg(m)),$('small',{text:n})))))],
+ ['karten','Karteikarten','Leiste unten: Karten','Antwort überlegen, Karte antippen, dann ehrlich sagen: „Wusste ich“ oder „Noch nicht“. Was du nicht kannst, kommt öfter. Optional tippst du deine Antwort ein und die App gleicht Stichworte ab.',
+  ()=>mk('karten',$('div',{class:'mcard'},$('small',{class:'mtag',text:'KUP · KENNZAHLEN'}),$('b',{text:'Was sagt die Eigenkapitalquote aus?'}),$('div',{class:'mtwo'},$('span',{class:'mno',text:'Noch nicht'}),$('span',{class:'myes',text:'Wusste ich'}))))],
+ ['quiz','Quiz','Leiste unten: Quiz','Zehn Ankreuzfragen wie in der Prüfung, mit Erklärung nach jeder Antwort. Oben wählst du den Prüfungsbereich.',
+  ()=>mk('quiz',$('div',{class:'mcard'},$('b',{text:'Wer haftet bei der GmbH?'}),$('div',{class:'mopt',text:'Alle Gesellschafter privat'}),$('div',{class:'mopt ok',text:'✓ Nur das Gesellschaftsvermögen'}),$('div',{class:'mopt',text:'Der Geschäftsführer allein'})))],
+ ['rechnen','Rechnen','Leiste unten: Rechnen','Prüfungstypische Rechenaufgaben mit immer neuen Zahlen. Jede Aufgabe hat ihren eigenen Taschenrechner mit Verlauf, das Ergebnis trägst du selbst ein.',
+  ()=>mk('rechnen',$('div',{class:'mcard'},$('b',{text:'Handelsspanne?'}),$('div',{class:'mdisp',text:'4.000 ÷ 30.000 × 100'}),$('div',{class:'mpad'},'789÷456×123−'.split('').map(k=>$('span',{class:'+−×÷'.includes(k)?'op':null,text:k}))),$('div',{class:'mbtn',text:'='})))],
+ ['buchen','Buchen','Leiste unten: Buchen','Zu jedem Beleg ziehst du die Konten auf die Soll- und die Haben-Seite, wie im T-Konto. Statt Ziehen geht auch Antippen.',
+  ()=>mk('buchen',$('div',{class:'mcard'},$('div',{class:'mtk'},$('b',{text:'Soll'}),$('b',{text:'Haben'}),$('span',{class:'mch',text:'2400 Forderungen'}),$('span',{class:'mch',text:'8100 Erlöse'}),$('span'),$('span',{class:'mch',text:'4800 USt'}))))],
+ ['wissen','Wissen','Leiste unten: Wissen','Formelsammlung, alle Lernfelder kurz und knapp und Bildgeschichten, in denen typische Abläufe als Comic erklärt werden.',
+  ()=>mk('wissen',$('div',{class:'mtiles'},[['Formeln','Σ'],['Lernfelder','≡'],['Bilder','☺']].map(([n,g])=>$('div',{},$('i',{text:g}),$('small',{text:n})))))],
+ ['pruefung','Testprüfung','Startseite: blaue Kachel','Eine Prüfung nach IHK-Schema: auf Zeit, 100 Punkte, am Ende mit Note. Ideal für die letzten Tage vor der Prüfung.',
+  ()=>mk('pruefung',$('div',{class:'mcard mex'},$('div',{class:'mtime',text:'⏱ 89:59'}),$('b',{text:'Kaufmännische Unterstützungsprozesse'}),$('div',{class:'mgrade'},$('span',{text:'84 Punkte'}),$('b',{text:'Note 2'}))))],
+ ['start','Einstellungen','Oben rechts','Prüfungstermin, Schriftgröße, Hell oder Dunkel und diese Tour zum erneuten Ansehen.',
+  ()=>mk('start',$('div',{class:'mcard'},$('div',{class:'mset'},$('span',{text:'Prüfungstermin'}),$('b',{text:'24.–25.11.'})),$('div',{class:'mset'},$('span',{text:'Schriftgröße'}),$('div',{class:'mchips'},$('i',{text:'Klein'}),$('i',{class:'on',text:'Normal'}),$('i',{text:'Groß'}))),$('div',{class:'mset'},$('span',{text:'Design'}),$('b',{text:'Automatisch'}))))]];
 function tutEl(){let el=document.getElementById('tut');if(!el){el=$('div',{id:'tut',role:'dialog','aria-modal':'true','aria-label':'Tutorial'});document.body.append(el)}return el}
-function tutClose(){TI=-1;S.tut='seen';save();const el=document.getElementById('tut');if(el)el.remove();removeEventListener('resize',tutPos);removeEventListener('keydown',tutKey);if(location.hash!=='#start')location.hash='start'}
-function tutKey(e){if(e.key==='Escape')tutClose();if(TI>=0&&e.key==='ArrowRight')tutGo(TI+1);if(TI>0&&e.key==='ArrowLeft')tutGo(TI-1)}
+function tutClose(){TI=-1;S.tut='seen';save();const el=document.getElementById('tut');if(el)el.remove();removeEventListener('keydown',tutKey)}
+function tutKey(e){if(e.key==='Escape')tutClose();else if(TI>=0&&e.key==='ArrowRight')tutTo(TI+1);else if(TI>0&&e.key==='ArrowLeft')tutTo(TI-1)}
 function tutWelcome(){const el=tutEl();el.className='twel';
   el.replaceChildren($('div',{class:'tcard tcen'},
     $('button',{class:'tx','aria-label':'Schließen',onclick:tutClose},'✕'),
@@ -609,24 +712,23 @@ function tutWelcome(){const el=tutEl();el.className='twel';
     $('button',{class:'primary wide',onclick:()=>tutGo(0)},'Tour starten'),
     $('button',{class:'wide',onclick:tutClose},'Nein danke'),
     $('p',{class:'muted',style:'font-size:12.5px;margin:0',text:'Du findest die Tour jederzeit in den Einstellungen.'})));
-  addEventListener('keydown',tutKey);el.querySelector('.primary').focus()}
-function tutGo(i){if(i>=TUT.length)return tutClose();TI=i;const[h]=TUT[i];
-  if(location.hash!=='#'+h){location.hash=h}else route();
-  setTimeout(()=>{const t=document.querySelector(TUT[i][1]);if(t&&t.scrollIntoView){const big=t.getBoundingClientRect().height>innerHeight*.38;t.style.scrollMarginTop='70px';t.scrollIntoView({block:big?'start':'center'})}setTimeout(tutShow,120)},160);
-  addEventListener('resize',tutPos)}
-function tutShow(){if(TI<0)return;const[,sel,title,text]=TUT[TI],el=tutEl();el.className='trun';
-  el.replaceChildren($('div',{class:'tspot'}),$('div',{class:'tcard'},
-    $('div',{class:'thd'},$('span',{class:'tag',text:'Tour · '+(TI+1)+' von '+TUT.length}),$('button',{class:'tx','aria-label':'Tour beenden',onclick:tutClose},'✕')),
-    $('b',{class:'tt',text:title}),$('p',{text:text}),
-    $('div',{class:'tdots'},TUT.map((_,j)=>$('i',{class:j===TI?'on':j<TI?'d':null}))),
-    $('div',{class:'row'},TI>0?$('button',{onclick:()=>tutGo(TI-1)},'Zurück'):null,$('button',{class:'primary grow',onclick:()=>tutGo(TI+1)},TI===TUT.length-1?'Fertig':'Weiter'))));
-  tutPos();el.querySelector('.primary').focus({preventScroll:true})}
-function tutPos(){if(TI<0)return;const el=document.getElementById('tut');if(!el)return;const sp=el.querySelector('.tspot'),cd=el.querySelector('.tcard');const t=document.querySelector(TUT[TI][1]);
-  if(!t){sp.style.cssText='left:50%;top:50%;width:0;height:0';cd.style.cssText='bottom:calc(84px + env(safe-area-inset-bottom))';return}
-  const r=t.getBoundingClientRect(),pad=6,top=Math.max(4,r.top-pad),bot=Math.min(innerHeight-4,r.bottom+pad);
-  sp.style.cssText=`left:${Math.max(4,r.left-pad)}px;top:${top}px;width:${Math.min(innerWidth-8,r.width+pad*2)}px;height:${bot-top}px`;
-  const nav=84,above=top,below=innerHeight-nav-bot;cd.style.cssText=above>below?'top:calc(12px + env(safe-area-inset-top))':'bottom:calc('+nav+'px + env(safe-area-inset-bottom))';
-  if(TUT[TI][1]==='nav.tabs')cd.style.cssText='bottom:'+(innerHeight-top+12)+'px'}
+  removeEventListener('keydown',tutKey);addEventListener('keydown',tutKey);el.querySelector('.primary').focus()}
+function tutGo(i){TI=i||0;const el=tutEl();el.className='twel';
+  const track=$('div',{class:'tslides'},TSL.map(([c,t,where,txt,pic],j)=>$('section',{class:'tslide','aria-label':'Schritt '+(j+1)+' von '+TSL.length},pic(),
+    $('div',{class:'ttext'},$('div',{class:'tag',style:'color:var(--c-'+c+')',text:where}),$('b',{class:'tt',text:t}),$('p',{text:txt})))));
+  const dots=$('div',{class:'tdots'},TSL.map((_,j)=>$('i')));
+  const back=$('button',{onclick:()=>tutTo(TI-1)},'Zurück'),next=$('button',{class:'primary grow',onclick:()=>tutTo(TI+1)},'Weiter');
+  el.replaceChildren($('div',{class:'tcard tsl'},
+    $('div',{class:'thd'},$('span',{class:'tag tcount'}),$('button',{class:'tx','aria-label':'Tour beenden',onclick:tutClose},'✕')),
+    track,dots,$('div',{class:'row'},back,next)));
+  let raf=0;track.addEventListener('scroll',()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{const k=Math.round(track.scrollLeft/track.clientWidth);if(k!==TI){TI=k;tutUi()}})},{passive:true});
+  removeEventListener('keydown',tutKey);addEventListener('keydown',tutKey);
+  requestAnimationFrame(()=>{track.scrollLeft=TI*track.clientWidth;tutUi()});next.focus()}
+function tutTo(i){if(i<0)return;if(i>=TSL.length)return tutClose();const tr=document.querySelector('#tut .tslides');if(!tr)return;TI=i;
+  tr.scrollTo({left:i*tr.clientWidth,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});tutUi()}
+function tutUi(){const el=document.getElementById('tut');if(!el)return;el.querySelectorAll('.tdots i').forEach((d,j)=>d.className=j===TI?'on':j<TI?'d':'');
+  el.querySelector('.tcount').textContent='Tour · '+(TI+1)+' von '+TSL.length;const bs=el.querySelectorAll('.tsl .row button');bs[0].style.visibility=TI>0?'visible':'hidden';bs[1].textContent=TI===TSL.length-1?'Los geht’s':'Weiter';
+  el.querySelector('.tsl').style.setProperty('--c','var(--c-'+TSL[TI][0]+')')}
 
 /* ---------- Karteikarten ---------- */
 let cur=null, shown=false;
