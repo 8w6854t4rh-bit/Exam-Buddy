@@ -64,6 +64,19 @@ h1{font-family:var(--display);font-size:28px;line-height:1;margin:0;letter-spaci
 .pn figcaption{font-size:14px;line-height:1.4}.pn code{display:block;margin-top:8px;white-space:pre-wrap;font-size:12.5px;background:var(--raise);border-left:3px solid var(--accent);border-radius:6px;padding:7px 9px}
 button.story{text-align:left;font:inherit;color:inherit;align-items:stretch;min-height:0;gap:8px}button.story b{font-size:17px;line-height:1.25}
 a.btn{align-self:flex-start;background:var(--accent);color:var(--on);text-decoration:none;font-weight:700;border-radius:12px;padding:11px 16px}
+.calc{gap:10px}.chead{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:none;border:0;padding:0;min-height:0;text-align:left;font:inherit;color:inherit;width:100%}
+.chead b{font-size:16px;display:flex;align-items:center;gap:8px}.chead b::after{content:"▾";font-size:13px;color:var(--muted);transition:transform .15s}.chead[aria-expanded="false"] b::after{transform:rotate(-90deg)}.chead .muted{font-size:12.5px}
+.cbody{display:flex;flex-direction:column;gap:10px}.cbody[hidden]{display:none}
+.cscreen{background:var(--raise);border:1px solid var(--line);border-radius:12px;padding:8px 12px;text-align:right;min-height:64px;display:flex;flex-direction:column;justify-content:flex-end}
+.cprev{font-size:13px;color:var(--muted);min-height:17px}.cdisp{font-family:"DejaVu Sans Mono",ui-monospace,monospace;font-size:24px;font-weight:600;overflow-wrap:anywhere;line-height:1.2}
+.cpad{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.ck{min-height:48px;padding:0;font-size:19px;font-weight:600;border-radius:12px;background:var(--surface);color:inherit}
+.ck.fn{background:var(--raise);font-size:16px}.ck.op{background:color-mix(in srgb,var(--accent) 18%,var(--surface));color:var(--accent);font-size:21px;border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.ck.eq{grid-column:1/-1;background:var(--accent);color:var(--on);border-color:var(--accent);font-size:20px}
+.ck:active{transform:scale(.97)}
+.ctapew{display:flex;flex-direction:column;gap:6px}.ctape{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto}
+.tline{display:flex;justify-content:space-between;gap:10px;min-height:36px;padding:6px 10px;border-radius:10px;font-weight:500;font-size:14px;text-align:left;background:var(--surface);color:inherit}
+.tline span{color:var(--muted);overflow-wrap:anywhere}.tline b{white-space:nowrap}
 main{max-width:760px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
 h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px;text-wrap:balance}
 p{margin:0}
@@ -337,6 +350,44 @@ G.push(
  ['FF','Verkäuferprovision',()=>{const lp=ri(200,500)*100,ma=pick([12,14,15,16]),ra=pick([3,4,5,6,8]),pv=pick([10,12,15,18]),be=r2(lp*(ma-ra)/100),a=r2(be*pv/100);return{t:`Listenpreis netto ${eur(lp)} €, Händlermarge ${ma} %, Kundennachlass ${ra} % vom Listenpreis. Der Verkäufer erhält ${pv} % Provision vom Bruttoertrag. Wie hoch ist seine Provision?`,a,u:'€',s:`Marge = ${eur(r2(lp*ma/100))} €, Nachlass = ${eur(r2(lp*ra/100))} €\nBruttoertrag = ${eur(be)} €\nProvision = ${eur(be)} × ${pv} % = ${eur(a)} €`}}],
  ['FF','Planabsatz',()=>{const mv=ri(20,90)*100,ma=pick([4,5,6,8,10,12]),a=mv*ma/100;return{t:`Im Marktgebiet werden für das nächste Jahr ${eur(mv,0)} Neuzulassungen erwartet (Marktvolumen). Das Autohaus strebt einen Marktanteil von ${ma} % an. Wie viele Neuwagen muss es verkaufen?`,a,u:'Fahrzeuge',d:0,s:`Planabsatz = Marktvolumen × Marktanteil\n${eur(mv,0)} × ${ma} % = ${eur(a,0)} Fahrzeuge`}}],
 );
+
+/* ---------- Taschenrechner (pro Aufgabe) ---------- */
+const nf=n=>Number.isFinite(n)?n.toLocaleString('de-DE',{maximumFractionDigits:6}):'Fehler';
+function cEval(src){let i=0;const t=src.replace(/\s/g,'');
+  const peek=()=>t[i];
+  const num=()=>{let j=i;while(i<t.length&&/[0-9,]/.test(t[i]))i++;if(j===i)throw 0;const v=parseFloat(t.slice(j,i).replace(',','.'));if(isNaN(v))throw 0;return v};
+  const prim=()=>{if(peek()==='('){i++;const v=ex();if(peek()===')')i++;return v}return num()};
+  const fac=()=>{if(peek()==='−'||peek()==='-'){i++;return -fac()}let v=prim();while(peek()==='%'){i++;v/=100}return v};
+  const term=()=>{let v=fac();while(peek()==='×'||peek()==='÷'){const o=t[i++];const w=fac();v=o==='×'?v*w:v/w}return v};
+  const ex=()=>{let v=term();while(peek()==='+'||peek()==='−'){const o=t[i++];const w=term();v=o==='+'?v+w:v-w}return v};
+  const v=ex();if(i<t.length)throw 0;return v}
+const pe=e=>e.replace(/\d+(,\d*)?/g,m=>{const[a,b]=m.split(',');return a.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+(b!==undefined?','+b:'')}).replace(/([+×÷])/g,' $1 ').replace(/(\d|\)|%)−/g,'$1 − ');
+function calcPad(host){host=host||C;
+  const K=host.calc||(host.calc={e:'',tape:[],done:false});
+  const disp=$('div',{class:'cdisp','aria-live':'polite'}),prev=$('div',{class:'cprev'}),tape=$('div',{class:'ctape'});
+  const ops='+−×÷';
+  const show=()=>{disp.textContent=K.e===''?'0':pe(K.e);let p='';if(K.e&&!K.done){try{const v=cEval(K.e);if(Number.isFinite(v)&&/[+−×÷%]/.test(K.e))p='= '+nf(v)}catch(_){}}prev.textContent=p;
+    tape.replaceChildren(...(K.tape.length?K.tape.map(x=>$('button',{class:'tline',title:'Ergebnis übernehmen',onclick:()=>ins(x.raw)},$('span',{text:pe(x.e)+' ='}),$('b',{text:nf(x.r)}))).reverse():[$('span',{class:'muted',style:'font-size:13px',text:'Hier erscheinen deine Zwischenschritte. Antippen übernimmt das Ergebnis.'})]))};
+  const ins=v=>{if(K.done){K.e=/^[+−×÷%]/.test(v)?K.e:'';K.done=false}const last=K.e.slice(-1);
+    if(ops.includes(v)){if(K.e===''&&v!=='−')return;if(ops.includes(last))K.e=K.e.slice(0,-1)}
+    if(v===','){const seg=K.e.split(/[+−×÷()%]/).pop();if(seg.includes(','))return;if(seg==='')K.e+='0'}
+    K.e+=v;show()};
+  const eq=()=>{if(!K.e)return;let e=K.e;const open=(e.match(/\(/g)||[]).length-(e.match(/\)/g)||[]).length;e+=')'.repeat(Math.max(0,open));
+    try{const r=cEval(e);if(!Number.isFinite(r))throw 0;const raw=String(Math.round(r*1e6)/1e6).replace('.',',').replace('-','−');
+      K.tape.push({e,r,raw});if(K.tape.length>12)K.tape.shift();K.e=raw;K.done=true}catch(_){prev.textContent='Eingabe prüfen'}show()};
+  const key=(l,fn,c)=>$('button',{class:'ck'+(c?' '+c:''),onclick:fn,'aria-label':l==='⌫'?'Löschen':l},l);
+  const pad=$('div',{class:'cpad'},
+    key('C',()=>{K.e='';K.done=false;show()},'fn'),key('(',()=>ins('('),'fn'),key(')',()=>ins(')'),'fn'),key('⌫',()=>{if(K.done){K.e='';K.done=false}else K.e=K.e.slice(0,-1);show()},'fn'),
+    key('7',()=>ins('7')),key('8',()=>ins('8')),key('9',()=>ins('9')),key('÷',()=>ins('÷'),'op'),
+    key('4',()=>ins('4')),key('5',()=>ins('5')),key('6',()=>ins('6')),key('×',()=>ins('×'),'op'),
+    key('1',()=>ins('1')),key('2',()=>ins('2')),key('3',()=>ins('3')),key('−',()=>ins('−'),'op'),
+    key('%',()=>ins('%'),'fn'),key('0',()=>ins('0')),key(',',()=>ins(',')),key('+',()=>ins('+'),'op'),
+    key('=',eq,'eq'));
+  const open=S.calcOpen!==false;
+  const body=$('div',{class:'cbody',hidden:open?null:''},$('div',{class:'cscreen'},prev,disp),pad,$('div',{class:'ctapew'},$('div',{class:'tag',text:'Verlauf dieser Aufgabe'}),tape));
+  const box=$('div',{class:'sheet calc'},
+    $('button',{class:'chead','aria-expanded':String(open),onclick:e=>{const o=body.hidden;body.hidden=!o;e.currentTarget.setAttribute('aria-expanded',String(o));S.calcOpen=o;save()}},$('b',{text:'Taschenrechner'}),$('span',{class:'muted',text:host===C?'Schmierzettel, wird bei jeder neuen Aufgabe geleert':'Schmierzettel nur für diese Teilaufgabe'})),body);
+  show();return box}
 let C=null;
 function newCalc(){const p=G.filter(g=>inArea(g[0])&&(F.topic==='Alle'||g[1]===F.topic));const g=pick(p);C=Object.assign(g[2](),{area:g[0],name:g[1],state:null})}
 function vRechnen(){
@@ -352,6 +403,7 @@ function vRechnen(){
       C.state?$('div',{class:'note '+(C.state==='ok'?'ok':C.state==='no'?'no':'')},$('b',{text:C.state==='ok'?'Richtig. ':C.state==='no'?'Nicht ganz. ':''}),'Ergebnis: '+eur(C.a,d)+(C.u?' '+C.u:'')):null,
       C.state?$('div',{class:'steps',text:C.s}):null,
       C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{newCalc();vRechnen()}},'Nächste Aufgabe'),$('button',{onclick:()=>{location.hash='wissen'}},'Formel nachschlagen')):null),
+    calcPad(),
     $('p',{class:'muted',text:'Jede Aufgabe hat neue Zahlen. Kommas wie in der Prüfung eingeben, zum Beispiel 1.234,56.'}));
 }
 
@@ -763,7 +815,7 @@ function vExam(){
   let body;
   if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),it.o.map((o,i)=>$('button',{class:'opt'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t))];
   else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),
-    $('input',{type:'text',id:'exans',inputmode:'decimal',autocomplete:'off',value:it.val,placeholder:'Ergebnis'+(it.g.u?' in '+it.g.u:''),'aria-label':'Dein Ergebnis',oninput:e=>{it.val=e.target.value}})];
+    $('input',{type:'text',id:'exans',inputmode:'decimal',autocomplete:'off',value:it.val,placeholder:'Ergebnis'+(it.g.u?' in '+it.g.u:''),'aria-label':'Dein Ergebnis',oninput:e=>{it.val=e.target.value}}),calcPad(it)];
   else if(it.type==='o')body=[$('p',{class:'qt',text:it.c[2]}),
     $('textarea',{id:'exans',rows:'5','aria-label':'Deine Antwort',placeholder:'Antwort in Stichpunkten',oninput:e=>{it.val=e.target.value}},it.val),
     $('div',{class:'row'},$('button',{class:'chip','aria-pressed':String(it.seen),onclick:()=>{it.seen=!it.seen;vExam()}},'Im Kopf beantwortet, ohne zu tippen'))];
