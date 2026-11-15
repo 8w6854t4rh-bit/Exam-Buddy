@@ -224,6 +224,12 @@ html[data-fs="small"] input,html[data-fs="small"] textarea,html[data-fs="small"]
 .gauge b{position:absolute;left:0;right:0;top:60%;transform:translateY(-50%);text-align:center;font-size:14px;font-weight:800;letter-spacing:-.2px}
 .dmini a{container-type:inline-size}@container (max-width:68px){.dmini small i{display:none}.dmini small{font-size:10px}.gauge b{font-size:11.5px}}
 .dmini small{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:-2px}.dmini small i{width:16px;height:16px;border-radius:5px}.dmini small i svg{width:11px;height:11px}
+.pbi.done{background:var(--good);color:#fff}
+.pbm{height:4px;border-radius:2px;background:color-mix(in srgb,var(--bg) 25%,transparent);margin-top:5px;overflow:hidden}.pbm i{display:block;height:100%;background:var(--good);border-radius:2px;transition:width .3s}
+.pbc,.pbx{flex:0 0 auto;width:40px;height:40px;min-height:0;padding:0;border-radius:11px;display:grid;place-items:center;font-size:17px;font-weight:800;border:0}
+.pbc{background:var(--good);color:#fff}.pbx{background:color-mix(in srgb,var(--bg) 18%,transparent);color:inherit}
+.pbi.done .pbd{background:#fff;color:var(--good);border-color:#fff}.pbi.done .pbx{background:rgba(255,255,255,.22)}
+.row[aria-label="Ansicht"]{flex-wrap:nowrap}.row[aria-label="Ansicht"] .chip{min-width:0;flex:1 1 0;padding-left:6px;padding-right:6px}
 main{max-width:760px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
 h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px;text-wrap:balance}
 p{margin:0}
@@ -353,7 +359,7 @@ let S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0]};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 /* Beherrschung: je Frage, Aufgabentyp und Beleg zählt eine Serie richtiger Antworten; ein Fehler nimmt eine Stufe zurück */
-const upd=(key,k,ok,cap)=>{const o=S[key]||(S[key]={});o[k]=ok?Math.min(cap,(o[k]||0)+1):Math.max(0,(o[k]||0)-1)};
+const upd=(key,k,ok,cap)=>{planTick({qm:'quiz',cm:'rechnen',bm:'buchen'}[key]);const o=S[key]||(S[key]={});o[k]=ok?Math.min(cap,(o[k]||0)+1):Math.max(0,(o[k]||0)-1)};
 const lvl=p=>p<34?'bad':p<67?'warn':'good';
 const lvlText=p=>p<1?'noch nicht geübt':p<34?'am Anfang':p<67?'auf gutem Weg':p<90?'sitzt gut':'prüfungsreif';
 const root=document.documentElement, hostTheme=root.getAttribute('data-theme');
@@ -540,7 +546,7 @@ const planStats=P=>{const all=P.sessions.flatMap(s=>s.tasks),done=all.filter(t=>
 let PF=null,PT=null,W=null,PFW=0;
 function goTask(si,ti){const t=S.plan.sessions[si].tasks[ti];PT={si,ti};let h;
   if(t.k==='karten'){PF={area:t.a,topic:t.top};cur=null;h='karten'}
-  else if(t.k==='quiz'){Q=null;PF={area:t.a,topic:'Alle'};h='quiz'}
+  else if(t.k==='quiz'){Q=null;QAUTO=1;PF={area:t.a,topic:'Alle'};h='quiz'}
   else if(t.k==='rechnen'){PF={area:t.a,topic:t.gen};C=null;h='rechnen'}
   else if(t.k==='buchen')h='buchen';
   else if(t.k==='story'){PF={st:t.st};h='bilder'}
@@ -549,12 +555,29 @@ function goTask(si,ti){const t=S.plan.sessions[si].tasks[ti];PT={si,ti};let h;
   else if(t.k==='exam')h='pruefung';
   if(location.hash==='#'+h)route();else location.hash=h}
 function toggleTask(si,ti,v){const t=S.plan.sessions[si].tasks[ti];t.done=v===undefined?!t.done:v;save()}
-function pbar(v){const el=document.getElementById('pbar');if(TI>=0||!PT||!S.plan||v==='plan'||v==='start'){el.hidden=true;document.body.classList.remove('haspbar');return}
-  const t=S.plan.sessions[PT.si]&&S.plan.sessions[PT.si].tasks[PT.ti];if(!t){PT=null;el.hidden=true;return}
+const TV={karten:'karten',quiz:'quiz',rechnen:'rechnen',buchen:'buchen',story:'bilder',lf:'lernfelder',formeln:'wissen',exam:'pruefung'};
+const TGOAL={karten:15,quiz:10,rechnen:3,buchen:5,exam:1};
+const TUNIT={karten:'Karten',quiz:'Fragen',rechnen:'Aufgaben',buchen:'Belege'};
+let CURV='start',PRT=null;
+const curTask=()=>PT&&S.plan&&S.plan.sessions[PT.si]&&S.plan.sessions[PT.si].tasks[PT.ti];
+function planTick(k,x){const t=curTask();if(!t||t.done||t.k!==k||TV[k]!==CURV)return;if(k==='exam'&&t.x!==x)return;
+  t.n=(t.n||0)+1;if(t.n>=(TGOAL[k]||1))t.done=true;save();pbar(CURV)}
+function nextOpen(){const s=S.plan.sessions[PT.si];const ti=s.tasks.findIndex(t=>!t.done);return ti<0?null:{si:PT.si,ti}}
+function pbar(v){const el=document.getElementById('pbar');CURV=v;clearTimeout(PRT);
+  const t=curTask();
+  if(PT&&t&&v!=='plan'&&v!=='start'&&TV[t.k]!==v)PT=null;/* anderer Bereich gewählt: Lernplan-Modus endet */
+  if(TI>=0||!PT||!t||v==='plan'||v==='start'){el.hidden=true;document.body.classList.remove('haspbar');return}
   el.hidden=false;document.body.classList.add('haspbar');
-  el.replaceChildren($('div',{class:'pbi'},$('div',{class:'pbt'},$('span',{class:'tag',text:'Lernplan'}),$('b',{text:t.t})),
-    $('button',{class:'pbd'+(t.done?' on':''),'aria-pressed':String(!!t.done),onclick:()=>{toggleTask(PT.si,PT.ti);if(t.done){PT=null;location.hash='plan'}else pbar(v)}},t.done?'Erledigt':'Erledigt ✓'),
-    $('a',{class:'pbp',href:'#plan','aria-label':'Zurück zum Lernplan'},svg('plan'))))}
+  const goal=TGOAL[t.k],n=Math.min(t.n||0,goal||1),read=!goal;
+  if(read&&!t.done)PRT=setTimeout(()=>{const u=curTask();if(u===t&&!t.done&&TV[t.k]===CURV){t.done=true;save();pbar(CURV)}},40000);
+  const exit=$('button',{class:'pbx','aria-label':'Lernplan-Modus verlassen',title:'Lernplan verlassen',onclick:()=>{PT=null;pbar(v)}},'✕');
+  if(t.done){const nx=nextOpen();
+    el.replaceChildren($('div',{class:'pbi done'},$('div',{class:'pbt'},$('span',{class:'tag',text:'Erledigt ✓'}),$('b',{text:t.t})),
+      nx?$('button',{class:'pbd',onclick:()=>goTask(nx.si,nx.ti)},'Nächste ›'):$('button',{class:'pbd',onclick:()=>{PT=null;location.hash='plan'}},'Einheit geschafft ›'),exit));return}
+  el.replaceChildren($('div',{class:'pbi'},$('div',{class:'pbt'},
+      $('span',{class:'tag',text:goal&&goal>1?'Lernplan · '+n+' von '+goal+' '+TUNIT[t.k]:t.k==='exam'?'Lernplan · Prüfung abgeben zählt':'Lernplan · Lesen, hakt sich selbst ab'}),
+      $('b',{text:t.t}),goal&&goal>1?$('div',{class:'pbm'},$('i',{style:'width:'+(n/goal*100)+'%'})):null),
+    $('button',{class:'pbc','aria-label':'Von Hand als erledigt abhaken',title:'Von Hand abhaken',onclick:()=>{t.done=true;save();pbar(v)}},'✓'),exit))}
 function taskRow(si,ti,compact){const t=S.plan.sessions[si].tasks[ti];
   return $('div',{class:'trow'+(t.done?' done':'')},
     $('button',{class:'tchk','aria-label':t.done?'Als offen markieren':'Als erledigt markieren','aria-pressed':String(!!t.done),onclick:()=>{toggleTask(si,ti);route()}},t.done?'✓':''),
@@ -606,7 +629,7 @@ function vPlan(){
             s.tasks.map((_,ti)=>taskRow(i,ti)))}))}),
     $('div',{class:'row'},$('button',{onclick:()=>{W={step:0,a:JSON.parse(JSON.stringify(P.ans)),edit:1};vPlan();scrollTo(0,0)}},'Plan anpassen'),
       $('button',{class:'danger',onclick:()=>{if(confirm('Lernplan wirklich löschen? Dein Fortschritt im Plan geht verloren, deine Lernstände bleiben.')){S.plan=null;save();route()}}},'Plan löschen')),
-    $('p',{class:'muted',text:'Tipp: Tippe eine Aufgabe an, um direkt dorthin zu springen. Unten erscheint dann eine Leiste, mit der du sie abhaken kannst. Frei lernen kannst du jederzeit über die Leiste unten.'}));
+    $('p',{class:'muted',text:'Tipp: Tippe eine Aufgabe an, um direkt dorthin zu springen. Unten zeigt dann eine Leiste deinen Fortschritt, zum Beispiel 7 von 15 Karten. Ist das Ziel erreicht, wird die Aufgabe automatisch abgehakt. Mit ✓ hakst du von Hand ab, mit ✕ verlässt du den Lernplan und lernst frei weiter.'}));
 }
 function replan(keepAns){const P=S.plan,t0=today();const kept=P.sessions.filter(s=>s.tasks.some(t=>t.done));
   const cnt={};kept.forEach(s=>{if(s.lf)cnt[s.lf]=(cnt[s.lf]||0)+1});
@@ -759,7 +782,7 @@ function vKarten(){
   const topics=['Alle',...new Set(D.karten.filter(c=>inArea(c[0])).map(c=>c[1]))];
   const p=cardPool(), sure=p.filter(x=>(S.box[x.i]||0)>=2).length;
   const sel=$('select',{id:'topic','aria-label':'Thema',onchange:e=>{F.topic=e.target.value;cur=null;vKarten()}},topics.map(t=>$('option',{value:t,selected:t===F.topic?'':null},t==='Alle'?'Alle Themen':t)));
-  const mark=d=>{S.box[cur.i]=d<0?0:Math.min(3,(S.box[cur.i]||0)+1);save();nextCard();vKarten()};
+  const mark=d=>{planTick('karten');S.box[cur.i]=d<0?0:Math.min(3,(S.box[cur.i]||0)+1);save();nextCard();vKarten()};
   const typ=!!S.kType;
   const flip=()=>{shown=!shown;vKarten()};
   const check=()=>{const v=(document.getElementById('kans')||{}).value||'';KT=v;KR=v.trim()?kcheck(cur.c[3],v):null;shown=true;vKarten()};
@@ -790,7 +813,9 @@ function vKarten(){
 let Q=null;
 function startQuiz(){const pool=shuffle(D.quiz.filter(q=>inArea(q[0]))).slice(0,10);
   Q={list:pool.map(q=>({q,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]}))),sel:null})),n:0,right:0}}
+let QAUTO=0;
 function vQuiz(){
+  if(!Q&&QAUTO){QAUTO=0;startQuiz()}
   if(!Q){R(areaChips(vQuiz),
     $('div',{class:'sheet'},$('p',{class:'qt',text:'10 zufällige Ankreuzfragen im Stil der WiSo-Prüfung'}),$('p',{text:'Nach jeder Antwort siehst du die Lösung mit kurzer Erklärung.'}),
     $('p',{class:'muted',text:D.quiz.filter(q=>inArea(q[0])).length+' Fragen in dieser Auswahl'}),
@@ -905,7 +930,7 @@ function vRechnen(){
   R(areaChips(()=>{F.topic='Alle';C=null;vRechnen()}),
     $('div',{class:'row'},$('select',{id:'ctype','aria-label':'Aufgabentyp',onchange:e=>{F.topic=e.target.value;C=null;vRechnen()}},types.map(t=>$('option',{value:t,selected:t===F.topic?'':null},t==='Alle'?'Alle Aufgabentypen':t)))),
     $('div',{class:'sheet'},$('div',{class:'tag',text:AN(C.area)+' · '+C.name}),$('p',{style:'white-space:pre-line;font-size:17px',text:C.t}),
-      C.state?null:$('div',{class:'row'},$('input',{type:'text',id:'ans',inputmode:'decimal',autocomplete:'off',class:'grow',placeholder:'Ergebnis'+(C.u?' in '+C.u:''),'aria-label':'Dein Ergebnis',onkeydown:e=>{if(e.key==='Enter')check()}}),$('button',{class:'primary',onclick:check},'Prüfen'),$('button',{onclick:()=>{C.state='show';vRechnen()}},'Lösung zeigen')),
+      C.state?null:$('div',{class:'row'},$('input',{type:'text',id:'ans',inputmode:'decimal',autocomplete:'off',class:'grow',placeholder:'Ergebnis'+(C.u?' in '+C.u:''),'aria-label':'Dein Ergebnis',onkeydown:e=>{if(e.key==='Enter')check()}}),$('button',{class:'primary',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')),
       C.state?$('div',{class:'note '+(C.state==='ok'?'ok':C.state==='no'?'no':'')},$('b',{text:C.state==='ok'?'Richtig. ':C.state==='no'?'Nicht ganz. ':''}),'Ergebnis: '+eur(C.a,d)+(C.u?' '+C.u:'')):null,
       C.state?$('div',{class:'steps',text:C.s}):null,
       C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{newCalc();vRechnen()}},'Nächste Aufgabe'),$('button',{onclick:()=>{location.hash='wissen'}},'Formel nachschlagen')):null),
@@ -950,7 +975,7 @@ function vBuchen(){
     return $('div',{class:'tw'},$('table',{},$('tr',{},$('th',{text:'Soll'}),$('th',{text:'€'}),$('th',{text:'Haben'}),$('th',{text:'€'})),rows))};
   R($('div',{class:'sheet'},$('div',{class:'tag',text:'Beleg'}),$('p',{class:'qt',text:b[0]}),
       tkView(),
-      B.state?null:$('div',{class:'row'},$('button',{class:'primary grow',onclick:check},'Prüfen'),$('button',{onclick:()=>{B.state='show';B.pick=null;vBuchen()}},'Lösung zeigen')),
+      B.state?null:$('div',{class:'row'},$('button',{class:'primary grow',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('buchen');B.state='show';B.pick=null;vBuchen()}},'Lösung zeigen')),
       B.state?$('div',{class:'note '+(B.state==='ok'?'ok':B.state==='no'?'no':'')},$('b',{text:B.state==='ok'?'Richtig. ':B.state==='no'?'Nicht ganz. ':''}),b[3]):null,
       B.state?sol():null,
       B.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{newBuch();vBuchen()}},'Nächster Beleg')):null),
@@ -1286,7 +1311,7 @@ function exOk(it){if(it.type==='q')return it.sel!==null&&it.o[it.sel].ok;
 const exPts=it=>it.type==='o'?(it.self||0):(exOk(it)?it.pts:0);
 function scoreExam(){E.score=E.items.reduce((n,it)=>n+exPts(it),0);E.pct=Math.min(100,Math.round(E.score));const h={k:E.k,pct:E.pct,note:note(E.pct)[0],d:E.d};
   S.exams=[h,...(S.exams||[]).filter(x=>x.d!==E.d)].slice(0,6);save()}
-function finishExam(){if(!E||E.done)return;clearInterval(ET);E.done=true;E.d=Date.now();scoreExam()}
+function finishExam(){if(!E||E.done)return;clearInterval(ET);E.done=true;E.d=Date.now();scoreExam();planTick('exam',E.k)}
 function vExam(){
   if(!E){const hist=S.exams||[];
     const card=(k,ihk)=>{const x=EX[k];return $('button',{class:'sheet pick',onclick:()=>{startExam(k);vExam();scrollTo(0,0)}},$('b',{text:x.name}),x.lf?$('span',{class:'tag',text:x.lf}):null,$('span',{class:'muted',text:x.min+' Minuten · '+(ihk?'100 Punkte · ':'')+x.form}))};
