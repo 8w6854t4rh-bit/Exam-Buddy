@@ -862,9 +862,10 @@ function cEval(src){let i=0;const t=src.replace(/\s/g,'');
   const peek=()=>t[i];
   const num=()=>{let j=i;while(i<t.length&&/[0-9,]/.test(t[i]))i++;if(j===i)throw 0;const v=parseFloat(t.slice(j,i).replace(',','.'));if(isNaN(v))throw 0;return v};
   const prim=()=>{if(peek()==='('){i++;const v=ex();if(peek()===')')i++;return v}return num()};
-  const fac=()=>{if(peek()==='−'||peek()==='-'){i++;return -fac()}let v=prim();while(peek()==='%'){i++;v/=100}return v};
-  const term=()=>{let v=fac();while(peek()==='×'||peek()==='÷'){const o=t[i++];const w=fac();v=o==='×'?v*w:v/w}return v};
-  const ex=()=>{let v=term();while(peek()==='+'||peek()==='−'){const o=t[i++];const w=term();v=o==='+'?v+w:v-w}return v};
+  /* Prozent wie am Taschenrechner: a + b % = a + a·b/100, a − b % = a − a·b/100, a × b % = a·b/100, a ÷ b % = a/(b/100) */
+  const fac=()=>{if(peek()==='−'||peek()==='-'){i++;const f=fac();return{v:-f.v,p:f.p}}let v=prim(),p=false;while(peek()==='%'){i++;v/=100;p=true}return{v,p}};
+  const term=()=>{const f=fac();let v=f.v,p=f.p;while(peek()==='×'||peek()==='÷'){const o=t[i++];const w=fac().v;v=o==='×'?v*w:v/w;p=false}return{v,p}};
+  const ex=()=>{let v=term().v;while(peek()==='+'||peek()==='−'){const o=t[i++];const r=term();const w=r.p?v*r.v:r.v;v=o==='+'?v+w:v-w}return v};
   const v=ex();if(i<t.length)throw 0;return v}
 const pe=e=>e.replace(/\d+(,\d*)?/g,m=>{const[a,b]=m.split(',');return a.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+(b!==undefined?','+b:'')}).replace(/([+×÷])/g,' $1 ').replace(/(\d|\)|%)−/g,'$1 − ');
 function calcPad(host){host=host||C;
