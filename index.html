@@ -148,6 +148,20 @@ a.sheet.qlink{flex-direction:row;align-items:center;gap:12px;text-decoration:non
 button.go2{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 14px}button.go2 b{font-size:16px}button.go2 small{font-size:12.5px;font-weight:600;opacity:.8;line-height:1.3;text-align:center}
 .hexp{background:none;border:0;min-height:36px;padding:4px 0;font-size:13.5px;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px;align-self:center}
 .hexp::after{content:'▾';transition:transform .15s}.hexp[aria-expanded="true"]::after{transform:rotate(180deg)}
+.ktog{display:flex;align-items:center;gap:10px;background:none;border:0;padding:4px 0;min-height:40px;font-weight:600;font-size:14.5px;color:inherit;text-align:left}
+.ktog i{flex:0 0 auto;width:42px;height:24px;border-radius:999px;background:var(--line);position:relative;transition:background .15s}.ktog i::after{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.ktog[aria-pressed="true"] i{background:var(--accent)}.ktog[aria-pressed="true"] i::after{left:21px}
+.card.ktype{cursor:default;gap:12px}
+.kres{gap:10px}.kscore{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}.kscore b{font-size:17px}.kscore b.good{color:var(--good)}.kscore b.warn{color:var(--warn)}.kscore b.bad{color:var(--bad)}.kscore span{font-size:14px;color:var(--muted);font-weight:600}
+.kchips{display:flex;flex-wrap:wrap;gap:6px}.kwc{font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px dashed var(--line);color:var(--muted)}
+.kwc.hit{border-style:solid;border-color:var(--good);background:color-mix(in srgb,var(--good) 16%,var(--surface));color:var(--ink)}
+.kmine{background:var(--raise);border-radius:10px;padding:8px 10px}.kmine p{margin:2px 0 0;white-space:pre-wrap;font-size:14.5px}
+.kdis{font-size:12.5px;margin:0}
+.card mark{background:color-mix(in srgb,var(--good) 28%,transparent);color:inherit;border-radius:4px;padding:0 2px}
+button.sug{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)}
+html{touch-action:manipulation}button,a,input,textarea,select,summary,[role=button]{touch-action:manipulation}
+main,.top>div,#pbar{zoom:var(--z,1)}main{overflow-x:clip}
+html[data-fs="small"] input,html[data-fs="small"] textarea,html[data-fs="small"] select{font-size:17.8px}
 main{max-width:760px;margin:0 auto;padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px}
 h2{font-family:var(--display);font-size:22px;margin:0;text-transform:uppercase;letter-spacing:.3px;text-wrap:balance}
 p{margin:0}
@@ -168,7 +182,7 @@ p{margin:0}
 .ring span{background:var(--accent);width:66px;height:66px;border-radius:50%;display:grid;place-items:center}
 .hero b{font-family:var(--display);font-size:24px;text-transform:uppercase;line-height:1.05;display:block}
 .hero p{font-size:14px;opacity:.9}
-.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{min-width:0;overflow-wrap:anywhere}
 .tile{--accent:var(--c);background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit}
 .tile .ic{width:38px;height:38px;border-radius:11px;background:var(--c);color:var(--on-ic);display:grid;place-items:center}
 .tile .ic svg{width:22px;height:22px}
@@ -247,7 +261,7 @@ details[open] summary{margin-bottom:10px}
 .rev.ok{border-color:var(--good)} .rev.no{border-color:var(--bad)}
 .pick{text-align:left;display:flex;flex-direction:column;gap:2px;width:100%;font-weight:400}
 .pick b{font-size:16px}
-@media (min-width:560px){.tiles{grid-template-columns:repeat(3,1fr)}.kc{font-size:13.5px}}
+@media (min-width:560px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kc{font-size:13.5px}}
 </style>
 </head>
 <body data-mode="start">
@@ -281,6 +295,7 @@ const upd=(key,k,ok,cap)=>{const o=S[key]||(S[key]={});o[k]=ok?Math.min(cap,(o[k
 const lvl=p=>p<34?'bad':p<67?'warn':'good';
 const lvlText=p=>p<1?'noch nicht geübt':p<34?'am Anfang':p<67?'auf gutem Weg':p<90?'sitzt gut':'prüfungsreif';
 const root=document.documentElement, hostTheme=root.getAttribute('data-theme');
+function applyFs(){const f=S.fs||'normal';root.dataset.fs=f;root.style.setProperty('--z',f==='small'?'0.9':f==='large'?'1.15':'1')}
 function applyTheme(){const t=S.theme||'system';if(t==='system'){if(hostTheme)root.setAttribute('data-theme',hostTheme);else root.removeAttribute('data-theme')}else root.setAttribute('data-theme',t)}
 applyTheme();
 document.getElementById('gear').append(svg('gear'));document.getElementById('home').append(svg('start'));
@@ -560,22 +575,56 @@ function vWizard(){
 /* ---------- Karteikarten ---------- */
 let cur=null, shown=false;
 function cardPool(){return D.karten.map((c,i)=>({c,i})).filter(x=>inArea(x.c[0])&&(F.topic==='Alle'||x.c[1]===F.topic))}
-function nextCard(){const p=cardPool();if(!p.length){cur=null;return}
+function nextCard(){KT='';KR=null;const p=cardPool();if(!p.length){cur=null;return}
   const min=Math.min(...p.map(x=>S.box[x.i]||0));let c=p.filter(x=>(S.box[x.i]||0)===min);
   if(c.length>1&&cur)c=c.filter(x=>x.i!==cur.i);cur=pick(c);shown=false}
+
+/* ---------- Stichwort-Abgleich ---------- */
+const KSTOP=new Set('werden wurde wurden eines einer einem einen nicht durch sowie dabei diese dieser dieses diesem immer schon jeweils zwischen danach bevor haben hatte koennen muessen sollte sollten weniger allem unter ueber gegen ohne beispiel sich ihre ihren ihrer seine seinen deren dessen welche welcher welches andere anderen anderer gibt steht eigenen eigene ganze ganz sondern damit daher deshalb jedoch etwas meist meistens grundsaetzlich bereits gilt also bzw. heisst nennt bleibt kommt kommen macht machen zahlt zahlen werden. darf duerfen'.split(' '));
+const knorm=t=>t.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss');
+const KRE=/[0-9A-Za-zÄÖÜäöüß][0-9A-Za-zÄÖÜäöüß%]*(?:[.,-][0-9A-Za-zÄÖÜäöüß%]+)*/g;
+const kstem=n=>/\d/.test(n)?n.replace(/[.\s]/g,''):n.slice(0,Math.max(5,Math.min(n.length-2,8)));
+function keywords(ans){const seen=new Set(),out=[];
+  for(const m of ans.matchAll(KRE)){const raw=m[0],n=knorm(raw);const num=/\d/.test(n);
+    if(!num&&(n.length<5||KSTOP.has(n)))continue;const st=kstem(n);if(seen.has(st))continue;seen.add(st);
+    out.push({raw,st,score:(num?3:0)+(/^[A-ZÄÖÜ]/.test(raw)?2:0)+Math.min(n.length,12)/6})}
+  if(out.length>8){const keep=new Set(out.slice().sort((a,b)=>b.score-a.score).slice(0,8).map(x=>x.st));return out.filter(x=>keep.has(x.st))}
+  return out}
+function kcheck(ans,user){const kw=keywords(ans),u=knorm(user).replace(/(\d)\.(?=\d{3})/g,'$1');
+  const hits=new Set(kw.filter(k=>u.includes(k.st)).map(k=>k.st));return{kw,hits}}
+function kmark(ans,hits){const out=[];let last=0;
+  for(const m of ans.matchAll(KRE)){const st=kstem(knorm(m[0]));if(!hits.has(st))continue;out.push(ans.slice(last,m.index),$('mark',{text:m[0]}));last=m.index+m[0].length}
+  out.push(ans.slice(last));return out}
+let KT='',KR=null;
 function vKarten(){
   if(!cur||!cardPool().some(x=>x.i===cur.i))nextCard();
   const topics=['Alle',...new Set(D.karten.filter(c=>inArea(c[0])).map(c=>c[1]))];
   const p=cardPool(), sure=p.filter(x=>(S.box[x.i]||0)>=2).length;
   const sel=$('select',{id:'topic','aria-label':'Thema',onchange:e=>{F.topic=e.target.value;cur=null;vKarten()}},topics.map(t=>$('option',{value:t,selected:t===F.topic?'':null},t==='Alle'?'Alle Themen':t)));
   const mark=d=>{S.box[cur.i]=d<0?0:Math.min(3,(S.box[cur.i]||0)+1);save();nextCard();vKarten()};
+  const typ=!!S.kType;
+  const flip=()=>{shown=!shown;vKarten()};
+  const check=()=>{const v=(document.getElementById('kans')||{}).value||'';KT=v;KR=v.trim()?kcheck(cur.c[3],v):null;shown=true;vKarten()};
+  let res=null;
+  if(cur&&shown&&KR){const n=KR.kw.length,h=KR.hits.size,pct=n?h/n:0;
+    res=$('div',{class:'sheet kres'},
+      $('div',{class:'kscore'},$('b',{class:pct>=.7?'good':pct>=.4?'warn':'bad',text:h+' von '+n+' Stichworten'}),$('span',{text:pct>=.7?'Sieht gut aus':pct>=.4?'Teilweise getroffen':'Da fehlt noch einiges'})),
+      $('div',{class:'kchips'},KR.kw.map(k=>$('span',{class:'kwc'+(KR.hits.has(k.st)?' hit':''),text:(KR.hits.has(k.st)?'✓ ':'')+k.raw}))),
+      $('div',{class:'kmine'},$('small',{class:'muted',text:'Deine Antwort'}),$('p',{text:KT})),
+      $('p',{class:'muted kdis',text:'Der Abgleich sucht nur nach Stichworten aus der Musterantwort und versteht den Sinn nicht. Andere Formulierungen können trotzdem richtig sein, entscheide am Ende selbst. Die Musterantworten sind sorgfältig erstellt, können aber Fehler enthalten oder veraltet sein. Im Zweifel gelten deine Unterlagen aus Schule und Betrieb.'}))}
+  const sug=KR?(KR.kw.length&&KR.hits.size/KR.kw.length>=.7?1:-1):0;
   R(areaChips(()=>{cur=null;vKarten()}),
     $('div',{class:'row'},sel,$('span',{class:'muted',text:sure+' von '+p.length+' sicher'})),
     $('div',{class:'meter'},$('i',{style:'width:'+(p.length?sure/p.length*100:0)+'%'})),
-    cur?$('div',{class:'sheet card',tabindex:'0',role:'button','aria-label':'Karte umdrehen',onclick:()=>{shown=!shown;vKarten()},onkeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();shown=!shown;vKarten()}}},
-      $('div',{},$('div',{class:'tag',text:AN(cur.c[0])+' · '+cur.c[1]}),$('p',{class:'q',text:cur.c[2]})),
-      shown?$('p',{class:'a',text:cur.c[3]}):$('p',{class:'muted',text:'Antwort überlegen, dann tippen zum Umdrehen'})):$('p',{text:'Keine Karten in dieser Auswahl.'}),
-    cur&&shown?$('div',{class:'row'},$('button',{class:'bad grow',onclick:()=>mark(-1)},'Noch nicht'),$('button',{class:'good grow',onclick:()=>mark(1)},'Wusste ich')):null,
+    $('button',{class:'ktog','aria-pressed':String(typ),onclick:()=>{S.kType=!typ;save();KR=null;vKarten()}},$('i'),'Antwort eintippen und abgleichen'),
+    cur?(typ&&!shown?$('div',{class:'sheet card ktype'},$('div',{},$('div',{class:'tag',text:AN(cur.c[0])+' · '+cur.c[1]}),$('p',{class:'q',text:cur.c[2]})),
+        $('textarea',{id:'kans',rows:'4',placeholder:'Deine Antwort in Stichpunkten','aria-label':'Deine Antwort',oninput:e=>{KT=e.target.value}},KT),
+        $('div',{class:'row'},$('button',{class:'primary grow',onclick:check},'Abgleichen'),$('button',{onclick:()=>{KR=null;shown=true;vKarten()}},'Nur aufdecken')))
+      :$('div',{class:'sheet card',tabindex:'0',role:'button','aria-label':'Karte umdrehen',onclick:typ?null:flip,onkeydown:e=>{if(!typ&&(e.key==='Enter'||e.key===' ')){e.preventDefault();flip()}}},
+        $('div',{},$('div',{class:'tag',text:AN(cur.c[0])+' · '+cur.c[1]}),$('p',{class:'q',text:cur.c[2]})),
+        shown?$('p',{class:'a'},KR?kmark(cur.c[3],KR.hits):cur.c[3]):$('p',{class:'muted',text:'Antwort überlegen, dann tippen zum Umdrehen'}))):$('p',{text:'Keine Karten in dieser Auswahl.'}),
+    res,
+    cur&&shown?$('div',{class:'row'},$('button',{class:'bad grow'+(sug<0?' sug':''),onclick:()=>mark(-1)},'Noch nicht'),$('button',{class:'good grow'+(sug>0?' sug':''),onclick:()=>mark(1)},'Wusste ich')):null,
     $('p',{class:'muted',text:'Karten, die du noch nicht kannst, kommen zuerst wieder. Nach zweimal „Wusste ich“ gilt eine Karte als sicher.'}));
 }
 
@@ -1142,6 +1191,12 @@ function vSettings(){const t=S.theme||'system';
       msg,
       $('p',{class:'muted',style:'margin:0',text:'Der Lernplan richtet sich nach dem ersten Prüfungstag und endet am Tag davor. Änderst du den Termin, wird der Plan automatisch neu verteilt.'}),
       e.d1?$('button',{onclick:()=>{setExam('','');vSettings()}},'Termin entfernen'):null),
+    $('div',{class:'sheet'},$('b',{text:'Schriftgröße'}),
+      $('div',{class:'row',role:'group','aria-label':'Schriftgröße'},[['small','Klein'],['normal','Normal'],['large','Groß']].map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String((S.fs||'normal')===k),onclick:()=>{S.fs=k;save();applyFs();vSettings()}},n))),
+      $('p',{class:'muted',text:'Gilt für die ganze App auf diesem Gerät.'})),
+    $('div',{class:'sheet'},$('b',{text:'Karteikarten'}),
+      $('button',{class:'ktog','aria-pressed':String(!!S.kType),onclick:()=>{S.kType=!S.kType;save();vSettings()}},$('i'),'Antwort eintippen und abgleichen'),
+      $('p',{class:'muted',text:'Du schreibst deine Antwort auf, die App markiert, welche Stichworte der Musterantwort du getroffen hast. Lässt sich auch direkt bei den Karteikarten ein- und ausschalten.'})),
     $('div',{class:'sheet'},$('b',{text:'Darstellung'}),$('div',{class:'row',role:'group','aria-label':'Farbschema'},b('system','Automatisch'),b('light','Hell'),b('dark','Dunkel')),$('p',{class:'muted',text:'Automatisch folgt der Einstellung deines Geräts.'})),
     $('div',{class:'sheet'},$('b',{text:'Lernstand'}),
       $('p',{class:'muted',text:'Der Lernstand wird nur auf diesem Gerät gespeichert. Nach dem ersten Öffnen läuft die App auch ohne Internet.'}),
@@ -1154,7 +1209,7 @@ function route(){let h=(location.hash||'#start').slice(1);if(h==='kannliste')h='
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+m)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   V[v]();pbar(v);window.scrollTo(0,0)}
-addEventListener('hashchange',route);route();
+addEventListener('hashchange',route);applyFs();route();
 </script>
 <script>
 if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
