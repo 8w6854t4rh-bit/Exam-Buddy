@@ -159,7 +159,7 @@ button.go2{display:flex;flex-direction:column;align-items:center;gap:2px;padding
 .kdis{font-size:12.5px;margin:0}
 .card mark{background:color-mix(in srgb,var(--good) 28%,transparent);color:inherit;border-radius:4px;padding:0 2px}
 button.sug{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 45%,transparent)}
-html{touch-action:manipulation}button,a,input,textarea,select,summary,[role=button]{touch-action:manipulation}
+html,body,*,*::before,*::after{touch-action:manipulation}
 main,.top>div,#pbar{zoom:var(--z,1)}main{overflow-x:clip}
 html[data-fs="small"] input,html[data-fs="small"] textarea,html[data-fs="small"] select{font-size:17.8px}
 #tut{position:fixed;inset:0;z-index:50}
@@ -1368,6 +1368,10 @@ function route(){let h=(location.hash||'#start').slice(1);if(h==='kannliste')h='
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+m)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   V[v]();pbar(v);window.scrollTo(0,0)}
+/* Doppeltipp-Zoom verhindern (iOS), Zwei-Finger-Zoom bleibt erlaubt */
+(()=>{let lt=0;document.addEventListener('touchend',e=>{const now=Date.now();
+  if(now-lt<320&&e.touches.length===0&&e.changedTouches.length===1&&!e.target.closest('button,a,input,textarea,select,label,summary,[role=button],[contenteditable]'))e.preventDefault();
+  lt=now},{passive:false})})();
 addEventListener('hashchange',route);applyFs();route();if(!S.tut&&!location.hash.slice(1).match(/^(pruefung)$/))setTimeout(tutWelcome,400);
 </script>
 <script>
