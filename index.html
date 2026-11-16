@@ -342,6 +342,11 @@ details[open] summary{margin-bottom:10px}
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
 <script>const SCR=document.getElementById('scr');
+/* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
+(()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
+ const set=()=>{const por=matchMedia('(orientation: portrait)').matches,H=por?Math.max(screen.width,screen.height):Math.min(screen.width,screen.height);
+  document.body.style.bottom='auto';document.body.style.height=(H>=innerHeight?H:innerHeight)+'px'};
+ set();addEventListener('resize',set);addEventListener('orientationchange',()=>setTimeout(set,300))})();
 /* iOS 26: nach dem Schließen der Tastatur bleibt die Seite verschoben. Das Dokument selbst scrollt nie, also zurücksetzen */
 (()=>{const fix=()=>{if(scrollY||scrollX)window.scrollTo(0,0)};const vv=window.visualViewport;if(vv){vv.addEventListener('resize',()=>setTimeout(fix,60));vv.addEventListener('scroll',()=>{if(!document.activeElement||!/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))fix()})}document.addEventListener('focusout',()=>setTimeout(fix,120))})();
 
