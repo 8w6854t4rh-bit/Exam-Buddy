@@ -2,10 +2,16 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prüfungstrainer Automobilkaufleute</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Exam Buddy</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f1120">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Exam Buddy">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <!--HEAD-->
 <style id="fonts">
 /* Schriften lokal eingebunden (SIL Open Font License 1.1), keine Verbindung zu Google */
@@ -350,7 +356,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='45';
+<script>const APPV='46';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -2905,5 +2911,7 @@ document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest
 document.body.dataset.track=TR;if(T1M)document.body.style.setProperty('--dmn','3');
 addEventListener('hashchange',route);applyFs();route();if(!S.tut&&!location.hash.slice(1).match(/^(pruefung)$/))setTimeout(tutWelcome,400);
 </script>
-</body>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script></body>
 </html>
