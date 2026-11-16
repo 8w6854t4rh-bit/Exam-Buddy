@@ -42,7 +42,8 @@ body[data-mode="wissen"]{--accent:var(--c-wissen)} body[data-mode="pruefung"]{--
 html,body{margin:0}
 /* iOS-Web-App: ohne diese Zeile bleibt unter der Tab-Leiste ein Streifen frei */
 html{height:100%;overflow:hidden}
-@supports (-webkit-touch-callout:none){@media (display-mode:standalone){body{bottom:auto!important;height:calc(100% + env(safe-area-inset-top))}}}
+/* iOS-Home-Bildschirm-App: iOS zeichnet nur bis zur zu kurz gemeldeten Höhe, außer das Dokument ist höher. Daher wie früher um die Statusleiste verlängern */
+@supports (-webkit-touch-callout:none){@media (display-mode:standalone){html{height:calc(100% + env(safe-area-inset-top));overflow:visible}body{bottom:auto!important;height:calc(100% + env(safe-area-inset-top))}}}
 /* App-Rahmen: nur #scr scrollt. So kann iOS 26 die Tab-Leiste nach dem Tippen nicht mehr verschieben */
 body{position:fixed;inset:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:0!important}
 #scr{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:14px}
@@ -342,7 +343,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='34';
+<script>const APPV='35';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
