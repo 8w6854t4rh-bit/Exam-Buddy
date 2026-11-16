@@ -153,7 +153,7 @@ button.wide,a.wide{width:100%;text-align:center;align-self:stretch}a.btn.wide{di
 .mrow .ic,.qlink .ic,.qt2 .ic{--accent:var(--c);flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--c) 18%,var(--surface));color:var(--c);display:grid;place-items:center}.mrow .ic svg,.qlink .ic svg,.qt2 .ic svg{width:20px;height:20px}
 .mrh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}.mrh b{font-size:15px}.mrh span{font-weight:800;font-size:15px}.mrh span.good{color:var(--good)}.mrh span.warn{color:var(--warn)}.mrh span.bad{color:var(--bad)}
 .mrow small{font-size:12px;display:block;margin-top:3px}
-.shd{margin:14px 4px -4px;font-size:12.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}.shd:first-child{margin-top:0}.srow{display:flex;flex-direction:column;gap:6px}.srow .row{flex-wrap:nowrap}.srow .chip{min-width:0;padding-left:6px;padding-right:6px}.srow>span{font-size:13px;font-weight:600;color:var(--muted)}details.mini[open]{display:flex;flex-direction:column;gap:10px}details.mini>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}details.sheet.mini>summary{font-size:15px;color:var(--ink);font-weight:700}
+.shd{margin:14px 4px -4px;font-size:12.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}.shd:first-child{margin-top:0}.srow{display:flex;flex-direction:column;gap:6px}.srow .row{flex-wrap:nowrap}.srow .chip{min-width:0;padding-left:6px;padding-right:6px}.srow>span{font-size:13px;font-weight:600;color:var(--muted)}details.mini[open]{display:flex;flex-direction:column;gap:10px}.qhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.qend{flex:none;font-size:13px;padding:6px 12px;min-height:0}details.mini>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}details.sheet.mini>summary{font-size:15px;color:var(--ink);font-weight:700}
 a.sheet.qlink{flex-direction:row;align-items:center;gap:12px;text-decoration:none;color:inherit}.qlink b{display:block;font-size:16px}.qlink .muted{font-size:13px}.qlink>i{font-style:normal;font-size:22px;color:var(--muted)}
 .qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.qt2{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
 .qt2 b{font-size:14.5px}.qt2 .muted{font-size:12px;line-height:1.3}
@@ -356,7 +356,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='47';
+<script>const APPV='48';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1709,7 +1709,8 @@ const UI_EN={
 "Code einfügen": "Paste code",
 "Code anzeigen": "Show code",
 "Kopiert ✓": "Copied ✓",
-"Keine Werbung, kein Tracking, keine Cookies. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.": "No ads, no tracking, no cookies. All tasks are our own, no original IHK tasks. Figures as of November 2026."
+"Keine Werbung, kein Tracking, keine Cookies. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.": "No ads, no tracking, no cookies. All tasks are our own, no original IHK tasks. Figures as of November 2026.",
+"Runde beenden": "End round"
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2012,7 +2013,7 @@ function pbar(v){const el=document.getElementById('pbar');CURV=v;clearTimeout(PR
   el.hidden=false;document.body.classList.add('haspbar');
   const goal=TGOAL[t.k],n=Math.min(t.n||0,goal||1),read=!goal;
   if(read&&!t.done)PRT=setTimeout(()=>{const u=curTask();if(u===t&&!t.done&&TV[t.k]===CURV){t.done=true;save();pbar(CURV)}},40000);
-  const exit=$('button',{class:'pbx','aria-label':'Lernplan-Modus verlassen',title:'Lernplan verlassen',onclick:()=>{PT=null;pbar(v)}},'✕');
+  const exit=$('button',{class:'pbx','aria-label':'Lernplan-Modus verlassen',title:'Lernplan verlassen',onclick:()=>{PT=null;route()}},'✕');
   if(t.done){const nx=nextOpen();
     el.replaceChildren($('div',{class:'pbi done'},$('div',{class:'pbt'},$('span',{class:'tag',text:'Erledigt ✓'}),$('b',{text:t.t})),
       nx?$('button',{class:'pbd',onclick:()=>goTask(nx.si,nx.ti)},'Nächste ›'):$('button',{class:'pbd',onclick:()=>{PT=null;go('plan')}},'Einheit geschafft ›'),exit));return}
@@ -2261,7 +2262,8 @@ function startQuiz(){const pool=shuffle(D.quiz.filter(q=>inArea(q[0]))).slice(0,
   Q={list:pool.map(q=>({q,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]}))),sel:null})),n:0,right:0}}
 let QAUTO=0;
 function vQuiz(){
-  if(!Q&&QAUTO){QAUTO=0;startQuiz()}
+  if(Q&&Q.plan&&!PT)Q=null;/* Lernplan-Runde endet mit dem Lernplan-Modus */
+  if(!Q&&QAUTO){QAUTO=0;startQuiz();Q.plan=1}
   if(!Q){R(areaChips(vQuiz),
     $('div',{class:'sheet'},$('p',{class:'qt',text:'10 zufällige Ankreuzfragen im Stil der WiSo-Prüfung'}),$('p',{text:'Nach jeder Antwort siehst du die Lösung mit kurzer Erklärung.'}),
     $('p',{class:'muted',text:D.quiz.filter(q=>inArea(q[0])).length+' Fragen in dieser Auswahl'}),
@@ -2271,7 +2273,7 @@ function vQuiz(){
       $('p',{class:'muted',text:r/t>=.8?'Stark. Das reicht für eine gute Note.':r/t>=.5?'Bestanden wäre das. Die falschen Themen noch einmal über die Karteikarten wiederholen.':'Hier lohnt sich noch eine Runde Karteikarten zu diesem Bereich.'}),
       $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{startQuiz();vQuiz()}},'Neue Runde'),$('button',{onclick:()=>{go('karten')}},'Zu den Karteikarten'))));return}
   const it=Q.list[Q.n], done=it.sel!==null;
-  R($('p',{class:'muted',text:'Frage '+(Q.n+1)+' von '+Q.list.length+' · '+NAMES[it.q[0]]}),
+  R($('div',{class:'qhead'},$('p',{class:'muted',style:'margin:0',text:'Frage '+(Q.n+1)+' von '+Q.list.length+' · '+NAMES[it.q[0]]}),$('button',{class:'qend',onclick:()=>{Q=null;if(PT){PT=null;route()}else vQuiz()}},'Runde beenden')),
     $('div',{class:'meter'},$('i',{style:'width:'+(Q.n/Q.list.length*100)+'%'})),
     $('div',{class:'sheet'},$('p',{class:'qt',text:it.q[1]}),
       it.o.map((o,i)=>$('button',{class:'opt'+(done?(o.ok?' right':(i===it.sel?' wrong':'')):''),disabled:done?'':null,onclick:()=>{it.sel=i;S.quiz[1]++;if(o.ok){S.quiz[0]++;Q.right++}upd('qm',D.quiz.indexOf(it.q),o.ok,2);save();vQuiz()}},o.t)),
