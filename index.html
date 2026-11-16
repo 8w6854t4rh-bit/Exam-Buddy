@@ -153,7 +153,7 @@ button.wide,a.wide{width:100%;text-align:center;align-self:stretch}a.btn.wide{di
 .mrow .ic,.qlink .ic,.qt2 .ic{--accent:var(--c);flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--c) 18%,var(--surface));color:var(--c);display:grid;place-items:center}.mrow .ic svg,.qlink .ic svg,.qt2 .ic svg{width:20px;height:20px}
 .mrh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}.mrh b{font-size:15px}.mrh span{font-weight:800;font-size:15px}.mrh span.good{color:var(--good)}.mrh span.warn{color:var(--warn)}.mrh span.bad{color:var(--bad)}
 .mrow small{font-size:12px;display:block;margin-top:3px}
-details.mini>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}details.sheet.mini>summary{font-size:15px;color:var(--ink);font-weight:700}
+.shd{margin:14px 4px -4px;font-size:12.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}.shd:first-child{margin-top:0}.srow{display:flex;flex-direction:column;gap:6px}.srow .row{flex-wrap:nowrap}.srow .chip{min-width:0;padding-left:6px;padding-right:6px}.srow>span{font-size:13px;font-weight:600;color:var(--muted)}details.mini[open]{display:flex;flex-direction:column;gap:10px}details.mini>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}details.sheet.mini>summary{font-size:15px;color:var(--ink);font-weight:700}
 a.sheet.qlink{flex-direction:row;align-items:center;gap:12px;text-decoration:none;color:inherit}.qlink b{display:block;font-size:16px}.qlink .muted{font-size:13px}.qlink>i{font-style:normal;font-size:22px;color:var(--muted)}
 .qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.qt2{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
 .qt2 b{font-size:14.5px}.qt2 .muted{font-size:12px;line-height:1.3}
@@ -356,7 +356,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='46';
+<script>const APPV='47';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1696,7 +1696,20 @@ const UI_EN={
 "Code hier einfügen": "Paste code here",
 "Lernstand-Code": "Progress code",
 "Stand übernehmen": "Apply progress",
-"Der Code passt nicht. Bitte den ganzen Text kopieren.": "The code does not match. Please copy the whole text."
+"Der Code passt nicht. Bitte den ganzen Text kopieren.": "The code does not match. Please copy the whole text.",
+"Jede Prüfung hat ihren eigenen Lernstand und Lernplan.": "Each exam has its own progress and study plan.",
+"Der Lernplan endet am Tag vor dem ersten Prüfungstag.": "The study plan ends the day before the first exam day.",
+"Anzeige": "Display",
+"Lernen": "Learning",
+"Karteikarten: Antwort eintippen": "Flashcards: type your answer",
+"Die App markiert, welche Stichworte der Musterantwort du getroffen hast.": "The app marks which keywords of the model answer you hit.",
+"Tour durch die App starten": "Start the app tour",
+"Dein Lernstand liegt nur auf diesem Gerät. Mit einem Code nimmst du ihn in eine andere App oder auf ein anderes Gerät mit.": "Your progress is stored only on this device. With a code you can take it to another app or device.",
+"Code kopieren": "Copy code",
+"Code einfügen": "Paste code",
+"Code anzeigen": "Show code",
+"Kopiert ✓": "Copied ✓",
+"Keine Werbung, kein Tracking, keine Cookies. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.": "No ads, no tracking, no cookies. All tasks are our own, no original IHK tasks. Figures as of November 2026."
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2862,40 +2875,47 @@ function vRecht(){const x=LT[RS]||LT.impressum;
     $('div',{class:'sheet legal'},$('h2',{text:x[0]}),...x[1]().map(([h,ps])=>$('div',{},$('b',{text:h}),...ps.map(p=>Array.isArray(p)?$('p',{},p[0],p[1]):$('p',{text:p}))))),
     $('button',{onclick:()=>go('einstellungen')},'‹ Zurück zu den Einstellungen'))}
 function vSettings(){const t=S.theme||'system';
-  const b=(k,n)=>$('button',{class:'chip grow','aria-pressed':String(t===k),onclick:()=>{S.theme=k;save();applyTheme();vSettings()}},n);
+  const chips=(lab,opts,cur,set)=>$('div',{class:'srow'},$('span',{text:lab}),$('div',{class:'row',role:'group','aria-label':lab},opts.map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(cur===k),onclick:()=>{if(cur!==k)set(k)}},n))));
+  const H=x=>$('p',{class:'shd',text:x});
   const e=EXD(),msg=$('p',{class:'note ok',hidden:'',text:''});
   const chg=()=>{const d1=document.getElementById('ex1').value,d2=document.getElementById('ex2').value;const had=!!S.plan;setExam(d1,d2);
     document.getElementById('ex2').min=d1||today();if(d2&&d1&&d2<d1)document.getElementById('ex2').value='';
     msg.hidden=false;msg.textContent=d1?'Gespeichert: '+examLabel()+', noch '+daysTo(d1)+' Tage.'+(had?' Dein Lernplan wurde an den Termin angepasst, Erledigtes bleibt erhalten.':''):'Kein Prüfungstermin gesetzt.'};
-  R($('div',{class:'sheet'},$('b',{text:'Meine Prüfung'}),$('div',{class:'row',role:'group','aria-label':'Meine Prüfung'},[['ap1','Zwischenprüfung · Teil 1'],['ap2','Abschlussprüfung · Teil 2']].map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(TR===k),onclick:()=>{if(TR!==k)setTrack(k)}},n))),$('p',{class:'muted',text:T1M?'Zwischenprüfung (Teil 1): Warenwirtschafts- und Werkstattprozesse (Lernfelder 3, 4, 5). Lernstand, Lernplan und Testprüfungen werden für jede Prüfung getrennt gespeichert.':'Abschlussprüfung (Teil 2): am Ende der Ausbildung. Lernstand, Lernplan und Testprüfungen werden für jede Prüfung getrennt gespeichert.'})),
-    $('div',{class:'sheet'},$('b',{text:'Prüfungstermin'}),
+  const xm=$('p',{class:'note',hidden:'',text:''}),xt=$('textarea',{id:'xfer',rows:'3','aria-label':'Lernstand-Code',placeholder:'Code hier einfügen'});
+  R(H('Meine Prüfung'),
+    $('div',{class:'sheet'},
+      $('div',{class:'row',role:'group','aria-label':'Meine Prüfung'},[['ap1','Zwischenprüfung · Teil 1'],['ap2','Abschlussprüfung · Teil 2']].map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(TR===k),onclick:()=>{if(TR!==k)setTrack(k)}},n))),
+      $('p',{class:'muted',style:'margin:0',text:'Jede Prüfung hat ihren eigenen Lernstand und Lernplan.'}),
       $('label',{class:'dlab'},$('span',{text:'Erster Prüfungstag'}),$('input',{type:'date',id:'ex1',value:e.d1,'aria-label':'Erster Prüfungstag',onchange:chg})),
       $('label',{class:'dlab'},$('span',{text:'Zweiter Prüfungstag (optional)'}),$('input',{type:'date',id:'ex2',value:e.d2,min:e.d1||null,'aria-label':'Zweiter Prüfungstag',onchange:chg})),
       msg,
-      $('p',{class:'muted',style:'margin:0',text:'Der Lernplan richtet sich nach dem ersten Prüfungstag und endet am Tag davor. Änderst du den Termin, wird der Plan automatisch neu verteilt.'}),
+      $('p',{class:'muted',style:'margin:0',text:'Der Lernplan endet am Tag vor dem ersten Prüfungstag.'}),
       e.d1?$('button',{onclick:()=>{setExam('','');vSettings()}},'Termin entfernen'):null),
-    $('div',{class:'sheet'},$('b',{text:'Schriftgröße'}),
-      $('div',{class:'row',role:'group','aria-label':'Schriftgröße'},[['small','Klein'],['normal','Normal'],['large','Groß']].map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String((S.fs||'normal')===k),onclick:()=>{S.fs=k;save();applyFs();vSettings()}},n))),
-      $('p',{class:'muted',text:'Gilt für die ganze App auf diesem Gerät.'})),
-    $('div',{class:'sheet'},$('b',{text:'Karteikarten'}),
-      $('button',{class:'ktog','aria-pressed':String(!!S.kType),onclick:()=>{S.kType=!S.kType;save();vSettings()}},$('i'),'Antwort eintippen und abgleichen'),
-      $('p',{class:'muted',text:'Du schreibst deine Antwort auf, die App markiert, welche Stichworte der Musterantwort du getroffen hast. Lässt sich auch direkt bei den Karteikarten ein- und ausschalten.'})),
-    $('div',{class:'sheet'},$('b',{text:'Hilfe'}),$('p',{class:'muted',style:'margin:0',text:'Eine kurze Tour zeigt dir, was du wo in der App machen kannst.'}),$('button',{class:'primary',onclick:()=>tutGo(0)},'Tour starten')),
-    $('div',{class:'sheet'},$('b',{text:'Sprache · Language'}),$('div',{class:'row',role:'group','aria-label':'Sprache'},[['de','Deutsch'],['en','English']].map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(LANG===k),onclick:()=>{if(LANG===k)return;S.lang=k;save();location.reload()}},n))),$('p',{class:'muted',text:'Die Prüfung ist auf Deutsch. Zahlen bleiben im deutschen Format (1.234,56 €).'})),
-    $('div',{class:'sheet'},$('b',{text:'Darstellung'}),$('div',{class:'row',role:'group','aria-label':'Farbschema'},b('system','Automatisch'),b('light','Hell'),b('dark','Dunkel')),$('p',{class:'muted',text:'Automatisch folgt der Einstellung deines Geräts.'})),
-    $('div',{class:'sheet'},$('b',{text:'Lernstand übertragen'}),
-      $('p',{class:'muted',text:'Kopiere den Code auf dem alten Gerät oder in der alten App und füge ihn hier ein. So nimmst du deinen Stand mit. Gilt für die gerade gewählte Prüfung.'}),
-      $('button',{onclick:()=>{const t=document.getElementById('xfer');t.value=JSON.stringify(S);t.select();try{navigator.clipboard.writeText(t.value)}catch(e){}}},'Code erzeugen und kopieren'),
-      $('textarea',{id:'xfer',rows:'4','aria-label':'Lernstand-Code',placeholder:'Code hier einfügen'}),
-      $('button',{class:'primary',onclick:()=>{const t=document.getElementById('xfer'),m=document.getElementById('xmsg');let o=null;try{o=JSON.parse(t.value)}catch(e){}if(!o||typeof o!=='object'||Array.isArray(o)){m.hidden=false;m.textContent='Der Code passt nicht. Bitte den ganzen Text kopieren.';return}Object.assign(S,o);save();applyTheme();applyFs();vSettings()}},'Stand übernehmen'),
-      $('p',{id:'xmsg',class:'note',hidden:'',text:''})),
-    $('div',{class:'sheet'},$('b',{text:'Lernstand'}),
-      $('p',{class:'muted',text:'Der Lernstand wird nur in diesem Browser gespeichert. Jeder, der den Link öffnet, hat seinen eigenen Stand.'}),
-      $('div',{class:'row'},$('button',{id:'reset',onclick:e=>{const x=e.currentTarget;if(x.dataset.sure){S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0],qm:{},cm:{},bm:{},theme:S.theme,exam:S.exam,plan:S.plan};save();vSettings()}else{x.dataset.sure=1;x.textContent='Wirklich alles zurücksetzen? Noch einmal tippen';x.className='bad'}}},'Lernstand zurücksetzen'))),
-    $('div',{class:'sheet'},$('b',{text:'Rechtliches'}),$('div',{class:'row'},[['impressum','Impressum'],['datenschutz','Datenschutz'],['hinweise','Hinweise']].map(([k,n])=>$('button',{class:'grow',onclick:()=>{RS=k;go('recht')}},n))),$('p',{class:'muted',style:'margin:0',text:'Keine Werbung, kein Tracking, keine Cookies. Dein Lernstand bleibt auf deinem Gerät.'})),
-    $('div',{class:'sheet'},$('b',{text:'Über die App'}),$('p',{class:'muted',text:'Inhalte aus den Lernfeldern 1 bis 11. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.'}),$('p',{class:'muted',style:'margin:0;font-size:13px',text:'Version '+APPV})));
+    H('Anzeige'),
+    $('div',{class:'sheet'},
+      chips('Sprache · Language',[['de','Deutsch'],['en','English']],LANG,k=>{S.lang=k;save();location.reload()}),
+      chips('Farbschema',[['system','Automatisch'],['light','Hell'],['dark','Dunkel']],t,k=>{S.theme=k;save();applyTheme();vSettings()}),
+      chips('Schriftgröße',[['small','Klein'],['normal','Normal'],['large','Groß']],S.fs||'normal',k=>{S.fs=k;save();applyFs();vSettings()})),
+    H('Lernen'),
+    $('div',{class:'sheet'},
+      $('button',{class:'ktog','aria-pressed':String(!!S.kType),onclick:()=>{S.kType=!S.kType;save();vSettings()}},$('i'),'Karteikarten: Antwort eintippen'),
+      $('p',{class:'muted',style:'margin:0',text:'Die App markiert, welche Stichworte der Musterantwort du getroffen hast.'}),
+      $('button',{onclick:()=>tutGo(0)},'Tour durch die App starten')),
+    H('Lernstand'),
+    $('div',{class:'sheet'},
+      $('p',{class:'muted',style:'margin:0',text:'Dein Lernstand liegt nur auf diesem Gerät. Mit einem Code nimmst du ihn in eine andere App oder auf ein anderes Gerät mit.'}),
+      $('div',{class:'row'},
+        $('button',{class:'grow',onclick:ev=>{const v=JSON.stringify(S);xt.value=v;try{navigator.clipboard.writeText(v).then(()=>{ev.target.textContent='Kopiert ✓'}).catch(()=>{})}catch(err){}xd.open=true}},'Code kopieren'),
+        $('button',{class:'grow',onclick:()=>{xd.open=true;xt.value='';xt.focus()}},'Code einfügen')),
+      (()=>{window.xd=$('details',{class:'mini'},$('summary',{text:'Code anzeigen'}),xt,
+        $('button',{class:'primary',onclick:()=>{let o=null;try{o=JSON.parse(xt.value)}catch(err){}if(!o||typeof o!=='object'||Array.isArray(o)){xm.hidden=false;xm.textContent='Der Code passt nicht. Bitte den ganzen Text kopieren.';return}Object.assign(S,o);save();applyTheme();applyFs();vSettings()}},'Stand übernehmen'),xm);return xd})(),
+      $('button',{id:'reset',onclick:ev=>{const x=ev.currentTarget;if(x.dataset.sure){S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0],qm:{},cm:{},bm:{},theme:S.theme,exam:S.exam,plan:S.plan};save();vSettings()}else{x.dataset.sure=1;x.textContent='Wirklich alles zurücksetzen? Noch einmal tippen';x.className='bad'}}},'Lernstand zurücksetzen')),
+    H('Über die App'),
+    $('div',{class:'sheet'},
+      $('div',{class:'row',style:'flex-wrap:nowrap'},[['impressum','Impressum'],['datenschutz','Datenschutz'],['hinweise','Hinweise']].map(([k,n])=>$('button',{class:'grow',style:'min-width:0;padding-left:6px;padding-right:6px',onclick:()=>{RS=k;go('recht')}},n))),
+      $('p',{class:'muted',style:'margin:0',text:'Keine Werbung, kein Tracking, keine Cookies. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.'}),
+      $('p',{class:'muted',style:'margin:0;font-size:13px',text:'Version '+APPV})));
 }
-
 const V={start:vStart,karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,bilder:vWissen,pruefung:vExam,einstellungen:vSettings,plan:vPlan,recht:vRecht};
 function route(){let h=(location.hash||'#start').slice(1);if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'||v==='bilder'?'wissen':v==='einstellungen'||v==='plan'||v==='recht'?'start':v;F.topic='Alle';if(PF){if(PF.area)F.area=PF.area;if(PF.topic)F.topic=PF.topic;if(PF.st!=null)BST=PF.st;PFW=1}else if(PFW){PFW=0;F.area='Alle';WQ='';BST=null}if(v==='start'||v==='plan')PT=null;if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':v==='bilder'?'bilder':'formeln';if(g!==WSEG){WSEG=g;WQ=''}if(PF&&PF.wq!==undefined)WQ=PF.wq}PF=null;
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'||v==='recht'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
