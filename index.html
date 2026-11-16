@@ -42,6 +42,7 @@ body[data-mode="wissen"]{--accent:var(--c-wissen)} body[data-mode="pruefung"]{--
 html,body{margin:0}
 /* iOS-Web-App: ohne diese Zeile bleibt unter der Tab-Leiste ein Streifen frei */
 html{height:100%;overflow:hidden}
+@supports (-webkit-touch-callout:none){@media (display-mode:standalone){body{bottom:auto!important;height:calc(100% + env(safe-area-inset-top))}}}
 /* App-Rahmen: nur #scr scrollt. So kann iOS 26 die Tab-Leiste nach dem Tippen nicht mehr verschieben */
 body{position:fixed;inset:0;overflow:hidden;display:flex;flex-direction:column;padding-bottom:0!important}
 #scr{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:14px}
@@ -341,7 +342,8 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const SCR=document.getElementById('scr');
+<script>const APPV='34';
+const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
  const set=()=>{const por=matchMedia('(orientation: portrait)').matches,H=por?Math.max(screen.width,screen.height):Math.min(screen.width,screen.height);
@@ -1551,7 +1553,8 @@ const UI_EN={
 "Modellanteil am Bestand": "Model share of vehicle stock",
 "Laut Zulassungsstatistik sind im Marktgebiet am Jahresende {0} Pkw der Marke zugelassen (Gesamtbestand), davon {1} vom Modell „Saturn“. Wie viel Prozent der zugelassenen Pkw entfallen auf dieses Modell ({2} Nachkommastellen)?": "According to the registration statistics, {0} cars of the brand are registered in the market area at the end of the year (total stock), {1} of them of the model „Saturn“. What percentage of the registered cars is accounted for by this model ({2} decimal places)?",
 "Modellanteil = Bestand Modell / Gesamtbestand × {0}": "Model share = stock of the model / total stock × {0}",
-"Voraussichtlicher Bestand = {0} + {1} − {2} = {3}": "Expected headcount = {0} + {1} − {2} = {3}"
+"Voraussichtlicher Bestand = {0} + {1} − {2} = {3}": "Expected headcount = {0} + {1} − {2} = {3}",
+"Version {0}": "Version {0}"
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2668,7 +2671,7 @@ function vSettings(){const t=S.theme||'system';
     $('div',{class:'sheet'},$('b',{text:'Lernstand'}),
       $('p',{class:'muted',text:'Der Lernstand wird nur auf diesem Gerät gespeichert. Nach dem ersten Öffnen läuft die App auch ohne Internet.'}),
       $('div',{class:'row'},$('button',{id:'reset',onclick:e=>{const x=e.currentTarget;if(x.dataset.sure){S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0],qm:{},cm:{},bm:{},theme:S.theme,exam:S.exam,plan:S.plan};save();vSettings()}else{x.dataset.sure=1;x.textContent='Wirklich alles zurücksetzen? Noch einmal tippen';x.className='bad'}}},'Lernstand zurücksetzen'))),
-    $('div',{class:'sheet'},$('b',{text:'Über die App'}),$('p',{class:'muted',text:'Inhalte aus den Lernfeldern 1 bis 11. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.'})));
+    $('div',{class:'sheet'},$('b',{text:'Über die App'}),$('p',{class:'muted',text:'Inhalte aus den Lernfeldern 1 bis 11. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.'}),$('p',{class:'muted',style:'margin:0;font-size:13px',text:'Version '+APPV})));
 }
 
 const V={start:vStart,karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,bilder:vWissen,pruefung:vExam,einstellungen:vSettings,plan:vPlan};
