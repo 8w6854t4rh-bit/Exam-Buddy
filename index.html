@@ -335,6 +335,8 @@ details[open] summary{margin-bottom:10px}
 .rev.ok{border-color:var(--good)} .rev.no{border-color:var(--bad)}
 .pick{text-align:left;display:flex;flex-direction:column;gap:2px;width:100%;font-weight:400}
 .pick b{font-size:16px}
+.pgo{align-self:stretch;margin-top:12px;background:var(--accent);color:var(--on);border-radius:12px;padding:12px 14px;text-align:center;font-weight:700;font-size:16px}
+.pick:active .pgo{filter:brightness(.92)}
 @media (min-width:560px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kc{font-size:13.5px}}
 </style>
 </head>
@@ -343,7 +345,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='35';
+<script>const APPV='36';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1555,7 +1557,9 @@ const UI_EN={
 "Laut Zulassungsstatistik sind im Marktgebiet am Jahresende {0} Pkw der Marke zugelassen (Gesamtbestand), davon {1} vom Modell „Saturn“. Wie viel Prozent der zugelassenen Pkw entfallen auf dieses Modell ({2} Nachkommastellen)?": "According to the registration statistics, {0} cars of the brand are registered in the market area at the end of the year (total stock), {1} of them of the model „Saturn“. What percentage of the registered cars is accounted for by this model ({2} decimal places)?",
 "Modellanteil = Bestand Modell / Gesamtbestand × {0}": "Model share = stock of the model / total stock × {0}",
 "Voraussichtlicher Bestand = {0} + {1} − {2} = {3}": "Expected headcount = {0} + {1} − {2} = {3}",
-"Version {0}": "Version {0}"
+"Version {0}": "Version {0}",
+"Prüfung starten ›": "Start exam ›",
+"Test starten ›": "Start test ›"
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2599,7 +2603,7 @@ function scoreExam(){E.score=E.items.reduce((n,it)=>n+exPts(it),0);E.pct=Math.mi
 function finishExam(){if(!E||E.done)return;clearInterval(ET);E.done=true;E.d=Date.now();scoreExam();planTick('exam',E.k)}
 function vExam(){
   if(!E){const hist=S.exams||[];
-    const card=(k,ihk)=>{const x=EX[k];return $('button',{class:'sheet pick',onclick:()=>{startExam(k);vExam();SCR.scrollTo(0,0)}},$('b',{text:x.name}),x.lf?$('span',{class:'tag',text:x.lf}):null,$('span',{class:'muted',text:x.min+' Minuten · '+(ihk?'100 Punkte · ':'')+x.form}))};
+    const card=(k,ihk)=>{const x=EX[k];return $('button',{class:'sheet pick',onclick:()=>{startExam(k);vExam();SCR.scrollTo(0,0)}},$('b',{text:x.name}),x.lf?$('span',{class:'tag',text:x.lf}):null,$('span',{class:'muted',text:x.min+' Minuten · '+(ihk?'100 Punkte · ':'')+x.form}),$('span',{class:'pgo','aria-hidden':'true',text:(ihk?'Prüfung starten':'Test starten')+' ›'}))};
     R($('div',{class:'sheet'},$('p',{class:'qt',text:'Prüfung nach IHK-Schema'}),
         $('p',{text:'Die drei schriftlichen Bereiche der Abschlussprüfung Teil 2, jeweils mit ihren Lernfeldern: gleiche Bearbeitungszeit, 100 Punkte je Bereich, Situationsaufgaben mit Teilaufgaben und Punktangaben, Note nach IHK-Schlüssel.'}),
         $('p',{class:'muted',text:'Die Uhr läuft, Lösungen gibt es erst nach der Abgabe. Rechen-, Buchungs- und Ankreuzaufgaben werden automatisch bewertet. Offene Fragen bewertest du danach selbst anhand der Musterlösung, so wie der Prüfer mit dem Lösungsbogen.'})),
