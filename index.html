@@ -385,11 +385,11 @@ const tbl=(head,rows,mono)=>$('div',{class:'tw'},$('table',{class:mono?'mono':nu
 
 /* ---------- Start ---------- */
 function examCard(){const last=(S.exams||[])[0],run=E&&!E.done,e=EXD(),dt=e.d1?daysTo(e.d1):null,end=dt!=null&&dt>=0&&dt<=7;
-  const go=k=>{if(!E||E.done){startExam(k)}location.hash='pruefung';if(location.hash==='#pruefung')route()};
-  const q=(k,n,m)=>$('button',{class:'xq',onclick:()=>go(k)},$('b',{text:n}),$('small',{text:m}));
+  const goEx=k=>{if(!E||E.done){startExam(k)}go('pruefung')};
+  const q=(k,n,m)=>$('button',{class:'xq',onclick:()=>goEx(k)},$('b',{text:n}),$('small',{text:m}));
   return $('div',{class:'xcard'},
     $('div',{class:'xh'},$('div',{class:'xi'},svg('pruefung')),$('div',{class:'grow'},$('b',{text:'Prüfung simulieren'}),$('span',{text:end?'Endspurt: noch '+dt+(dt===1?' Tag':' Tage')+' bis zur Prüfung':'Wie in der echten Prüfung: auf Zeit, mit Punkten und Note'})),end?$('span',{class:'xbadge',text:'Endspurt'}):null),
-    run?$('button',{class:'xrun',onclick:()=>{location.hash='pruefung'}},'Laufende Prüfung fortsetzen ›')
+    run?$('button',{class:'xrun',onclick:()=>{go('pruefung')}},'Laufende Prüfung fortsetzen ›')
       :$('div',{class:'xgrid'},q('KUP','Unterstützungs­prozesse','90 Min'),q('FF','Fahrzeug­vertrieb','90 Min'),q('WiSo','WiSo','60 Min'),q('mix','Kurztest','15 Aufgaben')),
     last?$('a',{class:'xlast',href:'#pruefung'},'Zuletzt: '+(EX[last.k]?EX[last.k].name.replace('Kaufmännische ','').replace('prozesse und Finanzdienstleistungen','vertrieb'):last.k)+' · '+last.pct+' % · Note '+last.note+' ›'):null)}
 function gauge(v){const cx=30,cy=29,r=23,P=a=>{const t=a*Math.PI/180;return (cx+r*Math.cos(t)).toFixed(2)+' '+(cy+r*Math.sin(t)).toFixed(2)};
@@ -553,7 +553,7 @@ function goTask(si,ti){const t=S.plan.sessions[si].tasks[ti];PT={si,ti};let h;
   else if(t.k==='lf'){PF={wq:t.lf?LFM[t.lf].n+' ':''};h='lernfelder'}
   else if(t.k==='formeln'){PF={area:'Alle',wq:''};h='wissen'}
   else if(t.k==='exam')h='pruefung';
-  if(location.hash==='#'+h)route();else location.hash=h}
+  if(location.hash==='#'+h)route();else go(h)}
 function toggleTask(si,ti,v){const t=S.plan.sessions[si].tasks[ti];t.done=v===undefined?!t.done:v;save()}
 const TV={karten:'karten',quiz:'quiz',rechnen:'rechnen',buchen:'buchen',story:'bilder',lf:'lernfelder',formeln:'wissen',exam:'pruefung'};
 const TGOAL={karten:15,quiz:10,rechnen:3,buchen:5,exam:1};
@@ -573,7 +573,7 @@ function pbar(v){const el=document.getElementById('pbar');CURV=v;clearTimeout(PR
   const exit=$('button',{class:'pbx','aria-label':'Lernplan-Modus verlassen',title:'Lernplan verlassen',onclick:()=>{PT=null;pbar(v)}},'✕');
   if(t.done){const nx=nextOpen();
     el.replaceChildren($('div',{class:'pbi done'},$('div',{class:'pbt'},$('span',{class:'tag',text:'Erledigt ✓'}),$('b',{text:t.t})),
-      nx?$('button',{class:'pbd',onclick:()=>goTask(nx.si,nx.ti)},'Nächste ›'):$('button',{class:'pbd',onclick:()=>{PT=null;location.hash='plan'}},'Einheit geschafft ›'),exit));return}
+      nx?$('button',{class:'pbd',onclick:()=>goTask(nx.si,nx.ti)},'Nächste ›'):$('button',{class:'pbd',onclick:()=>{PT=null;go('plan')}},'Einheit geschafft ›'),exit));return}
   el.replaceChildren($('div',{class:'pbi'},$('div',{class:'pbt'},
       $('span',{class:'tag',text:goal&&goal>1?'Lernplan · '+n+' von '+goal+' '+TUNIT[t.k]:t.k==='exam'?'Lernplan · Prüfung abgeben zählt':'Lernplan · Lesen, hakt sich selbst ab'}),
       $('b',{text:t.t}),goal&&goal>1?$('div',{class:'pbm'},$('i',{style:'width:'+(n/goal*100)+'%'})):null),
@@ -823,7 +823,7 @@ function vQuiz(){
   if(Q.n>=Q.list.length){const r=Q.right,t=Q.list.length;Q=null;
     R($('div',{class:'sheet'},$('h2',{text:'Ergebnis'}),$('p',{class:'qt',text:r+' von '+t+' richtig ('+Math.round(r/t*100)+' %)'}),
       $('p',{class:'muted',text:r/t>=.8?'Stark. Das reicht für eine gute Note.':r/t>=.5?'Bestanden wäre das. Die falschen Themen noch einmal über die Karteikarten wiederholen.':'Hier lohnt sich noch eine Runde Karteikarten zu diesem Bereich.'}),
-      $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{startQuiz();vQuiz()}},'Neue Runde'),$('button',{onclick:()=>{location.hash='karten'}},'Zu den Karteikarten'))));return}
+      $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{startQuiz();vQuiz()}},'Neue Runde'),$('button',{onclick:()=>{go('karten')}},'Zu den Karteikarten'))));return}
   const it=Q.list[Q.n], done=it.sel!==null;
   R($('p',{class:'muted',text:'Frage '+(Q.n+1)+' von '+Q.list.length+' · '+NAMES[it.q[0]]}),
     $('div',{class:'meter'},$('i',{style:'width:'+(Q.n/Q.list.length*100)+'%'})),
@@ -933,7 +933,7 @@ function vRechnen(){
       C.state?null:$('div',{class:'row'},$('input',{type:'text',id:'ans',inputmode:'decimal',autocomplete:'off',class:'grow',placeholder:'Ergebnis'+(C.u?' in '+C.u:''),'aria-label':'Dein Ergebnis',onkeydown:e=>{if(e.key==='Enter')check()}}),$('button',{class:'primary',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')),
       C.state?$('div',{class:'note '+(C.state==='ok'?'ok':C.state==='no'?'no':'')},$('b',{text:C.state==='ok'?'Richtig. ':C.state==='no'?'Nicht ganz. ':''}),'Ergebnis: '+eur(C.a,d)+(C.u?' '+C.u:'')):null,
       C.state?$('div',{class:'steps',text:C.s}):null,
-      C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{newCalc();vRechnen()}},'Nächste Aufgabe'),$('button',{onclick:()=>{location.hash='wissen'}},'Formel nachschlagen')):null),
+      C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{newCalc();vRechnen()}},'Nächste Aufgabe'),$('button',{onclick:()=>{go('wissen')}},'Formel nachschlagen')):null),
     calcPad(),
     $('p',{class:'muted',text:'Jede Aufgabe hat neue Zahlen. Kommas wie in der Prüfung eingeben, zum Beispiel 1.234,56.'}));
 }
@@ -1254,7 +1254,7 @@ function wissenList(){
   box.replaceChildren(...(out.length?out:[$('p',{class:'muted',text:'Nichts gefunden. Anderes Stichwort probieren, zum Beispiel „Liquidität“ oder „Skonto“.'})]));
 }
 function vWissen(){
-  const seg=(k,n)=>$('button',{class:'chip grow','aria-pressed':String(WSEG===k),onclick:()=>{if(k==='bilder')BST=null;location.hash=k==='formeln'?'wissen':k}},n);
+  const seg=(k,n)=>$('button',{class:'chip grow','aria-pressed':String(WSEG===k),onclick:()=>{if(k==='bilder')BST=null;go(k==='formeln'?'wissen':k)}},n);
   const segs=$('div',{class:'row',role:'group','aria-label':'Ansicht'},seg('formeln','Formeln'),seg('lernfelder','Lernfelder'),seg('bilder','In Bildern'));
   if(WSEG==='bilder')return R(segs,vBilder());
   R(segs,
@@ -1340,7 +1340,7 @@ function vExam(){
         $('div',{class:'row'},$('div',{class:'grade',text:'Note '+z}),$('div',{},$('p',{class:'qt',text:w+(E.pct>=50?' · bestanden':' · nicht bestanden')}),$('p',{class:'muted',text:pt(Math.round(E.score*10)/10)+' von 100 Punkten'}))),
         $('div',{class:'meter'},$('i',{style:'width:'+E.pct+'%'})),
         unrated?$('div',{class:'note'},$('b',{text:'Noch '+unrated+' offene Frage'+(unrated>1?'n':'')+' selbst bewerten. '}),'Vergleiche deine Antwort mit der Musterlösung und vergib die Punkte. Bis dahin zählen sie mit 0 Punkten.'):null,
-        $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{E=null;vExam();scrollTo(0,0)}},'Neue Prüfung'),$('button',{onclick:()=>{E=null;location.hash='start'}},'Zur Startseite'))),
+        $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{E=null;vExam();scrollTo(0,0)}},'Neue Prüfung'),$('button',{onclick:()=>{E=null;go('start')}},'Zur Startseite'))),
       $('h2',{text:'Auswertung'}),$('div',{class:'sheet'},rows));return}
   const it=E.items[E.i],left=E.end-Date.now(),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
   let body;
@@ -1398,6 +1398,9 @@ function route(){let h=(location.hash||'#start').slice(1);if(h==='kannliste')h='
 (()=>{let lt=0;document.addEventListener('touchend',e=>{const now=Date.now();
   if(now-lt<320&&e.touches.length===0&&e.changedTouches.length===1&&!e.target.closest('button,a,input,textarea,select,label,summary,[role=button],[contenteditable]'))e.preventDefault();
   lt=now},{passive:false})})();
+/* Navigation ohne Verlauf: Wischen nach links/rechts (iOS) und Zurück führen nicht mehr auf die vorige Seite */
+function go(h){h=String(h).replace(/^#/,'');if(location.hash!=='#'+h)history.replaceState(null,'','#'+h);route()}
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey)return;e.preventDefault();go(a.getAttribute('href'))});
 addEventListener('hashchange',route);applyFs();route();if(!S.tut&&!location.hash.slice(1).match(/^(pruefung)$/))setTimeout(tutWelcome,400);
 </script>
 <script>
