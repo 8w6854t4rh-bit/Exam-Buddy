@@ -348,7 +348,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='43';
+<script>const APPV='44';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1680,7 +1680,15 @@ const UI_EN={
 "Die Energiekosten betragen im Jahr {0} €. Die drei Abteilungen haben {1} m², {2} m² und {3} m² Fläche. Welcher Betrag entfällt auf die Abteilung mit {4} m²?": "Energy costs total {0} € per year. The three departments have {1} m², {2} m² and {3} m² of floor space. What amount falls on the department with {4} m²?",
 "Gesamtfläche = {0} m²": "Total area = {0} m²",
 "Gesamtfläche = {0} m²\nAnteil = {1} × {2} / {3} = {4} €": "Total area = {0} m²\nShare = {1} × {2} / {3} = {4} €",
-"Sie sind Auszubildende(r) der Autohaus Nordring GmbH, einem Vertragshändler der Marke Nova. Sie arbeiten im Teile- und Zubehörlager, im Zubehörverkauf und in der Serviceannahme. Kreuzen Sie die richtige Antwort an oder ordnen Sie zu, wo es verlangt wird.": "You are a trainee at Autohaus Nordring GmbH, an authorised dealer of the Nova brand. You work in the parts and accessories warehouse, in accessories sales and at service reception. Tick the correct answer or match where asked."
+"Sie sind Auszubildende(r) der Autohaus Nordring GmbH, einem Vertragshändler der Marke Nova. Sie arbeiten im Teile- und Zubehörlager, im Zubehörverkauf und in der Serviceannahme. Kreuzen Sie die richtige Antwort an oder ordnen Sie zu, wo es verlangt wird.": "You are a trainee at Autohaus Nordring GmbH, an authorised dealer of the Nova brand. You work in the parts and accessories warehouse, in accessories sales and at service reception. Tick the correct answer or match where asked.",
+"Die Uhr läuft, Lösungen gibt es erst nach der Abgabe. Rechen-, Zuordnungs- und Ankreuzaufgaben werden automatisch bewertet. Offene Fragen bewertest du danach selbst anhand der Musterlösung, so wie der Prüfer mit dem Lösungsbogen.": "The clock is running, solutions only come after submission. Calculation, matching and multiple-choice tasks are marked automatically. You then rate open questions yourself using the model answer, just like the examiner with the answer sheet.",
+"Lernstand übertragen": "Transfer progress",
+"Kopiere den Code auf dem alten Gerät oder in der alten App und füge ihn hier ein. So nimmst du deinen Stand mit. Gilt für die gerade gewählte Prüfung.": "Copy the code on the old device or in the old app and paste it here. This brings your progress with you. It applies to the exam you have selected.",
+"Code erzeugen und kopieren": "Create and copy code",
+"Code hier einfügen": "Paste code here",
+"Lernstand-Code": "Progress code",
+"Stand übernehmen": "Apply progress",
+"Der Code passt nicht. Bitte den ganzen Text kopieren.": "The code does not match. Please copy the whole text."
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2767,7 +2775,7 @@ function vExam(){
     const card=(k,ihk)=>{const x=EX[k];return $('button',{class:'sheet pick',onclick:()=>{startExam(k);vExam();SCR.scrollTo(0,0)}},$('b',{text:x.name}),x.lf?$('span',{class:'tag',text:x.lf}):null,$('span',{class:'muted',text:x.min+' Minuten · '+(ihk?'100 Punkte · ':'')+x.form}),$('span',{class:'pgo','aria-hidden':'true',text:(ihk?'Prüfung starten':'Test starten')+' ›'}))};
     R($('div',{class:'sheet'},$('p',{class:'qt',text:'Prüfung nach IHK-Schema'}),
         $('p',{text:T1M?'Teil 1 der Zwischenprüfung: Warenwirtschafts- und Werkstattprozesse mit 90 Minuten, 100 Punkten und gebundenen Aufgaben, Note nach IHK-Schlüssel.':'Die drei schriftlichen Bereiche der Abschlussprüfung Teil 2, jeweils mit ihren Lernfeldern: gleiche Bearbeitungszeit, 100 Punkte je Bereich, Situationsaufgaben mit Teilaufgaben und Punktangaben, Note nach IHK-Schlüssel.'}),
-        $('p',{class:'muted',text:'Die Uhr läuft, Lösungen gibt es erst nach der Abgabe. Rechen-, Buchungs- und Ankreuzaufgaben werden automatisch bewertet. Offene Fragen bewertest du danach selbst anhand der Musterlösung, so wie der Prüfer mit dem Lösungsbogen.'})),
+        $('p',{class:'muted',text:'Die Uhr läuft, Lösungen gibt es erst nach der Abgabe. Rechen-, '+(T1M?'Zuordnungs':'Buchungs')+'- und Ankreuzaufgaben werden automatisch bewertet. Offene Fragen bewertest du danach selbst anhand der Musterlösung, so wie der Prüfer mit dem Lösungsbogen.'})),
       ...(T1M?[card('T1',1),$('h2',{text:'Wenig Zeit?'}),card('t1k',0)]:[card('KUP',1),card('WiSo',1),card('FF',1),$('h2',{text:'Wenig Zeit?'}),card('mix',0)]),
       hist.length?$('div',{class:'sheet'},$('b',{text:'Deine letzten Ergebnisse'}),tbl(['Prüfung','Ergebnis','Note'],hist.map(h=>[EX[h.k]?EX[h.k].name:h.k,h.pct+' %',String(h.note)]))):null,
       $('div',{class:'sheet'},$('b',{text:'IHK-Notenschlüssel'}),tbl(['Punkte','Note'],[['100 bis 92','1 sehr gut'],['91 bis 81','2 gut'],['80 bis 67','3 befriedigend'],['66 bis 50','4 ausreichend'],['49 bis 30','5 mangelhaft'],['29 bis 0','6 ungenügend']])));return}
@@ -2867,6 +2875,12 @@ function vSettings(){const t=S.theme||'system';
     $('div',{class:'sheet'},$('b',{text:'Hilfe'}),$('p',{class:'muted',style:'margin:0',text:'Eine kurze Tour zeigt dir, was du wo in der App machen kannst.'}),$('button',{class:'primary',onclick:()=>tutGo(0)},'Tour starten')),
     $('div',{class:'sheet'},$('b',{text:'Sprache · Language'}),$('div',{class:'row',role:'group','aria-label':'Sprache'},[['de','Deutsch'],['en','English']].map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(LANG===k),onclick:()=>{if(LANG===k)return;S.lang=k;save();location.reload()}},n))),$('p',{class:'muted',text:'Die Prüfung ist auf Deutsch. Zahlen bleiben im deutschen Format (1.234,56 €).'})),
     $('div',{class:'sheet'},$('b',{text:'Darstellung'}),$('div',{class:'row',role:'group','aria-label':'Farbschema'},b('system','Automatisch'),b('light','Hell'),b('dark','Dunkel')),$('p',{class:'muted',text:'Automatisch folgt der Einstellung deines Geräts.'})),
+    $('div',{class:'sheet'},$('b',{text:'Lernstand übertragen'}),
+      $('p',{class:'muted',text:'Kopiere den Code auf dem alten Gerät oder in der alten App und füge ihn hier ein. So nimmst du deinen Stand mit. Gilt für die gerade gewählte Prüfung.'}),
+      $('button',{onclick:()=>{const t=document.getElementById('xfer');t.value=JSON.stringify(S);t.select();try{navigator.clipboard.writeText(t.value)}catch(e){}}},'Code erzeugen und kopieren'),
+      $('textarea',{id:'xfer',rows:'4','aria-label':'Lernstand-Code',placeholder:'Code hier einfügen'}),
+      $('button',{class:'primary',onclick:()=>{const t=document.getElementById('xfer'),m=document.getElementById('xmsg');let o=null;try{o=JSON.parse(t.value)}catch(e){}if(!o||typeof o!=='object'||Array.isArray(o)){m.hidden=false;m.textContent='Der Code passt nicht. Bitte den ganzen Text kopieren.';return}Object.assign(S,o);save();applyTheme();applyFs();vSettings()}},'Stand übernehmen'),
+      $('p',{id:'xmsg',class:'note',hidden:'',text:''})),
     $('div',{class:'sheet'},$('b',{text:'Lernstand'}),
       $('p',{class:'muted',text:'Der Lernstand wird nur in diesem Browser gespeichert. Jeder, der den Link öffnet, hat seinen eigenen Stand.'}),
       $('div',{class:'row'},$('button',{id:'reset',onclick:e=>{const x=e.currentTarget;if(x.dataset.sure){S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0],qm:{},cm:{},bm:{},theme:S.theme,exam:S.exam,plan:S.plan};save();vSettings()}else{x.dataset.sure=1;x.textContent='Wirklich alles zurücksetzen? Noch einmal tippen';x.className='bad'}}},'Lernstand zurücksetzen'))),
