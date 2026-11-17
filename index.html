@@ -185,6 +185,27 @@ a.bwopt{border-left-color:var(--c-wissen)}
 .dhero.ab small{font-weight:600;opacity:.8}.dhero.ab b{font-family:var(--display);font-size:32px;line-height:1}.dhero.ab span{font-size:15px;line-height:1.45;margin-top:6px}
 .exl{display:flex;flex-direction:column;gap:10px;margin:4px 0}
 .exl>div{display:flex;flex-direction:column;gap:1px;padding-left:12px;border-left:3px solid var(--accent)}
+.sheet.sgrp{padding:0;gap:0}.sgrp>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:10px}.sgrp>summary::-webkit-details-marker{display:none}
+.sgrp>summary::after{content:'›';margin-left:auto;font-size:22px;color:var(--muted);transition:transform .15s}.sgrp[open]>summary::after{transform:rotate(90deg)}
+.sgt{display:flex;flex-direction:column;gap:2px;min-width:0}.sgt b{font-size:16px}.sgt small{color:var(--muted);font-size:13.5px}
+.sgb{display:flex;flex-direction:column;gap:12px;padding:0 16px 16px}
+.sheet.mitcta{display:flex;flex-direction:column;gap:4px;text-decoration:none;color:inherit;border:2px solid var(--c-start);background:color-mix(in srgb,var(--c-start) 12%,var(--surface))}
+.mitcta b{font-size:17px}.mitcta b::after{content:' ›'}.mitcta span{color:var(--muted);font-size:14.5px}
+.mithero{display:flex;flex-direction:column;gap:8px;padding:20px;border-radius:20px;background:var(--c-start);color:#132209}
+.mithero b{font-family:var(--display);font-size:30px;line-height:1.05;text-transform:uppercase}.mithero span{font-size:15.5px;line-height:1.5}
+.mitsteps{list-style:none;counter-reset:st;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.mitsteps li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;column-gap:12px;align-items:center}
+.mitsteps li::before{content:counter(st);grid-row:span 2;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--surface);border:2px solid var(--c-start)}
+.mitsteps span{color:var(--muted);font-size:14px}
+.mitrules{display:flex;flex-direction:column;gap:4px;font-size:14px}.mitrules ul{margin:0;padding-left:18px;color:var(--muted)}
+.dslink{color:inherit;text-decoration:underline;font-weight:700}
+.dsov{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.dssh{background:var(--surface);color:var(--ink);width:100%;max-width:640px;max-height:85dvh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom)}
+.dshd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}.dshd b{font-size:17px}
+.dsx{background:none;border:0;font-size:20px;color:inherit;min-width:40px;min-height:40px}
+.dsbody{overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px;font-size:14px}.dsbody p{margin:4px 0}
+.dsft{padding:12px 16px;border-top:1px solid var(--line)}
+a.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 details.mini>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}details.sheet.mini>summary{font-size:15px;color:var(--ink);font-weight:700}
 a.sheet.qlink{flex-direction:row;align-items:center;gap:12px;text-decoration:none;color:inherit}.qlink b{display:block;font-size:16px}.qlink .muted{font-size:13px}.qlink>i{font-style:normal;font-size:22px;color:var(--muted)}
 .qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.qt2{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
@@ -388,7 +409,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='57';
+<script>const APPV='58';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1946,7 +1967,31 @@ const UI_EN={
 "Bitte bestätige zuerst, dass du die Unterlagen weitergeben darfst.": "Please first confirm that you are allowed to share the materials.",
 "Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Ein Anspruch auf Übernahme besteht nicht.": "We review every submission and only use content in our own words. There is no entitlement to inclusion.",
 "Fehler in dieser Aufgabe melden": "Report an error in this task",
-"Fehlt dir etwas? Unterlagen einsenden ›": "Missing something? Send in materials ›"
+"Fehlt dir etwas? Unterlagen einsenden ›": "Missing something? Send in materials ›",
+"Mitmachen": "Contribute",
+"Bau Exam Buddy mit": "Help build Exam Buddy",
+"Schick deine Mitschriften. Wir machen daraus Karten und Aufgaben für alle.": "Send your notes. We turn them into cards and tasks for everyone.",
+"Weitere Einstellungen": "More settings",
+"Karteikarten, Tour durch die App": "Flashcards, app tour",
+"Auf ein anderes Gerät mitnehmen oder zurücksetzen": "Move to another device or reset",
+"Problem mit der App melden": "Report a problem with the app",
+"Etwas klappt nicht? Dann öffnet sich deine Mail-App mit einer vorbereiteten Nachricht. Einen Fehler in einer Aufgabe meldest du am besten direkt unter der Aufgabe.": "Something isn't working? Your mail app opens with a prepared message. Report errors in a task directly below the task.",
+"Datenschutzerklärung": "Privacy policy",
+"Ablehnen": "Decline",
+"Zustimmen": "Agree",
+"Bau deine Lern-App mit": "Help build your learning app",
+"Exam Buddy wächst mit euch. Schick uns deine Mitschriften oder Zusammenfassungen. Wir prüfen sie und machen daraus Karten und Aufgaben für alle in deinem Beruf. So bauen wir auch neue Ausbildungsberufe auf.": "Exam Buddy grows with you. Send us your notes or summaries. We review them and turn them into cards and tasks for everyone in your profession. This is also how we add new training occupations.",
+"Auswählen": "Choose",
+"Beruf, Prüfung und worum es geht": "Profession, exam and what it is about",
+"Mail vorbereiten": "Prepare email",
+"Deine Mail-App öffnet sich mit einer fertigen Nachricht": "Your mail app opens with a ready-made message",
+"Anhängen und senden": "Attach and send",
+"Fotos oder Dateien anhängen, fertig": "Attach photos or files, done",
+"Was du schicken darfst": "What you may send",
+"Eigene Mitschriften und Zusammenfassungen oder Material, das du weitergeben darfst.": "Your own notes and summaries, or material you are allowed to share.",
+"Ich darf die Unterlagen weitergeben und bin mit der ": "I am allowed to share the materials and agree to the ",
+" einverstanden.": ".",
+"Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Die Originale veröffentlichen wir nicht. Ein Anspruch auf Übernahme besteht nicht.": "We review every submission and only use content in our own words. We do not publish the originals. There is no entitlement to inclusion."
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2025,7 +2070,7 @@ const ICON={
 const svg=n=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('fill','none');s.setAttribute('stroke','currentColor');s.setAttribute('stroke-width','2');s.setAttribute('stroke-linecap','round');s.setAttribute('stroke-linejoin','round');s.setAttribute('aria-hidden','true');s.innerHTML=ICON[n];return s};
 const MODES=[['start','Start'],['karten','Karten'],['quiz','Quiz'],['rechnen','Rechnen'],['buchen','Buchen'],['wissen','Wissen']];
 if(AB||(PV&&!BER))MODES.splice(0,MODES.length,['start','Start'],['wissen','Lernfelder']);
-const TITLE={start:'Start',karten:'Karteikarten',quiz:'Quiz',rechnen:'Rechnen',buchen:'Buchen',wissen:'Wissen',lernfelder:'Lernfelder',bilder:'In Bildern erklärt',pruefung:'Testprüfung',einstellungen:'Einstellungen',plan:'Lernplan',recht:'Rechtliches'};
+const TITLE={mitmachen:'Mitmachen',start:'Start',karten:'Karteikarten',quiz:'Quiz',rechnen:'Rechnen',buchen:'Buchen',wissen:'Wissen',lernfelder:'Lernfelder',bilder:'In Bildern erklärt',pruefung:'Testprüfung',einstellungen:'Einstellungen',plan:'Lernplan',recht:'Rechtliches'};
 document.getElementById('nav').append(...MODES.filter(([m])=>!(T1M&&m==='buchen')).map(([m,n])=>$('a',{href:'#'+m,style:'--c:var(--c-'+m+')'},$('i',{},svg(m)),n)));document.getElementById('nav').style.gridTemplateColumns='repeat('+MODES.filter(([m])=>!(T1M&&m==='buchen')).length+',1fr)';
 let S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0]};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
@@ -3039,7 +3084,7 @@ function vWissen(){
   if(WSEG==='bilder'&&!T1M)R(segs,inp,list,$('div',{id:'wbase',style:'display:flex;flex-direction:column;gap:14px'},vBilder()));
   else R(segs,inp,WSEG==='formeln'?$('div',{id:'wac'},areaChips(vWissen,true)):null,list,
     WSEG==='lernfelder'?$('p',{id:'wnote',class:'muted',text:'Die Lernfelder fassen die Kann-Listen in Stichpunkten zusammen, geordnet nach den Prüfungen, in denen sie drankommen.'}):null,
-    $('a',{class:'rep',href:'#einstellungen',onclick:()=>setTimeout(()=>{const d=document.getElementById('einsend');if(d){d.open=true;d.scrollIntoView({block:'start'})}},250),text:'Fehlt dir etwas? Unterlagen einsenden ›'}));
+    $('a',{class:'rep',href:'#mitmachen',text:'Fehlt dir etwas? Unterlagen einsenden ›'}));
   wissenList();
 }
 
@@ -3064,7 +3109,7 @@ function vAufbau(){const B=BERUFE[BER],ex=EH_EX[BER][BTR],lfs=ehLfs();
     $('a',{class:'sheet bwopt',href:'#wissen'},$('b',{text:lfs.length+' Lernfelder ansehen'}),$('span',{text:'Lernfeld '+lfs[0][0]+' bis '+lfs[lfs.length-1][0]+', mit den Inhalten, die für deine Prüfung zählen'})),
     $('div',{class:'sheet'},$('h2',{text:'Hilf mit, deinen Beruf aufzubauen'}),
       $('p',{class:'muted',style:'margin:0',text:'Schick uns eigene Mitschriften oder Zusammenfassungen. Wir prüfen sie und machen daraus Karten und Aufgaben für alle.'}),
-      $('button',{class:'primary',onclick:()=>{go('einstellungen');setTimeout(()=>{const d=document.getElementById('einsend');if(d){d.open=true;d.scrollIntoView({block:'start'})}},250)}},'Unterlagen einsenden')));
+      $('button',{class:'primary',onclick:()=>go('mitmachen')},'Unterlagen einsenden')));
 }
 function vAufbauLF(){const lfs=ehLfs(),B=BERUFE[BER];
   R($('p',{class:'muted',style:'margin:0',text:'Lernfelder für '+B.n+', '+B.tr.find(t=>t[0]===BTR)[1]+'. Quelle: Rahmenlehrplan der Kultusministerkonferenz (2017).'}),
@@ -3223,77 +3268,86 @@ function vRecht(){const x=LT[RS]||LT.impressum;
     $('button',{onclick:()=>go('einstellungen')},'‹ Zurück zu den Einstellungen'))}
 function vSettings(){const t=S.theme||'system';
   const chips=(lab,opts,cur,set)=>$('div',{class:'srow'},$('span',{text:lab}),$('div',{class:'row',role:'group','aria-label':lab},opts.map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(cur===k),onclick:()=>{if(cur!==k)set(k)}},n))));
-  const H=x=>$('p',{class:'shd',text:x});
+  const grp=(id,title,sub,...body)=>$('details',{class:'sheet sgrp',id:'sg-'+id,open:SOPEN===id?'':null,ontoggle:e=>{if(e.target.open){SOPEN=id;document.querySelectorAll('.sgrp').forEach(d=>{if(d!==e.target)d.open=false})}else if(SOPEN===id)SOPEN=null}},
+    $('summary',{},$('span',{class:'sgt'},$('b',{text:title}),$('small',{text:sub}))),$('div',{class:'sgb'},...body));
   const e=EXD(),msg=$('p',{class:'note ok',hidden:'',text:''});
   const chg=()=>{const d1=document.getElementById('ex1').value,d2=document.getElementById('ex2').value;const had=!!S.plan;setExam(d1,d2);
     document.getElementById('ex2').min=d1||today();if(d2&&d1&&d2<d1)document.getElementById('ex2').value='';
     msg.hidden=false;msg.textContent=d1?'Gespeichert: '+examLabel()+', noch '+daysTo(d1)+' Tage.'+(had?' Dein Lernplan wurde an den Termin angepasst, Erledigtes bleibt erhalten.':''):'Kein Prüfungstermin gesetzt.'};
   const xm=$('p',{class:'note',hidden:'',text:''}),xt=$('textarea',{id:'xfer',rows:'3','aria-label':'Lernstand-Code',placeholder:'Code hier einfügen'});
-  const berSel=PV?$('label',{class:'dlab'},$('span',{text:'Ausbildungsberuf'}),$('select',{'aria-label':'Ausbildungsberuf',onchange:e=>setBeruf(e.target.value)},Object.entries(BERUFE).map(([k,B])=>$('option',{value:k,selected:(BER||'auto')===k?'':null,text:B.n})))):null;
-  const vSettingsRest=()=>[
-    H('Anzeige'),
-    $('div',{class:'sheet'},
+  const xd=$('details',{class:'mini'},$('summary',{text:'Code anzeigen'}),xt,
+        $('button',{class:'primary',onclick:()=>{let o=null;try{o=JSON.parse(xt.value)}catch(err){}if(!o||typeof o!=='object'||Array.isArray(o)){xm.hidden=false;xm.textContent='Der Code passt nicht. Bitte den ganzen Text kopieren.';return}Object.assign(S,o);save();applyTheme();applyFs();vSettings()}},'Stand übernehmen'),xm);
+  const berSel=PV?$('label',{class:'dlab'},$('span',{text:'Ausbildungsberuf'}),$('select',{'aria-label':'Ausbildungsberuf',onchange:ev=>setBeruf(ev.target.value)},Object.entries(BERUFE).map(([k,B])=>$('option',{value:k,selected:(BER||'auto')===k?'':null,text:B.n})))):null;
+  const trs=AB?BERUFE[BER].tr:[['ap1','Zwischenprüfung · Teil 1'],['ap2','Abschlussprüfung · Teil 2']],cur=AB?BTR:TR;
+  const exam=$('div',{class:'sheet'},berSel,
+      $('div',{class:'row',role:'group','aria-label':'Meine Prüfung'},trs.map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(cur===k),onclick:()=>{if(cur===k)return;if(AB)setBeruf(BER,k);else if(PV)setBeruf('auto',k);else setTrack(k)}},n))),
+      AB?null:$('p',{class:'muted',style:'margin:0',text:'Jede Prüfung hat ihren eigenen Lernstand und Lernplan.'}),
+      AB?null:$('label',{class:'dlab'},$('span',{text:'Erster Prüfungstag'}),$('input',{type:'date',id:'ex1',value:e.d1,'aria-label':'Erster Prüfungstag',onchange:chg})),
+      AB?null:$('label',{class:'dlab'},$('span',{text:'Zweiter Prüfungstag (optional)'}),$('input',{type:'date',id:'ex2',value:e.d2,min:e.d1||null,'aria-label':'Zweiter Prüfungstag',onchange:chg})),
+      msg,
+      !AB&&e.d1?$('button',{onclick:()=>{setExam('','');vSettings()}},'Termin entfernen'):null);
+  const LN={de:'Deutsch',en:'English'},TN={system:'Automatisch',light:'Hell',dark:'Dunkel'},FN={small:'Klein',normal:'Normal',large:'Groß'};
+  R($('p',{class:'shd',text:PV?'Meine Ausbildung':'Meine Prüfung'}),exam,
+    $('a',{class:'sheet mitcta',href:'#mitmachen'},$('b',{text:'Bau Exam Buddy mit'}),$('span',{text:'Schick deine Mitschriften. Wir machen daraus Karten und Aufgaben für alle.'})),
+    $('p',{class:'shd',text:'Weitere Einstellungen'}),
+    grp('anzeige','Anzeige',[LN[LANG]||'Deutsch',TN[t],FN[S.fs||'normal']].join(', '),
       chips('Sprache · Language',[['de','Deutsch'],['en','English']],LANG,k=>{S.lang=k;save();location.reload()}),
       chips('Farbschema',[['system','Automatisch'],['light','Hell'],['dark','Dunkel']],t,k=>{S.theme=k;save();applyTheme();vSettings()}),
       chips('Schriftgröße',[['small','Klein'],['normal','Normal'],['large','Groß']],S.fs||'normal',k=>{S.fs=k;save();applyFs();vSettings()})),
-    AB?null:H('Lernen'),
-    AB?null:$('div',{class:'sheet'},
+    AB?null:grp('lernen','Lernen','Karteikarten, Tour durch die App',
       $('button',{class:'ktog','aria-pressed':String(!!S.kType),onclick:()=>{S.kType=!S.kType;save();vSettings()}},$('i'),'Karteikarten: Antwort eintippen'),
       $('p',{class:'muted',style:'margin:0',text:'Die App markiert, welche Stichworte der Musterantwort du getroffen hast.'}),
       $('button',{onclick:()=>tutGo(0)},'Tour durch die App starten')),
-    H('Lernstand'),
-    $('div',{class:'sheet'},
+    grp('stand','Lernstand','Auf ein anderes Gerät mitnehmen oder zurücksetzen',
       $('p',{class:'muted',style:'margin:0',text:'Dein Lernstand liegt nur auf diesem Gerät. Mit einem Code nimmst du ihn in eine andere App oder auf ein anderes Gerät mit.'}),
       $('div',{class:'row'},
         $('button',{class:'grow',onclick:ev=>{const v=JSON.stringify(S);xt.value=v;try{navigator.clipboard.writeText(v).then(()=>{ev.target.textContent='Kopiert ✓'}).catch(()=>{})}catch(err){}xd.open=true}},'Code kopieren'),
         $('button',{class:'grow',onclick:()=>{xd.open=true;xt.value='';xt.focus()}},'Code einfügen')),
-      (()=>{window.xd=$('details',{class:'mini'},$('summary',{text:'Code anzeigen'}),xt,
-        $('button',{class:'primary',onclick:()=>{let o=null;try{o=JSON.parse(xt.value)}catch(err){}if(!o||typeof o!=='object'||Array.isArray(o)){xm.hidden=false;xm.textContent='Der Code passt nicht. Bitte den ganzen Text kopieren.';return}Object.assign(S,o);save();applyTheme();applyFs();vSettings()}},'Stand übernehmen'),xm);return xd})(),
+      xd,
       $('button',{id:'reset',onclick:ev=>{const x=ev.currentTarget;if(x.dataset.sure){S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0],qm:{},cm:{},bm:{},theme:S.theme,exam:S.exam,plan:S.plan};save();vSettings()}else{x.dataset.sure=1;x.textContent='Wirklich alles zurücksetzen? Noch einmal tippen';x.className='bad'}}},'Lernstand zurücksetzen')),
-    H('Hilfe und Mitmachen'),
-    $('div',{class:'sheet',id:'mitmachen'},
-      $('p',{class:'muted',style:'margin:0',text:'Etwas klappt nicht oder eine Aufgabe ist falsch? Oder fehlen Unterlagen für deinen Beruf? Beides geht per E-Mail direkt an uns.'}),
-      $('div',{class:'row'},
-        $('button',{class:'grow',onclick:()=>{location.href=mailTo('Problem mit der App',`Hallo,\n\nfolgendes Problem ist aufgetreten:\n\n\nWo in der App (zum Beispiel Quiz, Lernplan, Prüfung)?\n\n\nWas hast du davor gemacht?\n\n\nGern kannst du einen Screenshot anhängen.\n\n---\n${devInfo()}`)}},'Problem melden'),
-        $('button',{class:'grow',onclick:()=>{const d=document.getElementById('einsend');d.open=!d.open;if(d.open)d.scrollIntoView({behavior:'smooth',block:'start'})}},'Unterlagen einsenden')),
-      (()=>{const sel=(id,lab,opts,ch)=>$('label',{class:'dlab'},$('span',{text:lab}),$('select',{id,onchange:ch||null},opts.map(o=>$('option',{value:o,text:o}))));
-        const er=$('p',{class:'note',hidden:'',text:''});
-        return $('details',{class:'mini',id:'einsend'},$('summary',{text:'So funktioniert das Einsenden'}),
-          $('p',{class:'muted',style:'margin:0',text:'Fehlen Inhalte für deinen Beruf oder hast du eine gute Ergänzung? Wähle unten aus, worum es geht. Dann öffnet sich deine Mail-App mit einer fertigen Nachricht. Fotos oder Dateien hängst du dort an.'}),
-          sel('esB','Ausbildungsberuf',['Automobilkaufmann/-frau','Verkäufer/-in','Kaufmann/-frau im Einzelhandel','Anderer Beruf'],e=>{document.getElementById('esX').hidden=e.target.value!=='Anderer Beruf'}),
-          $('input',{type:'text',id:'esX',hidden:'',placeholder:'Anderer Beruf: welcher?','aria-label':'Anderer Beruf'}),
-          sel('esP','Prüfung',['Zwischenprüfung (Teil 1)','Abschlussprüfung (Teil 2)','Unterricht allgemein']),
-          sel('esA','Art',['Neue Unterlagen','Ergänzung zu vorhandenen Inhalten','Korrektur']),
-          $('ul',{class:'muted',style:'margin:0;padding-left:18px'},['Nur eigene Mitschriften und Zusammenfassungen oder Material, das du weitergeben darfst.','Keine Original-Prüfungsaufgaben der IHK, keine Fotos aus Schulbüchern.','Keine Namen oder Daten anderer Personen, zum Beispiel von Kunden oder Mitschülern.'].map(x=>$('li',{text:x}))),
-          $('label',{class:'chk'},$('input',{type:'checkbox',id:'esOk'}),$('span',{text:'Ich darf die Unterlagen weitergeben und habe die Datenschutzerklärung gelesen.'})),
-          $('button',{class:'primary',onclick:()=>{if(!document.getElementById('esOk').checked){er.hidden=false;er.textContent='Bitte bestätige zuerst, dass du die Unterlagen weitergeben darfst.';return}
-            let b=document.getElementById('esB').value;const x=document.getElementById('esX').value.trim();if(b==='Anderer Beruf'&&x)b=x;
-            const p=document.getElementById('esP').value,a=document.getElementById('esA').value;
-            location.href=mailTo(`Unterlagen: ${b} · ${p}`,`Hallo,\n\nanbei sende ich Unterlagen für Exam Buddy.\n\nAusbildungsberuf: ${b}\nPrüfung: ${p}\nArt: ${a}\nLernfeld oder Thema (falls bekannt): \n\nKurze Beschreibung:\n\n\nBitte Fotos oder Dateien an diese Mail anhängen.\nIch bestätige, dass ich die Unterlagen weitergeben darf.\n\n---\n${devInfo()}`)}},'E-Mail vorbereiten'),er,
-          $('p',{class:'muted',style:'margin:0;font-size:13px',text:'Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Ein Anspruch auf Übernahme besteht nicht.'}))})()),
-    H('Über die App'),
-    $('div',{class:'sheet'},
+    grp('hilfe','Hilfe','Problem mit der App melden',
+      $('p',{class:'muted',style:'margin:0',text:'Etwas klappt nicht? Dann öffnet sich deine Mail-App mit einer vorbereiteten Nachricht. Einen Fehler in einer Aufgabe meldest du am besten direkt unter der Aufgabe.'}),
+      $('button',{onclick:()=>{location.href=mailTo('Problem mit der App',`Hallo,\n\nfolgendes Problem ist aufgetreten:\n\n\nWo in der App (zum Beispiel Quiz, Lernplan, Prüfung)?\n\n\nWas hast du davor gemacht?\n\n\nGern kannst du einen Screenshot anhängen.\n\n---\n${devInfo()}`)}},'Problem melden')),
+    grp('ueber','Über die App','Impressum, Datenschutz, Version '+APPV,
       $('div',{class:'row',style:'flex-wrap:nowrap'},[['impressum','Impressum'],['datenschutz','Datenschutz'],['hinweise','Hinweise']].map(([k,n])=>$('button',{class:'grow',style:'min-width:0;padding-left:6px;padding-right:6px',onclick:()=>{RS=k;go('recht')}},n))),
       $('p',{class:'muted',style:'margin:0',text:'Keine Werbung, kein Tracking, keine Cookies. Alle Aufgaben sind selbst erstellt, keine Originalaufgaben der IHK. Stand der Werte: November 2026.'}),
-      $('p',{class:'muted',style:'margin:0;font-size:13px',text:'Version '+APPV}))];
-  if(AB)return R(H('Meine Ausbildung'),$('div',{class:'sheet'},berSel,
-      $('div',{class:'row',role:'group','aria-label':'Meine Prüfung'},BERUFE[BER].tr.map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(BTR===k),onclick:()=>{if(BTR!==k)setBeruf(BER,k)}},n)))),
-    ...vSettingsRest());
-  R(H(PV?'Meine Ausbildung':'Meine Prüfung'),
-    $('div',{class:'sheet'},berSel,
-      $('div',{class:'row',role:'group','aria-label':'Meine Prüfung'},[['ap1','Zwischenprüfung · Teil 1'],['ap2','Abschlussprüfung · Teil 2']].map(([k,n])=>$('button',{class:'chip grow','aria-pressed':String(TR===k),onclick:()=>{if(TR!==k){if(PV)setBeruf('auto',k);else setTrack(k)}}},n))),
-      $('p',{class:'muted',style:'margin:0',text:'Jede Prüfung hat ihren eigenen Lernstand und Lernplan.'}),
-      $('label',{class:'dlab'},$('span',{text:'Erster Prüfungstag'}),$('input',{type:'date',id:'ex1',value:e.d1,'aria-label':'Erster Prüfungstag',onchange:chg})),
-      $('label',{class:'dlab'},$('span',{text:'Zweiter Prüfungstag (optional)'}),$('input',{type:'date',id:'ex2',value:e.d2,min:e.d1||null,'aria-label':'Zweiter Prüfungstag',onchange:chg})),
-      msg,
-      $('p',{class:'muted',style:'margin:0',text:'Der Lernplan endet am Tag vor dem ersten Prüfungstag.'}),
-      e.d1?$('button',{onclick:()=>{setExam('','');vSettings()}},'Termin entfernen'):null),
-    ...vSettingsRest());
+      $('p',{class:'muted',style:'margin:0;font-size:13px',text:'Version '+APPV})));
 }
-const V={start:vStart,karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,bilder:vWissen,pruefung:vExam,einstellungen:vSettings,plan:vPlan,recht:vRecht};
+let SOPEN=null;
+/* Datenschutzerklärung als Fenster, mit Zustimmen und Ablehnen */
+function dsSheet(onOk){const close=()=>ov.remove();
+  const ov=$('div',{class:'dsov',role:'dialog','aria-modal':'true','aria-label':'Datenschutzerklärung',onclick:ev=>{if(ev.target===ov)close()}},
+    $('div',{class:'dssh'},
+      $('div',{class:'dshd'},$('b',{text:'Datenschutzerklärung'}),$('button',{class:'dsx','aria-label':'Schließen',onclick:close},'✕')),
+      $('div',{class:'dsbody legal'},...LT.datenschutz[1]().map(([h,ps])=>$('div',{},$('b',{text:h}),...ps.map(p=>Array.isArray(p)?$('p',{},p[0],p[1]):$('p',{text:p}))))),
+      onOk?$('div',{class:'row dsft'},$('button',{class:'grow',onclick:close},'Ablehnen'),$('button',{class:'primary grow',onclick:()=>{close();onOk()}},'Zustimmen')):$('div',{class:'row dsft'},$('button',{class:'primary grow',onclick:close},'Schließen'))));
+  document.body.append(ov);ov.querySelector('.dsx').focus()}
+/* Mitmachen: Unterlagen einsenden */
+function vMitmachen(){
+  const sel=(id,lab,opts,ch)=>$('label',{class:'dlab'},$('span',{text:lab}),$('select',{id,onchange:ch||null},opts.map(o=>$('option',{value:o,text:o}))));
+  const er=$('p',{class:'note',hidden:'',text:''}),ok=$('input',{type:'checkbox',id:'esOk'});
+  const send=()=>{let b=document.getElementById('esB').value;const x=document.getElementById('esX').value.trim();if(b==='Anderer Beruf'&&x)b=x;
+    const p=document.getElementById('esP').value,a=document.getElementById('esA').value;
+    location.href=mailTo(`Unterlagen: ${b} · ${p}`,`Hallo,\n\nanbei sende ich Unterlagen für Exam Buddy.\n\nAusbildungsberuf: ${b}\nPrüfung: ${p}\nArt: ${a}\nLernfeld oder Thema (falls bekannt): \n\nKurze Beschreibung:\n\n\nBitte Fotos oder Dateien an diese Mail anhängen.\nIch bestätige, dass ich die Unterlagen weitergeben darf und mit der Datenschutzerklärung einverstanden bin.\n\n---\n${devInfo()}`)};
+  const defB=BER==='vk'?'Verkäufer/-in':BER==='ke'?'Kaufmann/-frau im Einzelhandel':'Automobilkaufmann/-frau';
+  R($('div',{class:'mithero'},$('b',{text:'Bau deine Lern-App mit'}),
+      $('span',{text:'Exam Buddy wächst mit euch. Schick uns deine Mitschriften oder Zusammenfassungen. Wir prüfen sie und machen daraus Karten und Aufgaben für alle in deinem Beruf. So bauen wir auch neue Ausbildungsberufe auf.'})),
+    $('ol',{class:'mitsteps'},[['Auswählen','Beruf, Prüfung und worum es geht'],['Mail vorbereiten','Deine Mail-App öffnet sich mit einer fertigen Nachricht'],['Anhängen und senden','Fotos oder Dateien anhängen, fertig']].map(([h,t])=>$('li',{},$('b',{text:h}),$('span',{text:t})))),
+    $('div',{class:'sheet',id:'einsend'},
+      (()=>{const s1=sel('esB','Ausbildungsberuf',['Automobilkaufmann/-frau','Verkäufer/-in','Kaufmann/-frau im Einzelhandel','Anderer Beruf'],ev=>{document.getElementById('esX').hidden=ev.target.value!=='Anderer Beruf'});s1.querySelector('select').value=defB;return s1})(),
+      $('input',{type:'text',id:'esX',hidden:'',placeholder:'Anderer Beruf: welcher?','aria-label':'Anderer Beruf'}),
+      (()=>{const s2=sel('esP','Prüfung',['Zwischenprüfung (Teil 1)','Abschlussprüfung (Teil 2)','Unterricht allgemein']);s2.querySelector('select').value=AB?(BTR==='ap2'?'Abschlussprüfung (Teil 2)':'Zwischenprüfung (Teil 1)'):(T1M?'Zwischenprüfung (Teil 1)':'Abschlussprüfung (Teil 2)');return s2})(),
+      sel('esA','Art',['Neue Unterlagen','Ergänzung zu vorhandenen Inhalten','Korrektur']),
+      $('div',{class:'mitrules'},$('b',{text:'Was du schicken darfst'}),
+        $('ul',{},['Eigene Mitschriften und Zusammenfassungen oder Material, das du weitergeben darfst.','Keine Original-Prüfungsaufgaben der IHK, keine Fotos aus Schulbüchern.','Keine Namen oder Daten anderer Personen, zum Beispiel von Kunden oder Mitschülern.'].map(x=>$('li',{text:x})))),
+      $('label',{class:'chk'},ok,$('span',{},'Ich darf die Unterlagen weitergeben und bin mit der ',$('a',{href:'#',class:'dslink',onclick:ev=>{ev.preventDefault();ev.stopPropagation();dsSheet(()=>{ok.checked=true})}},'Datenschutzerklärung'),' einverstanden.')),
+      $('button',{class:'primary',onclick:()=>{er.hidden=true;if(ok.checked)send();else dsSheet(()=>{ok.checked=true;send()})}},'E-Mail vorbereiten'),er,
+      $('p',{class:'muted',style:'margin:0;font-size:13px',text:'Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Die Originale veröffentlichen wir nicht. Ein Anspruch auf Übernahme besteht nicht.'})));
+}
+const V={start:()=>{vStart();app.append($('a',{class:'sheet mitcta',href:'#mitmachen'},$('b',{text:'Bau Exam Buddy mit'}),$('span',{text:'Schick deine Mitschriften. Wir machen daraus Karten und Aufgaben für alle.'})))},karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,bilder:vWissen,pruefung:vExam,einstellungen:vSettings,plan:vPlan,recht:vRecht,mitmachen:vMitmachen};
 if(PV&&!BER)V.start=vBerufWahl;else if(AB){V.start=vAufbau;V.wissen=V.lernfelder=vAufbauLF}
 if(PV){TITLE.start=!BER?'Willkommen':{auto:'Automobilkaufleute',vk:'Verkäufer/-in',ke:'Kaufleute im Einzelhandel'}[BER];if(AB)TITLE.wissen=TITLE.lernfelder='Lernfelder'}
-function route(){let h=(location.hash||'#start').slice(1);if(PV&&!BER&&!/^(einstellungen|recht)$/.test(h))h='start';else if(AB&&!/^(start|wissen|lernfelder|einstellungen|recht)$/.test(h))h='start';if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'||v==='bilder'?'wissen':v==='einstellungen'||v==='plan'||v==='recht'?'start':v;F.topic='Alle';if(PF){if(PF.area)F.area=PF.area;if(PF.topic)F.topic=PF.topic;if(PF.st!=null)BST=PF.st;PFW=1}else if(PFW){PFW=0;F.area='Alle';WQ='';BST=null}if(v==='start'||v==='plan')PT=null;if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':v==='bilder'?'bilder':'formeln';if(g!==WSEG){WSEG=g}if(PF&&PF.wq!==undefined)WQ=PF.wq}PF=null;
+function route(){let h=(location.hash||'#start').slice(1);if(PV&&!BER&&!/^(einstellungen|recht|mitmachen)$/.test(h))h='start';else if(AB&&!/^(start|wissen|lernfelder|einstellungen|recht|mitmachen)$/.test(h))h='start';if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'||v==='bilder'?'wissen':v==='einstellungen'||v==='plan'||v==='recht'||v==='mitmachen'?'start':v;F.topic='Alle';if(PF){if(PF.area)F.area=PF.area;if(PF.topic)F.topic=PF.topic;if(PF.st!=null)BST=PF.st;PFW=1}else if(PFW){PFW=0;F.area='Alle';WQ='';BST=null}if(v==='start'||v==='plan')PT=null;if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':v==='bilder'?'bilder':'formeln';if(g!==WSEG){WSEG=g}if(PF&&PF.wq!==undefined)WQ=PF.wq}PF=null;
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'||v==='recht'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+m)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   V[v]();pbar(v);SCR.scrollTo(0,0)}
