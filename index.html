@@ -388,7 +388,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='56';
+<script>const APPV='57';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -3183,7 +3183,7 @@ function vExam(){
 /* ---------- Einstellungen ---------- */
 
 /* Rechtliches: Impressum, Datenschutz, Hinweise. Anschrift ergänzen, sobald vorhanden (Pflicht bei geschäftsmäßigem Angebot, § 5 DDG) */
-const IMP={name:'Jérôme Drouvin',adr:'',mail:'JeromeDrouvin@ExamBuddy04.onmicrosoft.com'};
+const IMP={name:'Jérôme Drouvin',adr:'',mail:'support@ExamBuddy04.onmicrosoft.com'};
 /* Support und Einsendungen per E-Mail: die App hat keinen eigenen Server, die Mail geht aus der Mail-App der Nutzer */
 const SUP={mail:IMP.mail,tag:'[Exam Buddy]'};
 const devInfo=()=>'Version '+APPV+' · '+(T1M?'Zwischenprüfung (Teil 1)':'Abschlussprüfung (Teil 2)')+' · '+(LANG==='en'?'Englisch':'Deutsch')+' · '+(/iPhone|iPad/.test(navigator.userAgent)?'iOS':/Android/.test(navigator.userAgent)?'Android':'Computer')+(matchMedia('(display-mode: standalone)').matches?' (installierte App)':' (Browser)');
