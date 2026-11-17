@@ -153,7 +153,7 @@ button.wide,a.wide{width:100%;text-align:center;align-self:stretch}a.btn.wide{di
 .mrow .ic,.qlink .ic,.qt2 .ic{--accent:var(--c);flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--c) 18%,var(--surface));color:var(--c);display:grid;place-items:center}.mrow .ic svg,.qlink .ic svg,.qt2 .ic svg{width:20px;height:20px}
 .mrh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}.mrh b{font-size:15px}.mrh span{font-weight:800;font-size:15px}.mrh span.good{color:var(--good)}.mrh span.warn{color:var(--warn)}.mrh span.bad{color:var(--bad)}
 .mrow small{font-size:12px;display:block;margin-top:3px}
-.shd{margin:14px 4px -4px;font-size:12.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}.shd:first-child{margin-top:0}.srow{display:flex;flex-direction:column;gap:6px}.srow .row{flex-wrap:nowrap}.srow .chip{min-width:0;padding-left:6px;padding-right:6px}.srow>span{font-size:13px;font-weight:600;color:var(--muted)}details.mini[open]{display:flex;flex-direction:column;gap:10px}.qhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.qend{flex:none;font-size:13px;padding:6px 12px;min-height:0}.shit{font-size:15px;margin:6px 2px 0;letter-spacing:.6px;color:var(--muted)}.srow2{flex-direction:column;align-items:flex-start;text-align:left;gap:4px}.pmb{flex:none;min-width:48px;font-size:18px;font-weight:700}details.mini>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}details.sheet.mini>summary{font-size:15px;color:var(--ink);font-weight:700}
+.shd{margin:14px 4px -4px;font-size:12.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}.shd:first-child{margin-top:0}.srow{display:flex;flex-direction:column;gap:6px}.srow .row{flex-wrap:nowrap}.srow .chip{min-width:0;padding-left:6px;padding-right:6px}.srow>span{font-size:13px;font-weight:600;color:var(--muted)}details.mini[open]{display:flex;flex-direction:column;gap:10px}.qhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.qend{flex:none;font-size:13px;padding:6px 12px;min-height:0}.shit{font-size:15px;margin:6px 2px 0;letter-spacing:.6px;color:var(--muted)}.srow2{flex-direction:column;align-items:flex-start;text-align:left;gap:4px}.pmb{flex:none;min-width:48px;font-size:18px;font-weight:700}.cvb{border:2px solid var(--c-plan,var(--acc));gap:10px}.cvl{font-weight:700;font-size:14px;color:inherit;text-decoration:underline}details.mini>summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--muted)}details.sheet.mini>summary{font-size:15px;color:var(--ink);font-weight:700}
 a.sheet.qlink{flex-direction:row;align-items:center;gap:12px;text-decoration:none;color:inherit}.qlink b{display:block;font-size:16px}.qlink .muted{font-size:13px}.qlink>i{font-style:normal;font-size:22px;color:var(--muted)}
 .qgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.qt2{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
 .qt2 b{font-size:14.5px}.qt2 .muted{font-size:12px;line-height:1.3}
@@ -356,7 +356,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='51';
+<script>const APPV='52';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1864,7 +1864,12 @@ const UI_EN={
 "− Lieferrabatt {0} % = {1} €": "− Supplier discount {0} % = {1} €",
 "− Lieferskonto {0} % = {1} €": "− Supplier cash discount {0} % = {1} €",
 "− Umsatzsteuer (÷ {0}) = {1} €": "− VAT (÷ {0}) = {1} €",
-"− Rabatt, Skonto": "− Discounts"
+"− Rabatt, Skonto": "− Discounts",
+"Neue Aufgaben verfügbar": "New tasks available",
+"Seit deinem Lernplan sind neue Aufgaben und Erklärungen dazugekommen. Übernimm sie in die kommenden Tage. Was du erledigt hast, bleibt erhalten.": "New tasks and explanations have been added since you made your study plan. Add them to the coming days. What you have completed is kept.",
+"In den Lernplan übernehmen": "Add to study plan",
+"Später": "Later",
+"✨ Neue Aufgaben verfügbar ›": "✨ New tasks available ›"
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2020,6 +2025,7 @@ function vStart(){
       :$('div',{class:'dtile dplan'},$('div',{class:'dth'},$('i',{},svg('plan')),$('b',{text:'Lernplan · '+st.pct+' %'}),$('a',{class:'dlink',href:'#plan',text:'Plan ›'})),
         $('div',{class:'meter slim'},$('i',{style:'width:'+Math.max(st.pct,2)+'%'})),
         ses?$('span',{text:(ses.d===today()?'Heute':ses.d<today()?'Nachholen':dl(ses.d))+': '+(ses.ph==='pruefung'?'Prüfungstraining':ses.ph==='final'?'Generalprobe':(ses.lfs||[ses.lf]).map(k=>LFM[k].n).join(', '))+' · noch '+open.reduce((n,x)=>n+x.t.m,0)+' Min'}):$('span',{text:'Alles erledigt. Stark!'}),
+        cvNew()?$('a',{class:'cvl',href:'#plan',text:'✨ Neue Aufgaben verfügbar ›'}):null,
         open.length?$('button',{class:'dgo',onclick:()=>goTask(st.cur,open[0].ti)},'Weiter im Lernplan ›'):null);
     const run=E&&!E.done,end=dt!=null&&dt>=0&&dt<=7;
     const exT=$('a',{class:'dtile dex',href:'#pruefung'},$('div',{class:'dth'},$('i',{},svg('pruefung')),end?$('em',{text:'Endspurt'}):null),$('b',{text:'Prüfung simulieren'}),$('span',{text:run?'Läuft gerade, fortsetzen ›':last?'Zuletzt Note '+last.note+' · '+last.pct+' %':'Auf Zeit, mit Note'}));
@@ -2215,6 +2221,7 @@ function vPlan(){
         $('div',{},$('small',{text:'Prüfung'}),$('b',{text:examLabel()||'kein Datum'})),
         $('div',{},$('small',{text:'Lerntyp'}),$('b',{text:top[0][1]-top[1][1]<.06?STYN[top[0][0]].replace('-Lerner','')+'- und '+STYN[top[1][0]]:STYN[top[0][0]]})),
         $('div',{},$('small',{text:'Schwerpunkte'}),$('b',{text:foc.map(k=>LFM[k].n).join(', ')})))),
+    cvBanner(),
     st.behind>1?$('div',{class:'sheet'},$('b',{text:st.behind+' Einheiten sind liegen geblieben'}),$('p',{class:'muted',style:'margin:0',text:'Erledigtes bleibt erhalten. Der Rest wird ab heute neu auf deine Lerntage verteilt.'}),
       $('button',{class:'primary',onclick:()=>{replan();vPlan()}},'Ab heute neu verteilen')):null,
     st.cur>=0?sessionCard(st.cur,P.sessions[st.cur].d>today()?'Nächste Einheit':'Jetzt dran'):$('div',{class:'note ok',text:'Alle Einheiten erledigt. Viel Erfolg in der Prüfung!'}),
@@ -2228,10 +2235,17 @@ function vPlan(){
       $('button',{class:'danger',onclick:()=>{if(confirm('Lernplan wirklich löschen? Dein Fortschritt im Plan geht verloren, deine Lernstände bleiben.')){S.plan=null;save();route()}}},'Plan löschen')),
     $('p',{class:'muted',text:'Tipp: Tippe eine Aufgabe an, um direkt dorthin zu springen. Unten zeigt dann eine Leiste deinen Fortschritt, zum Beispiel 7 von 15 Karten. Ist das Ziel erreicht, wird die Aufgabe automatisch abgehakt. Mit ✓ hakst du von Hand ab, mit ✕ verlässt du den Lernplan und lernst frei weiter.'}));
 }
+/* Inhaltsstand: ändert sich, sobald neue Aufgabentypen oder Bildgeschichten dazukommen */
+function cvNow(){const x=Object.values(LFM).map(v=>v.gen.join(',')).join('|')+'#'+STORIES.map(s=>s.title).join('|');let h=0;for(let i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))|0;return String(h)}
+const cvNew=()=>{const P=S.plan,c=cvNow();return !!P&&P.cv!==c&&P.cvSkip!==c};
+function cvTake(){replan();S.plan.cv=cvNow();delete S.plan.cvSkip;save();route()}
+function cvBanner(){if(!cvNew())return null;return $('div',{class:'sheet cvb'},$('b',{text:'Neue Aufgaben verfügbar'}),
+  $('p',{class:'muted',style:'margin:0',text:'Seit deinem Lernplan sind neue Aufgaben und Erklärungen dazugekommen. Übernimm sie in die kommenden Tage. Was du erledigt hast, bleibt erhalten.'}),
+  $('div',{class:'row'},$('button',{class:'primary grow',onclick:cvTake},'In den Lernplan übernehmen'),$('button',{onclick:()=>{S.plan.cvSkip=cvNow();save();route()}},'Später')))}
 function replan(keepAns){const P=S.plan,t0=today();const kept=P.sessions.filter(s=>s.tasks.some(t=>t.done));
   const cnt={};kept.forEach(s=>{if(s.lf)cnt[s.lf]=(cnt[s.lf]||0)+1});
   let from=t0;const lastKept=kept.length?kept[kept.length-1].d:null;if(lastKept&&lastKept>=t0){const d=pd(lastKept);from=ds(new Date(d.getFullYear(),d.getMonth(),d.getDate()+1))}
-  P.sessions=kept.concat(buildSessions(P.ans,from,cnt));save()}
+  P.sessions=kept.concat(buildSessions(P.ans,from,cnt));P.cv=cvNow();save()}
 function vWizard(){
   if(!W)W={step:0,a:{exam:EXD().d1,days:[1,2,3,4,5],min:30,r:{},lt:[null,null,null,null],sty:[],goal:'gut',chk:null}};
   const a=W.a,steps=['Prüfung','Einschätzung','Lerntyp','Kurzer Check','Dein Plan'];
@@ -2289,7 +2303,7 @@ function vWizard(){
         $('div',{class:'muted',style:'font-size:13px'},$('b',{text:'Erste Einheit: '}),prev[0].tasks.map(t=>t.t).join(' · '))):$('div',{class:'note no',text:'Bis zur Prüfung bleibt an deinen Lerntagen keine Zeit mehr. Wähle mehr Tage oder prüfe das Datum.'}),
       $('div',{class:'row wnav'},$('button',{onclick:()=>{W.step--;vWizard();SCR.scrollTo(0,0)}},'Zurück'),
         $('button',{class:'primary grow',disabled:prev.length?null:'',onclick:()=>{
-          if(W.edit&&S.plan){S.plan.ans=a;replan()}else{S.plan={ans:a,created:today(),sessions:prev}}
+          if(W.edit&&S.plan){S.plan.ans=a;replan()}else{S.plan={ans:a,created:today(),sessions:prev,cv:cvNow()}}
           W=null;save();vPlan();SCR.scrollTo(0,0)}},W.edit?'Plan aktualisieren':'Lernplan starten'))]}
   R(head,body)}
 
