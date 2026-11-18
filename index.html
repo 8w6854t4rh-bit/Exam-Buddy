@@ -398,6 +398,7 @@ details[open] summary{margin-bottom:10px}
 .wide{grid-column:1/-1}
 .exbar{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .timer{font-family:var(--mono);font-weight:600;font-size:18px;padding:5px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.exctl{display:flex;align-items:center;gap:8px}.pausebtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px;font-weight:600}.timer.paused{opacity:.6}.pausesheet{display:flex;flex-direction:column;gap:12px;text-align:left}
 .timer.low{background:var(--bad);border-color:var(--bad);color:var(--on)}
 .dots{display:flex;flex-wrap:wrap;gap:6px}
 .dots button{min-height:34px;min-width:38px;padding:0 6px;border-radius:9px;font-size:13px;font-weight:600}
@@ -419,7 +420,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='62';
+<script>const APPV='63';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -2001,7 +2002,14 @@ const UI_EN={
 "Eigene Mitschriften und Zusammenfassungen oder Material, das du weitergeben darfst.": "Your own notes and summaries, or material you are allowed to share.",
 "Ich darf die Unterlagen weitergeben und bin mit der ": "I am allowed to share the materials and agree to the ",
 " einverstanden.": ".",
-"Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Die Originale veröffentlichen wir nicht. Ein Anspruch auf Übernahme besteht nicht.": "We review every submission and only use content in our own words. We do not publish the originals. There is no entitlement to inclusion."
+"Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Die Originale veröffentlichen wir nicht. Ein Anspruch auf Übernahme besteht nicht.": "We review every submission and only use content in our own words. We do not publish the originals. There is no entitlement to inclusion.",
+"Pause": "Pause",
+"Prüfung pausieren": "Pause exam",
+"Prüfung fortsetzen": "Resume exam",
+"Prüfung pausiert": "Exam paused",
+"Die Uhr ist angehalten. Die Aufgaben sind ausgeblendet, bis du weitermachst.": "The clock is stopped. The tasks are hidden until you continue.",
+"Weiter mit der Prüfung": "Continue the exam",
+"Pausiert: {0} Min": "Paused: {0} min"
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -3169,7 +3177,7 @@ function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
     if(X.mix)part=shuffle(part);
     part.forEach((it,i)=>{it.bi=bi;it.label=X.mix?String(items.length+1):(bi+1)+'.'+(i+1);items.push(it)})});
   E={k,name:X.name,min:X.min,items,i:0,end:Date.now()+X.min*60000,done:false};EA=false;
-  clearInterval(ET);ET=setInterval(()=>{if(!E||E.done){clearInterval(ET);return}const left=E.end-Date.now();
+  clearInterval(ET);ET=setInterval(()=>{if(!E||E.done){clearInterval(ET);return}if(E.pause)return;const left=E.end-Date.now();
     if(left<=0){finishExam();if(document.body.dataset.mode==='pruefung'){vExam();SCR.scrollTo(0,0)}return}
     const el=document.getElementById('timer');if(el){el.textContent=fmt(left);el.classList.toggle('low',left<300000)}},1000)}
 const zHits=it=>it.z.rows.reduce((n,_,i)=>n+(it.sel[i]===it.z.ans[i]?1:0),0);
@@ -3183,6 +3191,10 @@ const bHits=it=>{const all=[...it.b[1].map(x=>[x[0],'S']),...it.b[2].map(x=>[x[0
 const exPts=it=>it.type==='o'?(it.self||0):it.type==='z'?it.pts*zHits(it)/it.z.rows.length:it.type==='b'?it.pts*bHits(it):(exOk(it)?it.pts:0);
 function scoreExam(){E.score=E.items.reduce((n,it)=>n+exPts(it),0);E.pct=Math.min(100,Math.round(E.score));const h={k:E.k,pct:E.pct,note:note(E.pct)[0],d:E.d};
   S.exams=[h,...(S.exams||[]).filter(x=>x.d!==E.d)].slice(0,6);save()}
+/* Pause: Uhr anhalten, Aufgaben ausblenden; beim Fortsetzen verschiebt sich das Ende um die Pausenzeit */
+function pauseExam(){if(!E||E.done||E.pause)return;E.pause=Date.now();EA=false;vExam();SCR.scrollTo(0,0)}
+function resumeExam(){if(!E||!E.pause)return;const d=Date.now()-E.pause;E.end+=d;E.pt=(E.pt||0)+d;E.pause=null;vExam();SCR.scrollTo(0,0)}
+const pauseIco=()=>{const v=document.createElementNS('http://www.w3.org/2000/svg','svg');v.setAttribute('viewBox','0 0 24 24');v.setAttribute('width','18');v.setAttribute('height','18');v.setAttribute('aria-hidden','true');v.innerHTML='<rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/>';return v};
 function finishExam(){if(!E||E.done)return;clearInterval(ET);E.done=true;E.d=Date.now();scoreExam();planTick('exam',E.k)}
 function vExam(){
   if(!E){const hist=S.exams||[];
@@ -3211,9 +3223,10 @@ function vExam(){
         $('div',{class:'row'},$('div',{class:'grade',text:'Note '+z}),$('div',{},$('p',{class:'qt',text:w+(E.pct>=50?' · bestanden':' · nicht bestanden')}),$('p',{class:'muted',text:pt(Math.round(E.score*10)/10)+' von 100 Punkten'}))),
         $('div',{class:'meter'},$('i',{style:'width:'+E.pct+'%'})),
         unrated?$('div',{class:'note'},$('b',{text:'Noch '+unrated+' offene Frage'+(unrated>1?'n':'')+' selbst bewerten. '}),(PV&&KI.s?'Lass sie unten von Claude bewerten oder vergleiche selbst mit der Musterlösung. ':'Vergleiche deine Antwort mit der Musterlösung und vergib die Punkte. ')+'Bis dahin zählen sie mit 0 Punkten.'):null,
+        E.pt>=60000?$('p',{class:'muted',style:'margin:0',text:'Pausiert: '+Math.round(E.pt/60000)+' Min'}):null,
         $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{E=null;vExam();SCR.scrollTo(0,0)}},'Neue Prüfung'),$('button',{onclick:()=>{E=null;go('start')}},'Zur Startseite'))),
       PV?kiGradeBox():null,$('h2',{text:'Auswertung'}),$('div',{class:'sheet'},rows));return}
-  const it=E.items[E.i],left=E.end-Date.now(),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
+  const it=E.items[E.i],left=E.end-(E.pause||Date.now()),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
   let body;
   if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),it.o.map((o,i)=>$('button',{class:'opt'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t))];
   else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),
@@ -3224,7 +3237,12 @@ function vExam(){
   else if(it.type==='z'){const zSel=(i)=>{const sl=$('select',{'aria-label':it.z.rows[i],onchange:e=>{it.sel[i]=e.target.value===''?null:+e.target.value;vExam()}},$('option',{value:'',text:'– bitte wählen –'}),...it.z.opts.map((o,j)=>$('option',{value:String(j),text:o})));sl.value=it.sel[i]===null?'':String(it.sel[i]);return sl};
     body=[$('p',{class:'qt',text:it.z.t}),it.z.rows.map((r,i)=>$('label',{class:'zrow'},$('span',{text:r}),zSel(i)))]}
   else{B=it;BR=vExam;body=[$('p',{class:'qt',text:it.b[0]}),tkView()]}
-  R($('div',{class:'exbar'},$('span',{class:'muted',text:X.mix?'Aufgabe '+it.label+' von '+n:'Teilaufgabe '+(E.i+1)+' von '+n}),$('span',{class:'timer'+(left<300000?' low':''),id:'timer',role:'timer','aria-label':'Restzeit',text:fmt(left)})),
+  const tmr=$('span',{class:'timer'+(left<300000&&!E.pause?' low':'')+(E.pause?' paused':''),id:'timer',role:'timer','aria-label':'Restzeit',text:fmt(left)});
+  const pbtn=$('button',{class:'pausebtn','aria-label':E.pause?'Prüfung fortsetzen':'Prüfung pausieren',onclick:()=>E.pause?resumeExam():pauseExam()},E.pause?null:pauseIco(),E.pause?'Weiter':'Pause');
+  if(E.pause){R($('div',{class:'exbar'},$('span',{class:'muted',text:X.mix?'Aufgabe '+it.label+' von '+n:'Teilaufgabe '+(E.i+1)+' von '+n}),$('div',{class:'exctl'},tmr,pbtn)),
+    $('div',{class:'sheet pausesheet'},$('b',{class:'qt',text:'Prüfung pausiert'}),$('p',{style:'margin:0',text:'Die Uhr ist angehalten. Die Aufgaben sind ausgeblendet, bis du weitermachst.'}),
+      $('button',{class:'primary',onclick:resumeExam},'Weiter mit der Prüfung')));return}
+  R($('div',{class:'exbar'},$('span',{class:'muted',text:X.mix?'Aufgabe '+it.label+' von '+n:'Teilaufgabe '+(E.i+1)+' von '+n}),$('div',{class:'exctl'},tmr,pbtn)),
     $('div',{class:'meter'},$('i',{style:'width:'+((n-open)/n*100)+'%'})),
     X.mix?null:$('div',{class:'note'},$('b',{text:'Aufgabe '+(it.bi+1)+' · '+bl[0]}),$('p',{style:'margin-top:4px',text:'Situation: '+bl[1]})),
     $('div',{class:'sheet'},$('div',{class:'tag',text:(X.mix?'Aufgabe ':'')+it.label+' · '+(X.mix?'ca. ':'')+pt(Math.round(it.pts))+' Punkte'}),body),

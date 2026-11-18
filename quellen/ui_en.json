@@ -1544,5 +1544,12 @@
 "Eigene Mitschriften und Zusammenfassungen oder Material, das du weitergeben darfst.": "Your own notes and summaries, or material you are allowed to share.",
 "Ich darf die Unterlagen weitergeben und bin mit der ": "I am allowed to share the materials and agree to the ",
 " einverstanden.": ".",
-"Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Die Originale veröffentlichen wir nicht. Ein Anspruch auf Übernahme besteht nicht.": "We review every submission and only use content in our own words. We do not publish the originals. There is no entitlement to inclusion."
+"Wir prüfen jede Einsendung und übernehmen Inhalte nur in eigenen Worten. Die Originale veröffentlichen wir nicht. Ein Anspruch auf Übernahme besteht nicht.": "We review every submission and only use content in our own words. We do not publish the originals. There is no entitlement to inclusion.",
+"Pause": "Pause",
+"Prüfung pausieren": "Pause exam",
+"Prüfung fortsetzen": "Resume exam",
+"Prüfung pausiert": "Exam paused",
+"Die Uhr ist angehalten. Die Aufgaben sind ausgeblendet, bis du weitermachst.": "The clock is stopped. The tasks are hidden until you continue.",
+"Weiter mit der Prüfung": "Continue the exam",
+"Pausiert: {0} Min": "Paused: {0} min"
 }
