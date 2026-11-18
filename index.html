@@ -375,6 +375,7 @@ select,input[type=text],input[type=search]{border:1px solid var(--line);backgrou
 .pool:empty::after{content:"alle Konten verteilt"}
 .kc{touch-action:none;user-select:none;-webkit-user-select:none;font-family:var(--mono);font-size:12.5px;font-weight:400;text-align:left;padding:7px 9px;min-height:40px;border-radius:10px;background:var(--raise);border-color:var(--line);line-height:1.25;cursor:grab}
 .kc b{font-weight:600;margin-right:5px}
+.kamt{display:block;margin-top:3px;font-weight:600;font-variant-numeric:tabular-nums}
 .kc.pick{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
 .kc.dragging{opacity:.35}
 .kc.ghost{position:fixed;left:0;top:0;z-index:20;pointer-events:none;box-shadow:0 8px 22px rgba(0,0,0,.3);border-color:var(--accent);opacity:.95}
@@ -420,7 +421,7 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='63';
+<script>const APPV='64';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -2765,6 +2766,7 @@ function place(k,side){if(side==='P')delete B.place[k];else B.place[k]=side;B.pi
 function kchip(k){
   const b=B.b,ok=(B.place[k]==='S'&&b[1].some(x=>x[0]===k))||(B.place[k]==='H'&&b[2].some(x=>x[0]===k));
   const el=$('button',{class:'kc'+(B.pick===k?' pick':'')+(B.state&&B.place[k]?(ok?' ok':' err'):''),'data-k':k,disabled:B.state?'':null,'aria-label':k+' '+D.konten[k]+(B.place[k]?(B.place[k]==='S'?', liegt im Soll':', liegt im Haben'):', noch nicht zugeordnet')},$('b',{text:k}),D.konten[k]);
+  if(B.state&&B.place[k]&&ok){const a=(B.place[k]==='S'?b[1]:b[2]).find(x=>x[0]===k);if(a)el.append($('span',{class:'kamt',text:eur(a[1])+' €'}))}
   if(B.state)return el;
   el.addEventListener('click',e=>{e.stopPropagation();if(dragged){dragged=false;return}B.pick=B.pick===k?null:k;BR()});
   el.addEventListener('pointerdown',ev=>{if(ev.button)return;const sx=ev.clientX,sy=ev.clientY;let ghost=null;dragged=false;
@@ -2778,7 +2780,7 @@ function kchip(k){
       if(z)place(k,z.dataset.side);else BR()};
     el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)});
   return el}
-function bzone(side,cls){return $('div',{class:'zone '+cls+(B.pick&&!B.state?' target':''),'data-side':side,onclick:()=>{if(B.pick&&!B.state)place(B.pick,side)}},B.list.filter(k=>(B.place[k]||'P')===side).map(kchip))}
+function bzone(side,cls){return $('div',{class:'zone '+cls+(B.pick&&!B.state?' target':''),'data-side':side,onclick:()=>{if(B.pick&&!B.state)place(B.pick,side)}},B.list.filter(k=>(B.place[k]||'P')===side).sort((x,y)=>{if(!B.state||side==='P')return 0;const o=side==='S'?B.b[1]:B.b[2],ix=k=>{const i=o.findIndex(z=>z[0]===k);return i<0?99:i};return ix(x)-ix(y)}).map(kchip))}
 function tkView(){return [$('div',{class:'tk'},$('span',{class:'an',text:'an'}),
     $('div',{class:'side'},$('h3',{text:'Soll'}),bzone('S','')),
     $('div',{class:'side'},$('h3',{text:'Haben'}),bzone('H',''))),
@@ -2792,7 +2794,7 @@ function vBuchen(){
     return $('div',{class:'tw'},$('table',{},$('tr',{},$('th',{text:'Soll'}),$('th',{text:'€'}),$('th',{text:'Haben'}),$('th',{text:'€'})),rows))};
   R($('div',{class:'sheet'},$('div',{class:'tag',text:'Beleg'}),$('p',{class:'qt',text:b[0]}),
       tkView(),
-      B.state?null:$('div',{class:'row'},$('button',{class:'primary grow',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('buchen');B.state='show';B.pick=null;vBuchen()}},'Lösung zeigen')),
+      B.state?null:$('div',{class:'row'},$('button',{class:'primary grow',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('buchen');B.state='show';B.pick=null;B.place={};b[1].forEach(x=>{B.place[x[0]]='S'});b[2].forEach(x=>{B.place[x[0]]='H'});vBuchen()}},'Lösung zeigen')),
       B.state?$('div',{class:'note '+(B.state==='ok'?'ok':B.state==='no'?'no':'')},$('b',{text:B.state==='ok'?'Richtig. ':B.state==='no'?'Nicht ganz. ':''}),b[3]):null,
       B.state?sol():null,
       B.state?repLink(b[0]):null,
@@ -3161,6 +3163,15 @@ const EX={
  mix:{name:'Kurztest gemischt',min:15,form:'15 Aufgaben quer durch alle Bereiche, kein IHK-Format',mix:true,blocks:[
   ['','',[['q',null,8,100/15],['c',null,4,100/15],['b',3,100/15]]]]}};
 let E=null, ET=null, EA=false;
+/* Laufende Prüfung auf dem Gerät mitspeichern (eigener Schlüssel, Lernstand bleibt unberührt) */
+const EKEY=()=>'eb-exam'+(T1M?'-ap1':'');
+function exSave(){try{if(E)localStorage.setItem(EKEY(),JSON.stringify(E));else localStorage.removeItem(EKEY())}catch(e){}}
+function exTimer(){let n=0;clearInterval(ET);ET=setInterval(()=>{if(!E||E.done){clearInterval(ET);return}if(++n%5===0)exSave();if(E.pause)return;const left=E.end-Date.now();
+    if(left<=0){finishExam();exSave();if(document.body.dataset.mode==='pruefung'){vExam();SCR.scrollTo(0,0)}return}
+    const el=document.getElementById('timer');if(el){el.textContent=fmt(left);el.classList.toggle('low',left<300000)}},1000)}
+function exRestore(){try{const r=JSON.parse(localStorage.getItem(EKEY())||'null');if(!r||!EX[r.k]||!Array.isArray(r.items)||!r.items.length)return false;E=r;EA=false;
+  if(E.done)return false;if(!E.pause&&E.end<=Date.now()){finishExam();exSave();return true}exTimer();return true}catch(e){return false}}
+addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')exSave()});addEventListener('pagehide',exSave);
 const num=v=>parseFloat(String(v).replace(/−|–/g,'-').replace(/\s|€|%/g,'').replace(/\./g,'').replace(',','.'));
 const tol=d=>d===0?0.5:d===1?0.051:d===4?0.00011:0.011;
 const fmt=ms=>{const t=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')};
@@ -3176,10 +3187,7 @@ function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
       else{shuffle(D.karten.filter((c,i)=>sp[1].includes(c[1])&&!usedC.has(c[2]))).slice(0,sp[2]).forEach(c=>{usedC.add(c[2]);part.push({type:'o',pts:sp[3],c,val:'',seen:false,self:null})})}}
     if(X.mix)part=shuffle(part);
     part.forEach((it,i)=>{it.bi=bi;it.label=X.mix?String(items.length+1):(bi+1)+'.'+(i+1);items.push(it)})});
-  E={k,name:X.name,min:X.min,items,i:0,end:Date.now()+X.min*60000,done:false};EA=false;
-  clearInterval(ET);ET=setInterval(()=>{if(!E||E.done){clearInterval(ET);return}if(E.pause)return;const left=E.end-Date.now();
-    if(left<=0){finishExam();if(document.body.dataset.mode==='pruefung'){vExam();SCR.scrollTo(0,0)}return}
-    const el=document.getElementById('timer');if(el){el.textContent=fmt(left);el.classList.toggle('low',left<300000)}},1000)}
+  E={k,name:X.name,min:X.min,items,i:0,end:Date.now()+X.min*60000,done:false};EA=false;exTimer();exSave()}
 const zHits=it=>it.z.rows.reduce((n,_,i)=>n+(it.sel[i]===it.z.ans[i]?1:0),0);
 const exDone=it=>it.type==='z'?it.sel.every(x=>x!==null):it.type==='q'?it.sel!==null:it.type==='c'?it.val.trim()!=='':it.type==='o'?(it.seen||it.val.trim()!==''):Object.keys(it.place).length>0;
 function exOk(it){if(it.type==='z')return zHits(it)===it.z.rows.length;if(it.type==='q')return it.sel!==null&&it.o[it.sel].ok;
@@ -3196,7 +3204,7 @@ function pauseExam(){if(!E||E.done||E.pause)return;E.pause=Date.now();EA=false;v
 function resumeExam(){if(!E||!E.pause)return;const d=Date.now()-E.pause;E.end+=d;E.pt=(E.pt||0)+d;E.pause=null;vExam();SCR.scrollTo(0,0)}
 const pauseIco=()=>{const v=document.createElementNS('http://www.w3.org/2000/svg','svg');v.setAttribute('viewBox','0 0 24 24');v.setAttribute('width','18');v.setAttribute('height','18');v.setAttribute('aria-hidden','true');v.innerHTML='<rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/>';return v};
 function finishExam(){if(!E||E.done)return;clearInterval(ET);E.done=true;E.d=Date.now();scoreExam();planTick('exam',E.k)}
-function vExam(){
+function vExam(){exSave();
   if(!E){const hist=S.exams||[];
     const card=(k,ihk)=>{const x=EX[k];return $('button',{class:'sheet pick',onclick:()=>{startExam(k);vExam();SCR.scrollTo(0,0)}},$('b',{text:x.name}),x.lf?$('span',{class:'tag',text:x.lf}):null,$('span',{class:'muted',text:x.min+' Minuten · '+(ihk?'100 Punkte · ':'')+x.form}),$('span',{class:'pgo','aria-hidden':'true',text:(ihk?'Prüfung starten':'Test starten')+' ›'}))};
     R($('div',{class:'sheet'},$('p',{class:'qt',text:'Prüfung nach IHK-Schema'}),
@@ -3210,7 +3218,7 @@ function vExam(){
   if(E.done){const[z,w]=note(E.pct),unrated=E.items.filter(x=>x.type==='o'&&x.self===null).length;
     const side=(it,c)=>Object.keys(it.place).filter(k=>it.place[k]===c).sort().join(', ')||'–';
     const mine=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+(it.sel[i]!==null?it.z.opts[it.sel[i]]:'–')).join('; '):it.type==='q'?(it.sel!==null?it.o[it.sel].t:'keine Antwort'):it.type==='c'?(it.val.trim()||'keine Antwort'):it.type==='o'?(it.val.trim()||(it.seen?'im Kopf beantwortet':'keine Antwort')):(Object.keys(it.place).length?'Soll '+side(it,'S')+' an Haben '+side(it,'H'):'keine Antwort');
-    const right=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+it.z.opts[it.z.ans[i]]).join('; '):it.type==='q'?it.o.find(o=>o.ok).t:it.type==='c'?eur(it.g.a,it.g.d===undefined?2:it.g.d)+(it.g.u?' '+it.g.u:''):it.type==='o'?it.c[3]:'Soll '+it.b[1].map(x=>x[0]+' '+D.konten[x[0]]).join(', ')+' an Haben '+it.b[2].map(x=>x[0]+' '+D.konten[x[0]]).join(', ');
+    const right=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+it.z.opts[it.z.ans[i]]).join('; '):it.type==='q'?it.o.find(o=>o.ok).t:it.type==='c'?eur(it.g.a,it.g.d===undefined?2:it.g.d)+(it.g.u?' '+it.g.u:''):it.type==='o'?it.c[3]:'Soll '+it.b[1].map(x=>x[0]+' '+D.konten[x[0]]+' '+eur(x[1])+' €').join(', ')+' an Haben '+it.b[2].map(x=>x[0]+' '+D.konten[x[0]]+' '+eur(x[1])+' €').join(', ');
     const why=it=>it.type==='q'?it.q[4]:it.type==='c'?it.g.s:it.type==='b'?it.b[3]:null;
     const rate=it=>$('div',{class:'row',role:'group','aria-label':'Eigene Bewertung'},[[0,'0 Punkte'],[it.pts/2,pt(it.pts/2)+' Punkte'],[it.pts,pt(it.pts)+' Punkte']].map(([v,l])=>$('button',{class:'chip','aria-pressed':String(it.self===v),onclick:()=>{const y=SCR.scrollTop;it.self=v;scoreExam();vExam();SCR.scrollTo(0,y)}},l)));
     const rows=[];let lb=-1;
@@ -3224,7 +3232,7 @@ function vExam(){
         $('div',{class:'meter'},$('i',{style:'width:'+E.pct+'%'})),
         unrated?$('div',{class:'note'},$('b',{text:'Noch '+unrated+' offene Frage'+(unrated>1?'n':'')+' selbst bewerten. '}),(PV&&KI.s?'Lass sie unten von Claude bewerten oder vergleiche selbst mit der Musterlösung. ':'Vergleiche deine Antwort mit der Musterlösung und vergib die Punkte. ')+'Bis dahin zählen sie mit 0 Punkten.'):null,
         E.pt>=60000?$('p',{class:'muted',style:'margin:0',text:'Pausiert: '+Math.round(E.pt/60000)+' Min'}):null,
-        $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{E=null;vExam();SCR.scrollTo(0,0)}},'Neue Prüfung'),$('button',{onclick:()=>{E=null;go('start')}},'Zur Startseite'))),
+        $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{E=null;vExam();SCR.scrollTo(0,0)}},'Neue Prüfung'),$('button',{onclick:()=>{E=null;exSave();go('start')}},'Zur Startseite'))),
       PV?kiGradeBox():null,$('h2',{text:'Auswertung'}),$('div',{class:'sheet'},rows));return}
   const it=E.items[E.i],left=E.end-(E.pause||Date.now()),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
   let body;
@@ -3560,6 +3568,7 @@ function go(h){h=String(h).replace(/^#/,'');if(location.hash!=='#'+h)history.rep
 document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented||e.metaKey||e.ctrlKey)return;e.preventDefault();go(a.getAttribute('href'))});
 document.body.dataset.track=TR;if(T1M)document.body.style.setProperty('--dmn','3');
 if(PV)document.body.classList.add('pv');
+if(exRestore())history.replaceState(null,'','#pruefung');
 addEventListener('hashchange',route);applyFs();route();if(!S.tut&&!(PV&&(!BER||AB))&&!location.hash.slice(1).match(/^(pruefung)$/))setTimeout(tutWelcome,400);
 </script>
 <script>
