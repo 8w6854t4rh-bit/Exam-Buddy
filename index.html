@@ -421,7 +421,11 @@ details[open] summary{margin-bottom:10px}
 <main id="app"></main></div>
 <div id="pbar" hidden></div>
 <nav class="tabs" aria-label="Modus wechseln"><div id="nav"></div></nav>
-<script>const APPV='65';
+<script>
+/* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
+const QRECH=new Set([237,241,242,243,244,266]);
+const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
+const APPV='66';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -2137,7 +2141,7 @@ function gauge(v){const cx=30,cy=29,r=23,P=a=>{const t=a*Math.PI/180;return (cx+
 let HSEG='heute';
 function vStart(){
   const qm=S.qm||{},cm=S.cm||{},bm=S.bm||{};
-  const kI=D.karten.map((c,i)=>i).filter(i=>ina(D.karten[i][0])),qI=D.quiz.map((q,i)=>i).filter(i=>ina(D.quiz[i][0])),g2=G.filter(g=>ina(g[0])),nB=D.buchungen.length;
+  const kI=D.karten.map((c,i)=>i).filter(i=>ina(D.karten[i][0])),qI=D.quiz.map((q,i)=>i).filter(i=>ina(D.quiz[i][0])&&!QRECH.has(i)),g2=G.filter(g=>ina(g[0])),nB=D.buchungen.length;
   const mast=[
     ['karten','#karten','Karten',kI.reduce((n,i)=>n+Math.min(S.box[i]||0,2)/2,0)/kI.length*100,kI.filter(i=>(S.box[i]||0)>=2).length+' von '+kI.length+' Karten sitzen'],
     ['quiz','#quiz','Quiz',qI.reduce((n,i)=>n+Math.min(qm[i]||0,2)/2,0)/qI.length*100,qI.filter(i=>(qm[i]||0)>=2).length+' von '+qI.length+' Fragen sitzen'],
@@ -2419,7 +2423,7 @@ function vWizard(){
   else if(W.step===3){
     if(!W.ck&&!a.chk)return R(head,$('div',{class:'sheet'},$('b',{text:'Kurzer Einstufungstest'}),
         $('p',{text:T1M?'9 Ankreuzfragen aus Teil 1. Das dauert etwa drei Minuten und macht den Plan genauer. Du kannst ihn auch überspringen.':'9 Ankreuzfragen, je 3 aus jedem Prüfungsbereich. Das dauert etwa drei Minuten und macht den Plan genauer. Du kannst ihn auch überspringen.'}),
-        $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{W.ck={i:0,list:(T1M?['T1']:['KUP','FF','WiSo']).flatMap(g=>shuffle(D.quiz.filter(q=>q[0]===g)).slice(0,T1M?9:3)).map(q=>({q,sel:null,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]})))})),res:{}};vWizard()}},'Check starten'),
+        $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{W.ck={i:0,list:(T1M?['T1']:['KUP','FF','WiSo']).flatMap(g=>shuffle(qpool().filter(q=>q[0]===g)).slice(0,T1M?9:3)).map(q=>({q,sel:null,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]})))})),res:{}};vWizard()}},'Check starten'),
           $('button',{onclick:()=>{W.step++;vWizard();SCR.scrollTo(0,0)}},'Überspringen'))),
       $('div',{class:'row wnav'},$('button',{onclick:()=>{W.step--;vWizard()}},'Zurück')));
     if(a.chk&&!W.ck)return R(head,$('div',{class:'sheet'},$('b',{text:'Check erledigt'}),
@@ -2569,7 +2573,7 @@ function vKarten(){
 
 /* ---------- Quiz ---------- */
 let Q=null;
-function startQuiz(){const pool=shuffle(D.quiz.filter(q=>inArea(q[0]))).slice(0,10);
+function startQuiz(){const pool=shuffle(qpool().filter(q=>inArea(q[0]))).slice(0,10);
   Q={list:pool.map(q=>({q,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]}))),sel:null})),n:0,right:0}}
 let QAUTO=0;
 function vQuiz(){
@@ -2577,7 +2581,7 @@ function vQuiz(){
   if(!Q&&QAUTO){QAUTO=0;startQuiz();Q.plan=1}
   if(!Q){R(areaChips(vQuiz),
     $('div',{class:'sheet'},$('p',{class:'qt',text:'10 zufällige Ankreuzfragen im Stil der WiSo-Prüfung'}),$('p',{text:'Nach jeder Antwort siehst du die Lösung mit kurzer Erklärung.'}),
-    $('p',{class:'muted',text:D.quiz.filter(q=>inArea(q[0])).length+' Fragen in dieser Auswahl'}),
+    $('p',{class:'muted',text:qpool().filter(q=>inArea(q[0])).length+' Fragen in dieser Auswahl'}),
     $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{startQuiz();vQuiz()}},'Runde starten'))));return}
   if(Q.n>=Q.list.length){const r=Q.right,t=Q.list.length;Q=null;
     R($('div',{class:'sheet'},$('h2',{text:'Ergebnis'}),$('p',{class:'qt',text:r+' von '+t+' richtig ('+Math.round(r/t*100)+' %)'}),
@@ -3184,7 +3188,7 @@ const pt=x=>Number.isInteger(x)?String(x):eur(x,1);
 function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
   X.blocks.forEach((bl,bi)=>{let part=[];
     for(const sp of bl[2]){
-      if(sp[0]==='q'){shuffle(D.quiz.filter(q=>sp[1]?q[0]===sp[1]:ina(q[0]))).slice(0,sp[2]).forEach(q=>part.push({type:'q',pts:sp[3],q,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]}))),sel:null}))}
+      if(sp[0]==='q'){shuffle(qpool().filter(q=>sp[1]?q[0]===sp[1]:ina(q[0]))).slice(0,sp[2]).forEach(q=>part.push({type:'q',pts:sp[3],q,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]}))),sel:null}))}
       else if(sp[0]==='c'){const gp=shuffle(G.filter(g=>sp[1]?sp[1].includes(g[1])&&(!T1M||g[0]==='T1'):ina(g[0])));for(let i=0;i<sp[2];i++){const g=gp[i%gp.length];part.push({type:'c',pts:sp[3],g:g[2](),area:g[0],name:g[1],val:''})}}
       else if(sp[0]==='z'){shuffle(D.zu.filter(u=>(u.g||null)===sp[1])).slice(0,sp[2]).forEach(u=>part.push({type:'z',pts:sp[3],z:u,sel:u.rows.map(()=>null)}))}
       else if(sp[0]==='b'){const nA=b=>b[1].length+b[2].length;let sel=shuffle(D.buchungen).slice(0,sp[1]);if(sp[2]==='n'&&sp[3]){for(let t=0;t<800;t++){const c=shuffle(D.buchungen).slice(0,sp[1]);if(c.reduce((a,b)=>a+nA(b),0)===sp[3]){sel=c;break}}}sel.forEach(b=>{const need=[...b[1],...b[2]].map(x=>x[0]);const others=shuffle(Object.keys(D.konten).filter(x=>!need.includes(x))).slice(0,Math.max(3,8-need.length));part.push({type:'b',pts:sp[2]==='n'?nA(b):sp[2],b,list:shuffle([...need,...others]),place:{},pick:null,state:null,exam:true})})}
