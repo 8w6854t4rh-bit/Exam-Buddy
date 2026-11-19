@@ -1573,5 +1573,8 @@
 "Nettoverkaufspreis": "Net selling price",
 "Bruttoverkaufspreis": "Gross selling price",
 "{0} von {1} Feldern richtig": "{0} of {1} fields correct",
-"Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.": "Fill in all fields of the costing scheme. Every correct field earns points."
+"Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.": "Fill in all fields of the costing scheme. Every correct field earns points.",
+"Mehrere Antworten möglich": "Several answers possible",
+"Bitte bei jeder Frage mindestens eine Antwort ankreuzen": "Please tick at least one answer for each question",
+"Vier kurze Fragen. Daraus ergibt sich, mit welchen Übungen dein Plan vor allem arbeitet. Pro Frage kannst du mehrere Antworten ankreuzen.": "Four short questions. They decide which exercises your plan focuses on. You can tick several answers per question."
 }

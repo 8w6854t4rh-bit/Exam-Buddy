@@ -423,7 +423,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='67';
+const APPV='68';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -681,7 +681,9 @@ function setExam(d1,d2){const e=EXD();e.d1=d1||'';e.d2=d2||'';if(e.d2&&e.d1&&e.d
 const storiesOf=lf=>STORIES.map((s,i)=>({s,i})).filter(x=>new RegExp('Lernfeld '+lf.slice(2)+'$').test(x.s.tag)).map(x=>x.i);
 function lfMastery(lf){const M=LFM[lf],idx=D.karten.map((c,i)=>i).filter(i=>M.top.some(([a,t])=>D.karten[i][0]===a&&D.karten[i][1]===t));
   const seen=idx.some(i=>S.box[i]);return{seen,m:idx.length?idx.reduce((n,i)=>n+Math.min(S.box[i]||0,2)/2,0)/idx.length:0}}
-function styleW(a){const c={b:0,p:0,k:0,q:0};(a.lt||[]).forEach(x=>{if(x)c[x]++});const ext=a.sty||[];let tot=0;
+/* Lerntyp: je Frage sind mehrere Antworten möglich; jede Frage zählt insgesamt einmal, geteilt auf die gewählten Antworten */
+const ltArr=x=>Array.isArray(x)?x:(x?[x]:[]);
+function styleW(a){const c={b:0,p:0,k:0,q:0};(a.lt||[]).forEach(x=>{const r=ltArr(x);r.forEach(k=>{c[k]+=1/r.length})});const ext=a.sty||[];let tot=0;
   for(const k in c){c[k]=0.12+c[k]+(ext.includes(k)?1.2:0);tot+=c[k]}for(const k in c)c[k]/=tot;return c}
 function lfWeights(a){const w={};for(const lf of LFK){const M=LFM[lf];let x=5-(a.r[lf]||2);const lm=lfMastery(lf);if(lm.seen)x*=1.25-0.5*lm.m;
   if(a.chk&&a.chk[M.g]){const[ok,n]=a.chk[M.g];x*=1.3-0.6*(ok/n)}x*=M.g==='WiSo'?0.7:1;if(lf==='LF9')x*=1.15;w[lf]=x}return w}
@@ -859,11 +861,11 @@ function vWizard(){
       ['KUP','FF','WiSo'].map(g=>$('div',{class:'sheet'},$('div',{class:'tag',text:GN[g]}),LFK.filter(k=>LFM[k].g===g).map(k=>$('div',{class:'rrow'},$('div',{},$('b',{text:LFM[k].n}),$('span',{class:'muted',text:' '+LFM[k].t})),
         $('div',{class:'rate',role:'group','aria-label':LFM[k].n},RATE.map((n,i)=>$('button',{class:'r'+(i+1),'aria-pressed':String(a.r[k]===i+1),onclick:()=>{a.r[k]=i+1;vWizard()}},n))))))),
       nav(LFK.every(k=>a.r[k]),LFK.every(k=>a.r[k])?'Weiter':'Bitte alle Lernfelder einschätzen')]}
-  else if(W.step===2){
-    body=[$('p',{class:'muted',style:'margin:0',text:'Vier kurze Fragen. Daraus ergibt sich, mit welchen Übungen dein Plan vor allem arbeitet.'}),
-      LTQ.map(([q,opts],qi)=>$('div',{class:'sheet'},$('b',{text:(qi+1)+'. '+q}),opts.map(([t,k])=>$('button',{class:'opt'+(a.lt[qi]===k?' sel':''),'aria-pressed':String(a.lt[qi]===k),onclick:()=>{a.lt[qi]=k;vWizard()}},t)))),
+  else if(W.step===2){a.lt=LTQ.map((_,i)=>ltArr(a.lt[i]));
+    body=[$('p',{class:'muted',style:'margin:0',text:'Vier kurze Fragen. Daraus ergibt sich, mit welchen Übungen dein Plan vor allem arbeitet. Pro Frage kannst du mehrere Antworten ankreuzen.'}),
+      LTQ.map(([q,opts],qi)=>$('div',{class:'sheet',role:'group','aria-label':q},$('b',{text:(qi+1)+'. '+q}),$('span',{class:'muted',style:'font-size:13px',text:'Mehrere Antworten möglich'}),opts.map(([t,k])=>{const on=a.lt[qi].includes(k);return $('button',{class:'opt'+(on?' sel':''),'aria-pressed':String(on),onclick:()=>{a.lt[qi]=on?a.lt[qi].filter(x=>x!==k):a.lt[qi].concat(k);const y=SCR.scrollTop;vWizard();SCR.scrollTo(0,y)}},t)}))),
       $('div',{class:'sheet'},$('b',{text:'Was magst du außerdem besonders? (optional)'}),$('div',{class:'row'},Object.entries(STY).map(([k,[n,d]])=>chip(a.sty.includes(k),n+': '+d,()=>{a.sty=a.sty.includes(k)?a.sty.filter(x=>x!==k):a.sty.concat(k);vWizard()})))),
-      nav(a.lt.every(Boolean),a.lt.every(Boolean)?'Weiter':'Bitte alle vier Fragen beantworten')]}
+      nav(a.lt.every(x=>ltArr(x).length>0),a.lt.every(x=>ltArr(x).length>0)?'Weiter':'Bitte bei jeder Frage mindestens eine Antwort ankreuzen')]}
   else if(W.step===3){
     if(!W.ck&&!a.chk)return R(head,$('div',{class:'sheet'},$('b',{text:'Kurzer Einstufungstest'}),
         $('p',{text:T1M?'9 Ankreuzfragen aus Teil 1. Das dauert etwa drei Minuten und macht den Plan genauer. Du kannst ihn auch überspringen.':'9 Ankreuzfragen, je 3 aus jedem Prüfungsbereich. Das dauert etwa drei Minuten und macht den Plan genauer. Du kannst ihn auch überspringen.'}),
