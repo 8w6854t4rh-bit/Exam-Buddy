@@ -418,6 +418,30 @@ details[open] summary{margin-bottom:10px}
 .pgo{align-self:stretch;margin-top:12px;background:var(--accent);color:var(--on);border-radius:12px;padding:12px 14px;text-align:center;font-weight:700;font-size:16px}
 .pick:active .pgo{filter:brightness(.92)}
 @media (min-width:560px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kc{font-size:13.5px}}
+/* Tablet und großer Bildschirm: Inhalt nutzt die Breite. Handy (hoch und quer) bleibt unverändert */
+@media (min-width:700px) and (min-height:560px){
+ main,.top>div,.tabs div,.pbi{max-width:1180px}
+ main{padding:20px 28px 28px;gap:16px}
+ .comic{gap:18px}
+}
+/* Querformat (iPad quer, Computer): Navigation als Leiste links, Rechnen mit Taschenrechner daneben */
+@media (min-width:900px) and (min-height:560px) and (orientation:landscape){
+ body{display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+ #scr{grid-column:2;grid-row:1}
+ #pbar{grid-column:2;grid-row:2}
+ .tabs{grid-column:1;grid-row:1/3;width:88px;border-top:0;border-right:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 14px) 0 env(safe-area-inset-bottom) env(safe-area-inset-left);background:linear-gradient(var(--accent) 0 env(safe-area-inset-top),var(--surface) 0)}
+ .tabs div{display:flex;flex-direction:column;gap:6px;max-width:none}
+ .tabs a{padding:10px 2px}
+ body[data-mode="rechnen"] main,body[data-mode="pruefung"] main{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);align-items:start}
+ body[data-mode="pruefung"] main{align-items:stretch;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .gauge{max-width:76px}
+ body[data-mode="rechnen"] main>*,body[data-mode="pruefung"] main>*{grid-column:1/-1}
+ body[data-mode="rechnen"] main>.sheet:has(+.calc){grid-column:1}
+ body[data-mode="rechnen"] main>.calc{grid-column:2;position:sticky;top:12px}
+ body[data-mode="pruefung"] main>.pick{grid-column:auto}
+ body[data-mode="pruefung"] main>.pick>.pgo{margin-top:auto}
+ body[data-mode="pruefung"] main>.pick>:nth-last-child(2){margin-bottom:12px}
+}
 </style>
 </head>
 <body data-mode="start">
@@ -429,7 +453,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='68';
+const APPV='69';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
