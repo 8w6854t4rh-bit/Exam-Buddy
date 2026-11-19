@@ -1576,5 +1576,10 @@
 "Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.": "Fill in all fields of the costing scheme. Every correct field earns points.",
 "Mehrere Antworten möglich": "Several answers possible",
 "Bitte bei jeder Frage mindestens eine Antwort ankreuzen": "Please tick at least one answer for each question",
-"Vier kurze Fragen. Daraus ergibt sich, mit welchen Übungen dein Plan vor allem arbeitet. Pro Frage kannst du mehrere Antworten ankreuzen.": "Four short questions. They decide which exercises your plan focuses on. You can tick several answers per question."
+"Vier kurze Fragen. Daraus ergibt sich, mit welchen Übungen dein Plan vor allem arbeitet. Pro Frage kannst du mehrere Antworten ankreuzen.": "Four short questions. They decide which exercises your plan focuses on. You can tick several answers per question.",
+"Alle Beträge auf 2 Nachkommastellen runden.": "Round all amounts to 2 decimal places.",
+"Beträge und Prozentsatz auf 2 Nachkommastellen runden.": "Round the amounts and the percentage to 2 decimal places.",
+"Ergebnis als ganze Zahl angeben, ohne Nachkommastellen.": "Give the result as a whole number, without decimal places.",
+"Ergebnis auf {0} Nachkommastelle runden.": "Round the result to {0} decimal place.",
+"Ergebnis auf {0} Nachkommastellen runden.": "Round the result to {0} decimal places."
 }

@@ -418,6 +418,8 @@ details[open] summary{margin-bottom:10px}
 .pgo{align-self:stretch;margin-top:12px;background:var(--accent);color:var(--on);border-radius:12px;padding:12px 14px;text-align:center;font-weight:700;font-size:16px}
 .pick:active .pgo{filter:brightness(.92)}
 @media (min-width:560px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kc{font-size:13.5px}}
+.rund{margin:-4px 0 0;font-size:14px;font-weight:600;color:var(--muted)}
+.rund:before{content:'≈ ';color:var(--accent)}
 /* Tablet und großer Bildschirm: Inhalt nutzt die Breite. Handy (hoch und quer) bleibt unverändert */
 @media (min-width:700px) and (min-height:560px){
  main,.top>div,.tabs div,.pbi{max-width:1180px}
@@ -453,7 +455,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='69';
+const APPV='70';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -2067,8 +2069,14 @@ const UI_EN={
 "Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.": "Fill in all fields of the costing scheme. Every correct field earns points.",
 "Mehrere Antworten möglich": "Several answers possible",
 "Bitte bei jeder Frage mindestens eine Antwort ankreuzen": "Please tick at least one answer for each question",
-"Vier kurze Fragen. Daraus ergibt sich, mit welchen Übungen dein Plan vor allem arbeitet. Pro Frage kannst du mehrere Antworten ankreuzen.": "Four short questions. They decide which exercises your plan focuses on. You can tick several answers per question."
-};
+"Vier kurze Fragen. Daraus ergibt sich, mit welchen Übungen dein Plan vor allem arbeitet. Pro Frage kannst du mehrere Antworten ankreuzen.": "Four short questions. They decide which exercises your plan focuses on. You can tick several answers per question.",
+"Alle Beträge auf 2 Nachkommastellen runden.": "Round all amounts to 2 decimal places.",
+"Beträge und Prozentsatz auf 2 Nachkommastellen runden.": "Round the amounts and the percentage to 2 decimal places.",
+"Ergebnis als ganze Zahl angeben, ohne Nachkommastellen.": "Give the result as a whole number, without decimal places.",
+"Ergebnis auf {0} Nachkommastelle runden.": "Round the result to {0} decimal place.",
+"Ergebnis auf {0} Nachkommastellen runden.": "Round the result to {0} decimal places."
+}
+;
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
   konten:Object.fromEntries(Object.entries(d.konten).map(([k,v])=>[k,e.konten[k]||v])),
@@ -2798,6 +2806,12 @@ G.push(
  ['T1','Energiekosten nach Fläche verteilen',()=>{const k=ri(20,200)*100,f1=ri(2,9)*50,f2=ri(2,9)*50,f3=ri(2,9)*50,a=r2(k*f1/(f1+f2+f3));return{t:`Die Energiekosten betragen im Jahr ${eur(k)} €. Die drei Abteilungen haben ${f1} m², ${f2} m² und ${f3} m² Fläche. Welcher Betrag entfällt auf die Abteilung mit ${f1} m²?`,a,u:'€',s:`Gesamtfläche = ${f1+f2+f3} m²\nAnteil = ${eur(k)} × ${f1} / ${f1+f2+f3} = ${eur(a)} €`}}]);
 const T1X=['Kalkulationszuschlag','Handelsspanne','Angebotspreis mit Kalkulationsfaktor','Bezugspreis im Angebotsvergleich','Lagerdauer','Lagerzinsen'];
 if(T1M)G.push(...G.filter(g=>g[0]==='KUP'&&T1X.includes(g[1])).map(g=>['T1',g[1],g[2]]));
+/* Rundungshinweis unter jeder Rechenaufgabe, passend zur Genauigkeit, mit der geprüft wird */
+function rundTxt(g){if(!g||/Nachkommastelle/.test(g.t||''))return null;
+  if(g.tab)return g.tab.some(r=>r.pi)?'Beträge und Prozentsatz auf 2 Nachkommastellen runden.':'Alle Beträge auf 2 Nachkommastellen runden.';
+  const d=g.d===undefined?2:g.d;
+  return d===0?'Ergebnis als ganze Zahl angeben, ohne Nachkommastellen.':d===1?'Ergebnis auf 1 Nachkommastelle runden.':'Ergebnis auf '+d+' Nachkommastellen runden.'}
+const rundP=g=>{const t=rundTxt(g);return t?$('p',{class:'rund',text:t}):null};
 let C=null;
 /* iPhone-Zifferntastatur hat kein Minus: Vorzeichen-Taste */
 const pmBtn=(id,cb)=>$('button',{class:'pmb','aria-label':'Vorzeichen wechseln',onclick:()=>{const el=document.getElementById(id);let v=el.value.trim();v=/^[-−]/.test(v)?v.replace(/^[-−]\s*/,''):'−'+v;el.value=v;if(cb)cb(v)}},'±');
@@ -2819,7 +2833,7 @@ function vRechnen(){
     const ok=Math.abs(v-C.a)<=(d===0?0.5:d===1?0.051:d===4?0.00011:0.011);C.state=ok?'ok':'no';S.calc[1]++;if(ok)S.calc[0]++;upd('cm',C.name,ok,3);save();vRechnen()};
   R(areaChips(()=>{F.topic='Alle';C=null;vRechnen()}),
     $('div',{class:'row'},$('select',{id:'ctype','aria-label':'Aufgabentyp',onchange:e=>{F.topic=e.target.value;C=null;vRechnen()}},types.map(t=>$('option',{value:t,selected:t===F.topic?'':null},t==='Alle'?'Alle Aufgabentypen':t)))),
-    $('div',{class:'sheet'},$('div',{class:'tag',text:AN(C.area)+' · '+C.name}),$('p',{style:'white-space:pre-line;font-size:17px',text:C.t}),
+    $('div',{class:'sheet'},$('div',{class:'tag',text:AN(C.area)+' · '+C.name}),$('p',{style:'white-space:pre-line;font-size:17px',text:C.t}),rundP(C),
       C.tab&&C.state!=='show'?kSchema(C,!!C.state):null,
       C.tab&&!C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{const r=kCheck(C);if(!C.tv.some(x=>String(x).trim()!=='')){document.querySelector('.kin')&&document.querySelector('.kin').focus();return}
         const ok=r.res[C.ai].v&&(C.tab[C.ai].pi?r.res[C.ai].p:true);C.score=r.ok+' von '+r.n;C.state=ok?'ok':'no';S.calc[1]++;if(ok)S.calc[0]++;upd('cm',C.name,ok,3);save();vRechnen()}},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')):null,
@@ -3318,8 +3332,8 @@ function vExam(){exSave();
   const it=E.items[E.i],left=E.end-(E.pause||Date.now()),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
   let body;
   if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),it.o.map((o,i)=>$('button',{class:'opt'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t))];
-  else if(it.type==='c'&&it.g.tab)body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),$('p',{class:'muted',style:'margin:0',text:'Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.'}),kSchema(it,false),calcPad(it)];
-  else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),
+  else if(it.type==='c'&&it.g.tab)body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),rundP(it.g),$('p',{class:'muted',style:'margin:0',text:'Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.'}),kSchema(it,false),calcPad(it)];
+  else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),rundP(it.g),
     $('input',{type:'text',id:'exans',inputmode:'decimal',autocomplete:'off',value:it.val,placeholder:'Ergebnis'+(it.g.u?' in '+it.g.u:''),'aria-label':'Dein Ergebnis',oninput:e=>{it.val=e.target.value}}),it.g.neg?pmBtn('exans',v=>{it.val=v}):null,calcPad(it)];
   else if(it.type==='o')body=[$('p',{class:'qt',text:it.c[2]}),
     $('textarea',{id:'exans',rows:'5','aria-label':'Deine Antwort',placeholder:'Antwort in Stichpunkten',oninput:e=>{it.val=e.target.value}},it.val),
@@ -3617,7 +3631,7 @@ function vGemeinsam(){
       const bs=(d.optionen||[]).map((o,i)=>$('button',{class:'opt',onclick:()=>{if(done)return;done=true;bs.forEach((b,j)=>{if(j===d.richtig)b.classList.add('ok');else if(j===i)b.classList.add('no')});ex.hidden=false}},o));
       return $('div',{class:'sheet'},$('p',{class:'qt',text:d.frage}),bs,ex,hide(x))}
     if(KG==='rechnen'){const inp=$('input',{type:'text',inputmode:'decimal',placeholder:'Ergebnis'+(d.einheit?' in '+d.einheit:''),'aria-label':'Dein Ergebnis'}),fb=$('p',{hidden:'',style:'margin:0;white-space:pre-line'});
-      return $('div',{class:'sheet'},$('p',{style:'white-space:pre-line',text:d.aufgabe}),inp,$('button',{onclick:()=>{const v=num(inp.value),ok=!isNaN(v)&&Math.abs(v-Number(d.ergebnis))<=0.011;fb.hidden=false;fb.className=ok?'note ok':'note';fb.textContent=(ok?'Richtig. ':'Leider nicht. Richtig ist '+eur(Number(d.ergebnis),2)+(d.einheit?' '+d.einheit:'')+'. ')+(d.rechenweg||'')}},'Prüfen'),fb,hide(x))}
+      return $('div',{class:'sheet'},$('p',{style:'white-space:pre-line',text:d.aufgabe}),$('p',{class:'rund',text:'Ergebnis auf 2 Nachkommastellen runden.'}),inp,$('button',{onclick:()=>{const v=num(inp.value),ok=!isNaN(v)&&Math.abs(v-Number(d.ergebnis))<=0.011;fb.hidden=false;fb.className=ok?'note ok':'note';fb.textContent=(ok?'Richtig. ':'Leider nicht. Richtig ist '+eur(Number(d.ergebnis),2)+(d.einheit?' '+d.einheit:'')+'. ')+(d.rechenweg||'')}},'Prüfen'),fb,hide(x))}
     if(KG==='zuordnen'){const pr=d.paare||[],opts=shuffle(pr.map(p=>p[1])),fb=$('p',{hidden:'',style:'margin:0'});
       const sels=pr.map(p=>$('select',{'aria-label':p[0]},$('option',{value:'',text:'– bitte wählen –'}),opts.map(o=>$('option',{value:o,text:o}))));
       return $('div',{class:'sheet'},$('p',{class:'qt',text:d.aufgabe}),pr.map((p,i)=>$('label',{class:'zrow'},$('span',{text:p[0]}),sels[i])),
