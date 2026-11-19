@@ -452,7 +452,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='74';
+const APPV='75';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -908,7 +908,7 @@ function vWizard(){
     return R(head,$('p',{class:'muted',text:'Frage '+(ck.i+1)+' von '+ck.list.length+' · '+NAMES[it.q[0]]}),$('div',{class:'meter'},$('i',{style:'width:'+(ck.i/ck.list.length*100)+'%'})),
       $('div',{class:'sheet'},$('p',{class:'qt',text:it.q[1]}),
         it.o.map((o,i)=>$('button',{class:'opt'+(done?(o.ok?' right':(i===it.sel?' wrong':'')):''),disabled:done?'':null,onclick:()=>{it.sel=i;vWizard()}},o.t)),
-        done?$('div',{class:'note '+(it.o[it.sel].ok?'ok':'no')},$('b',{text:it.o[it.sel].ok?'Richtig. ':'Leider falsch. '}),it.q[4]):null,
+        done?$('div',{class:'note '+(it.o[it.sel].ok?'ok':'no')},$('b',{text:it.o[it.sel].ok?'Richtig. ':'Leider falsch. '}),it.q[4]):null,!done&&qCalc(it.q)?calcPad(it,1):null,
       done?repLink(it.q[1]+'\nRichtige Antwort laut App: '+it.q[2][it.q[3]]):null,
         done?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{if(ck.i+1<ck.list.length){ck.i++}else{const r={};ck.list.forEach(x=>{const g=x.q[0];r[g]=r[g]||[0,0];r[g][1]++;if(x.o[x.sel].ok)r[g][0]++});a.chk=r;W.ck=null}vWizard()}},ck.i+1<ck.list.length?'Weiter':'Auswerten')):null))}
   else{const sw=styleW(a),top=Object.entries(sw).sort((x,y)=>y[1]-x[1]),w=lfWeights(a),foc=LFK.slice().sort((x,y)=>w[y]-w[x]);
@@ -1067,7 +1067,7 @@ function vQuiz(){
     $('div',{class:'meter'},$('i',{style:'width:'+(Q.n/Q.list.length*100)+'%'})),
     $('div',{class:'sheet'},$('p',{class:'qt',text:it.q[1]}),
       it.o.map((o,i)=>$('button',{class:'opt'+(done?(o.ok?' right':(i===it.sel?' wrong':'')):''),disabled:done?'':null,onclick:()=>{it.sel=i;S.quiz[1]++;if(o.ok){S.quiz[0]++;Q.right++}upd('qm',D.quiz.indexOf(it.q),o.ok,2);save();vQuiz()}},o.t)),
-      done?$('div',{class:'note '+(it.o[it.sel].ok?'ok':'no')},$('b',{text:it.o[it.sel].ok?'Richtig. ':'Leider falsch. '}),it.q[4]):null,
+      done?$('div',{class:'note '+(it.o[it.sel].ok?'ok':'no')},$('b',{text:it.o[it.sel].ok?'Richtig. ':'Leider falsch. '}),it.q[4]):null,!done&&qCalc(it.q)?calcPad(it,1):null,
       done?repLink(it.q[1]+'\nRichtige Antwort laut App: '+it.q[2][it.q[3]]):null,
       done?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{Q.n++;vQuiz()}},Q.n+1<Q.list.length?'Weiter':'Auswertung')):null));
 }
@@ -1148,7 +1148,9 @@ function cEval(src){let i=0;const t=src.replace(/\s/g,'');
   const ex=()=>{let v=term().v;while(peek()==='+'||peek()==='−'){const o=t[i++];const r=term();const w=r.p?v*r.v:r.v;v=o==='+'?v+w:v-w}return v};
   const v=ex();if(i<t.length)throw 0;return v}
 const pe=e=>e.replace(/\d+(,\d*)?/g,m=>{const[a,b]=m.split(',');return a.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+(b!==undefined?','+b:'')}).replace(/([+×÷])/g,' $1 ').replace(/(\d|\)|%)−/g,'$1 − ');
-function calcPad(host){host=host||C;
+/* Rechenfragen im Quiz und in Prüfungen: Taschenrechner zum Aufklappen (in der IHK-Prüfung ist ein Taschenrechner erlaubt) */
+const qCalc=q=>/\d/.test(q[1])&&q[2].filter(o=>/\d/.test(o)).length>=2;
+function calcPad(host,quiz){host=host||C;
   const K=host.calc||(host.calc={e:'',tape:[],done:false});
   const disp=$('div',{class:'cdisp','aria-live':'polite'}),prev=$('div',{class:'cprev'}),tape=$('div',{class:'ctape'});
   const ops='+−×÷';
@@ -1169,10 +1171,10 @@ function calcPad(host){host=host||C;
     key('1',()=>ins('1')),key('2',()=>ins('2')),key('3',()=>ins('3')),key('−',()=>ins('−'),'op'),
     key('%',()=>ins('%'),'fn'),key('0',()=>ins('0')),key(',',()=>ins(',')),key('+',()=>ins('+'),'op'),
     key('=',eq,'eq'));
-  const open=S.calcOpen!==false;
+  const open=quiz?S.qcalcOpen===true:S.calcOpen!==false;
   const body=$('div',{class:'cbody',hidden:open?null:''},$('div',{class:'cscreen'},prev,disp),pad,$('div',{class:'ctapew'},$('div',{class:'tag',text:'Verlauf dieser Aufgabe'}),tape));
   const box=$('div',{class:'sheet calc'},
-    $('button',{class:'chead','aria-expanded':String(open),onclick:e=>{const o=body.hidden;body.hidden=!o;e.currentTarget.setAttribute('aria-expanded',String(o));S.calcOpen=o;save()}},$('b',{text:'Taschenrechner'}),$('span',{class:'muted',text:host===C?'Schmierzettel, wird bei jeder neuen Aufgabe geleert':'Schmierzettel nur für diese Teilaufgabe'})),body);
+    $('button',{class:'chead','aria-expanded':String(open),onclick:e=>{const o=body.hidden;body.hidden=!o;e.currentTarget.setAttribute('aria-expanded',String(o));if(quiz)S.qcalcOpen=o;else S.calcOpen=o;save()}},$('b',{text:'Taschenrechner'}),$('span',{class:'muted',text:quiz?'Für Rechenfragen, wie in der Prüfung erlaubt':host===C?'Schmierzettel, wird bei jeder neuen Aufgabe geleert':'Schmierzettel nur für diese Teilaufgabe'})),body);
   show();return box}
 /* Teil 1: eigene Aufgabentypen plus passende Typen aus Teil 2 (Kalkulation, Lager) */
 G.push(
@@ -1715,7 +1717,7 @@ function vExam(){exSave();
       PV?kiGradeBox():null,$('h2',{text:'Auswertung'}),$('div',{class:'sheet'},rows));return}
   const it=E.items[E.i],left=E.end-(E.pause||Date.now()),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
   let body;
-  if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),it.o.map((o,i)=>$('button',{class:'opt'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t))];
+  if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),it.o.map((o,i)=>$('button',{class:'opt'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t)),qCalc(it.q)?calcPad(it,1):null];
   else if(it.type==='c'&&it.g.tab)body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),rundP(it.g),$('p',{class:'muted',style:'margin:0',text:'Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.'}),kSchema(it,false),calcPad(it)];
   else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),rundP(it.g),
     $('input',{type:'text',id:'exans',inputmode:'decimal',autocomplete:'off',value:it.val,placeholder:'Ergebnis'+(it.g.u?' in '+it.g.u:''),'aria-label':'Dein Ergebnis',oninput:e=>{it.val=e.target.value}}),it.g.neg?pmBtn('exans',v=>{it.val=v}):null,calcPad(it)];

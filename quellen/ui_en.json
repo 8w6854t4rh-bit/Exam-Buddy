@@ -1582,5 +1582,6 @@
 "Beträge und Prozentsatz auf 2 Nachkommastellen runden.": "Round the amounts and the percentage to 2 decimal places.",
 "Ergebnis als ganze Zahl angeben, ohne Nachkommastellen.": "Give the result as a whole number, without decimal places.",
 "Ergebnis auf {0} Nachkommastelle runden.": "Round the result to {0} decimal place.",
-"Ergebnis auf {0} Nachkommastellen runden.": "Round the result to {0} decimal places."
+"Ergebnis auf {0} Nachkommastellen runden.": "Round the result to {0} decimal places.",
+"Für Rechenfragen, wie in der Prüfung erlaubt": "For calculation questions, as allowed in the exam"
 }
