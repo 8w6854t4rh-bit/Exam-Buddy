@@ -25,7 +25,7 @@ Code-Grundbausteine in `app.html`: `$()` baut Elemente, `R()` rendert in `#app`,
 ## Fachliche Festlegungen
 
 - Wirtschaftlicher Totalschaden: Reparaturkosten > Wiederbeschaffungswert − Restwert. Die Kasko-Besonderheit steht nur im Wissen, nicht in den Aufgaben.
-- Buchungssätze: Punkte = Anzahl der Konten (IHK-Stil), Teilpunkte je richtigem Konto, Abzug für falsche Konten.
+- Buchungssätze in Prüfungen wie im IHK-Lösungsschlüssel: je richtigem Soll- bzw. Habeneintrag (Konto und Betrag) 1 Punkt, Punkte = Anzahl der Einträge. Falsche Einträge geben 0 Punkte, nur Einträge über die Anzahl hinaus ziehen je 1 Punkt ab (`bHits`).
 - Quiz nur mit Aufgaben, die im Kopf lösbar sind. Rechenlastige Fragen gehören in den Rechnen-Bereich. Bestehende Quizfragen dieser Art werden über `QRECH` (Positionen in `D.quiz`) aus Quiz und Prüfungen herausgenommen, nicht gelöscht.
 - Konten immer mit Namen nennen („7000 VAK Neuwagen an 3000 Bestand Neuwagen“), nie nur die Nummer. Die Azubis müssen den Kontenrahmen nicht auswendig können.
 - Handelskalkulation vorwärts, rückwärts und Differenzkalkulation werden wie in der IHK-Prüfung im Kalkulationsschema gelöst (`tab` im Generator, `kSchema`/`kCheck` in `app.html`): Bezeichnungen und Prozentsätze sind vorgegeben, jedes Euro-Feld wird geprüft (Toleranz 5 Cent), in der Prüfung gibt es Punkte anteilig je richtigem Feld.
