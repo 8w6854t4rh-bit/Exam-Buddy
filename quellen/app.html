@@ -452,7 +452,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='73';
+const APPV='74';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1673,8 +1673,8 @@ function exOk(it){if(it.type==='z')return zHits(it)===it.z.rows.length;if(it.typ
   if(it.type==='o')return it.self!==null&&it.self>=it.pts;
   const want=n=>it.b[n].map(x=>x[0]).sort().join(),got=c=>Object.keys(it.place).filter(k=>it.place[k]===c).sort().join();return want(1)===got('S')&&want(2)===got('H')}
 /* Buchen wie im IHK-Lösungsschlüssel: je richtigem Soll- bzw. Habeneintrag (Konto und Betrag) 1 Punkt.
-   Ein falscher Eintrag bringt einfach 0 Punkte. Nur wer mehr Einträge setzt, als der Buchungssatz hat, verliert je überzähligem Eintrag einen Punkt (sonst könnte man alle Konten auf gut Glück setzen). */
-const bHits=it=>{const all=[...it.b[1].map(x=>[x[0],'S']),...it.b[2].map(x=>[x[0],'H'])];const hit=all.filter(([k,c])=>it.place[k]===c).length,extra=Math.max(0,Object.keys(it.place).length-all.length);return Math.max(0,hit-extra)/all.length};
+   Ein falscher Eintrag bringt einfach 0 Punkte. Ein Eintrag zu viel bleibt ohne Abzug. Ab dem zweiten überzähligen Eintrag kostet jeder einen Punkt (sonst könnte man alle Konten auf gut Glück setzen). */
+const bHits=it=>{const all=[...it.b[1].map(x=>[x[0],'S']),...it.b[2].map(x=>[x[0],'H'])];const hit=all.filter(([k,c])=>it.place[k]===c).length,extra=Math.max(0,Object.keys(it.place).length-all.length-1);return Math.max(0,hit-extra)/all.length};
 const exPts=it=>it.type==='o'?(it.self||0):it.type==='z'?it.pts*zHits(it)/it.z.rows.length:it.type==='b'?it.pts*bHits(it):it.type==='c'&&it.g.tab?(()=>{const r=kCheck(it);return it.pts*r.ok/r.n})():(exOk(it)?it.pts:0);
 function scoreExam(){E.score=E.items.reduce((n,it)=>n+exPts(it),0);E.pct=Math.min(100,Math.round(E.score));const h={k:E.k,pct:E.pct,note:note(E.pct)[0],d:E.d};
   S.exams=[h,...(S.exams||[]).filter(x=>x.d!==E.d)].slice(0,6);save()}
