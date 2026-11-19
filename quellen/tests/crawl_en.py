@@ -69,7 +69,10 @@ with sync_playwright() as p:
         for rep in range(3):
             pg.evaluate(f"F.area='Alle';F.topic=G[{i}][1];C=null;vRechnen()"); grab(pg,'calc')
             pg.click("button:has-text('Show solution')"); grab(pg,'calcsol')
-        pg.evaluate(f"C=null;vRechnen()"); pg.fill("#ans","1"); pg.click("main button.primary:has-text('Check')"); grab(pg,'calcno')
+        pg.evaluate(f"C=null;vRechnen()")
+        if pg.locator('#ans').count(): pg.fill("#ans","1")
+        else: pg.locator('.kin').first.fill('1')
+        pg.click("main button.primary:has-text('Check')"); grab(pg,'calcno')
     # calc pad
     pg.evaluate("C=null;vRechnen()")
     for k in ["1","+","2","="]: pg.locator(f".cpad button[aria-label='{k}']").click()

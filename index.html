@@ -362,6 +362,10 @@ select,input[type=text],input[type=search]{border:1px solid var(--line);backgrou
 .opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 16%,var(--surface))}
 .note{border-left:4px solid var(--accent);background:var(--raise);padding:10px 12px;border-radius:0 10px 10px 0;font-size:15px}
 .note.ok{border-color:var(--good)} .note.no{border-color:var(--bad)}
+.ksch{width:100%;border-collapse:collapse;font-size:15px;margin:4px 0}.ksch th,.ksch td{border:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:middle}
+.ksch thead th{font-size:13px;font-weight:700;background:var(--raise)}.ksch tbody th{font-weight:600;width:42%}.ksch td.kp{width:21%;white-space:nowrap;font-variant-numeric:tabular-nums}.ksch td.kp .kin{padding:6px 4px;text-align:center}
+.ksch tr.kmain th{font-weight:800}.kin{width:100%;box-sizing:border-box;min-height:40px;padding:6px 8px;font:inherit;font-variant-numeric:tabular-nums;text-align:right;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg,inherit)}
+.kin.ok{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}.kin.no{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}.kcell{display:flex;flex-direction:column;gap:2px}.kwant{font-size:12.5px;font-weight:700;color:var(--good);text-align:right}
 .steps{font-family:var(--mono);font-size:13.5px;white-space:pre-wrap;overflow-x:auto}
 /* Buchen: T-Konto */
 .tk{display:grid;grid-template-columns:1fr 1fr;border-radius:12px;position:relative}
@@ -425,7 +429,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='66';
+const APPV='67';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -2014,7 +2018,29 @@ const UI_EN={
 "Prüfung pausiert": "Exam paused",
 "Die Uhr ist angehalten. Die Aufgaben sind ausgeblendet, bis du weitermachst.": "The clock is stopped. The tasks are hidden until you continue.",
 "Weiter mit der Prüfung": "Continue the exam",
-"Pausiert: {0} Min": "Paused: {0} min"
+"Pausiert: {0} Min": "Paused: {0} min",
+"Kalkulationsschema": "Costing scheme",
+"% / €": "% / €",
+"€": "€",
+"Listeneinkaufspreis": "List purchase price",
+"Listeneinkaufspreis (höchstens)": "List purchase price (maximum)",
+"Lieferantenrabatt": "Supplier discount",
+"Zieleinkaufspreis": "Target purchase price",
+"Lieferantenskonto": "Supplier cash discount",
+"Bareinkaufspreis": "Cash purchase price",
+"Bezugskosten": "Delivery costs",
+"Bezugspreis": "Cost price (landed)",
+"Gemeinkosten (Handlungskosten)": "Overheads (handling costs)",
+"Selbstkosten": "Prime costs",
+"Gewinn": "Profit",
+"Barverkaufspreis": "Cash selling price",
+"Kundenskonto": "Customer cash discount",
+"Zielverkaufspreis": "Target selling price",
+"Kundenrabatt": "Customer discount",
+"Nettoverkaufspreis": "Net selling price",
+"Bruttoverkaufspreis": "Gross selling price",
+"{0} von {1} Feldern richtig": "{0} of {1} fields correct",
+"Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.": "Fill in all fields of the costing scheme. Every correct field earns points."
 };
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
@@ -2598,6 +2624,8 @@ function vQuiz(){
 }
 
 /* ---------- Rechnen ---------- */
+/* Kalkulationsschema wie in der IHK-Prüfung: Zeile = [Bezeichnung, Prozentangabe (Text), Betrag, Prozent selbst eintragen?, Prozentwert] */
+const KSCH=rows=>rows.map(r=>({l:r[0],p:r[1]||'',v:r[2],pi:!!r[3],pv:r[4]}));
 const G=[
  ['KUP','Skonto zurückrechnen',()=>{const n=ri(400,3000,100),p=pick([2,3]),b=r2(n*1.19),z=r2(b*(1-p/100));return{t:`Laut Kontoauszug wurden ${eur(z)} € überwiesen. Die Rechnung wurde mit ${p} % Skonto beglichen. Wie hoch war der Bruttorechnungsbetrag?`,a:b,u:'€',s:`Zahlbetrag = ${100-p} % des Rechnungsbetrags\n${eur(z)} / ${eur(1-p/100)} = ${eur(b)} €`}}],
  ['KUP','Angebotspreis mit Kalkulationsfaktor',()=>{const e=ri(60,400,5),f=pick([1.45,1.6,1.75,1.9255,2.1]),n=r2(e*f),b=r2(n*1.19);return{t:`Bezugspreis ${eur(e)} €, Kalkulationsfaktor (netto) ${f.toLocaleString('de-DE')}. Wie hoch ist der Brutto-Angebotspreis?`,a:b,u:'€',s:`Netto = ${eur(e)} × ${f.toLocaleString('de-DE')} = ${eur(n)} €\nBrutto = ${eur(n)} × 1,19 = ${eur(b)} €`}}],
@@ -2647,17 +2675,20 @@ G.push(
    if(ks)L.push(`+ Kundenskonto ${ks} % (im Hundert) = ${eur(ksa)} €`,`= Zielverkaufspreis ${eur(zvp)} €`);if(kr)L.push(`+ Kundenrabatt ${kr} % (im Hundert) = ${eur(kra)} €`);
    L.push(`= Listenverkaufspreis netto ${eur(lvp)} €`,`+ Umsatzsteuer 19 % = ${eur(ust)} €`,`= Bruttoverkaufspreis ${eur(br)} €`);
    const c=[`Lieferer: Listenpreis ${eur(lep)} € netto, ${r} % Rabatt`+(sk?`, ${sk} % Skonto`:'')+(bk?`, Fracht ${eur(bk)} € je Stück.`:', frei Haus.'),`Zuschlagssätze laut BAB: Neuwagen ${zn} %, Teile und Zubehör ${zt} %, Werkstatt ${zw} %.`,`Gewinnzuschlag ${g} %.`+(ks?` Kunden erhalten ${ks} % Skonto.`:'')+(kr?` Neukunden erhalten ${kr} % Rabatt.`:'')];
-   return{t:`Das Autohaus nimmt das Zubehörteil „${P[0]}“ ins Sortiment.\n${c.join('\n')}\nErmitteln Sie den Bruttoverkaufspreis.`,a:br,u:'€',s:L.join('\n')+(ks||kr?'\nKundenskonto und Kundenrabatt werden im Hundert gerechnet: Betrag ÷ (100 % − Satz).':'')}}],
+   const tab=KSCH([['Listeneinkaufspreis','',lep],['Lieferantenrabatt',r+' %',ra],['Zieleinkaufspreis','',zep],['Lieferantenskonto',sk+' %',ska],['Bareinkaufspreis','',bep],['Bezugskosten','',bk],['Bezugspreis','',bp],['Gemeinkosten (Handlungskosten)',zt+' %',gk],['Selbstkosten','',sko],['Gewinn',g+' %',ge],['Barverkaufspreis','',bvp],...(ks?[['Kundenskonto',ks+' %',ksa],['Zielverkaufspreis','',zvp]]:[]),['Kundenrabatt',kr+' %',kra],['Nettoverkaufspreis','',lvp],['Umsatzsteuer','19 %',ust],['Bruttoverkaufspreis','',br]]);
+   return{tab,ai:tab.length-1,t:`Das Autohaus nimmt das Zubehörteil „${P[0]}“ ins Sortiment.\n${c.join('\n')}\nErmitteln Sie den Bruttoverkaufspreis.`,a:br,u:'€',s:L.join('\n')+(ks||kr?'\nKundenskonto und Kundenrabatt werden im Hundert gerechnet: Betrag ÷ (100 % − Satz).':'')}}],
  ['KUP','Handelskalkulation rückwärts',()=>{const P=pick(['Dachbox','Kindersitz','Fahrradträger für die Anhängerkupplung','Satz Winterkompletträder']),br=ri(40,140)*10-1,r=pick([5,10,12,15]),sk=pick([0,2,3]),bk=pick([0,5,10,15]),zt=pick([15,20,25]),g=pick([5,10,12,15]),kr=pick([0,5,10]);
    const lvp=r2(br/1.19),ust=r2(br-lvp),kra=r2(lvp*kr/100),bvp=r2(lvp-kra),sko=r2(bvp/(1+g/100)),ge=r2(bvp-sko),bp=r2(sko/(1+zt/100)),gk=r2(sko-bp),bep=r2(bp-bk),zep=r2(bep/(1-sk/100)),ska=r2(zep-bep),lep=r2(zep/(1-r/100)),ra=r2(lep-zep);
    const L=[`Bruttoverkaufspreis = ${eur(br)} €`,`− Umsatzsteuer (÷ 1,19) = ${eur(ust)} €`,`= Listenverkaufspreis netto ${eur(lvp)} €`];if(kr)L.push(`− Kundenrabatt ${kr} % (vom Hundert) = ${eur(kra)} €`);
    L.push(`= Barverkaufspreis ${eur(bvp)} €`,`− Gewinn ${g} % (auf Hundert, ÷ ${(1+g/100).toLocaleString('de-DE')}) = ${eur(ge)} €`,`= Selbstkosten ${eur(sko)} €`,`− Gemeinkosten ${zt} % (auf Hundert, ÷ ${(1+zt/100).toLocaleString('de-DE')}) = ${eur(gk)} €`,`= Bezugspreis ${eur(bp)} €`);
    if(bk)L.push(`− Bezugskosten = ${eur(bk)} €`);L.push(`= Bareinkaufspreis ${eur(bep)} €`);if(sk)L.push(`+ Lieferskonto ${sk} % (im Hundert) = ${eur(ska)} €`,`= Zieleinkaufspreis ${eur(zep)} €`);L.push(`+ Lieferrabatt ${r} % (im Hundert) = ${eur(ra)} €`,`= höchster Listeneinkaufspreis ${eur(lep)} €`);
-   return{t:`Ein Mitbewerber verkauft das Zubehörteil „${P}“ für ${eur(br)} € brutto. Das Autohaus will denselben Preis verlangen`+(kr?` und Neukunden trotzdem ${kr} % Rabatt geben.`:'.')+`\nGemeinkostenzuschlag ${zt} %, Gewinnzuschlag ${g} %.`+(bk?` Bezugskosten ${eur(bk)} € je Stück.`:'')+`\nDer Lieferer gewährt ${r} % Rabatt`+(sk?` und ${sk} % Skonto.`:'.')+`\nWie hoch darf der Listeneinkaufspreis höchstens sein?`,a:lep,u:'€',s:L.join('\n')+'\nRückwärts kehren sich die Rechenwege um: Aus Aufschlägen auf Hundert werden Teilungen (÷ 1,12), aus Abzügen vom Hundert werden Teilungen im Hundert (÷ 0,85).'}}],
+   const tab=KSCH([['Listeneinkaufspreis (höchstens)','',lep],['Lieferantenrabatt',r+' %',ra],['Zieleinkaufspreis','',zep],['Lieferantenskonto',sk+' %',ska],['Bareinkaufspreis','',bep],['Bezugskosten','',bk],['Bezugspreis','',bp],['Gemeinkosten (Handlungskosten)',zt+' %',gk],['Selbstkosten','',sko],['Gewinn',g+' %',ge],['Barverkaufspreis','',bvp],['Kundenrabatt',kr+' %',kra],['Nettoverkaufspreis','',lvp],['Umsatzsteuer','19 %',ust],['Bruttoverkaufspreis','',br]]);
+   return{tab,ai:0,t:`Ein Mitbewerber verkauft das Zubehörteil „${P}“ für ${eur(br)} € brutto. Das Autohaus will denselben Preis verlangen`+(kr?` und Neukunden trotzdem ${kr} % Rabatt geben.`:'.')+`\nGemeinkostenzuschlag ${zt} %, Gewinnzuschlag ${g} %.`+(bk?` Bezugskosten ${eur(bk)} € je Stück.`:'')+`\nDer Lieferer gewährt ${r} % Rabatt`+(sk?` und ${sk} % Skonto.`:'.')+`\nWie hoch darf der Listeneinkaufspreis höchstens sein?`,a:lep,u:'€',s:L.join('\n')+'\nRückwärts kehren sich die Rechenwege um: Aus Aufschlägen auf Hundert werden Teilungen (÷ 1,12), aus Abzügen vom Hundert werden Teilungen im Hundert (÷ 0,85).'}}],
  ['KUP','Differenzkalkulation',()=>{for(;;){const P=pick(['Dachbox','Kindersitz','Satz Winterkompletträder','Wallbox']),lep=ri(200,900),r=pick([5,10,12]),sk=pick([0,2,3]),bk=pick([0,5,10]),zt=pick([15,20,25]),kr=pick([0,5,10]);
    const ra=r2(lep*r/100),zep=r2(lep-ra),ska=r2(zep*sk/100),bep=r2(zep-ska),bp=r2(bep+bk),gk=r2(bp*zt/100),sko=r2(bp+gk),br=Math.round(sko*(1+pick([6,8,10,12,15])/100)/(1-kr/100)*1.19/10)*10-1,lvp=r2(br/1.19),kra=r2(lvp*kr/100),bvp=r2(lvp-kra),ge=r2(bvp-sko);if(ge<=0)continue;const gp=r2(ge/sko*100);
    const L=[`Vorwärts: Listeneinkaufspreis ${eur(lep)} €`,`− Lieferrabatt ${r} % = ${eur(ra)} €`];if(sk)L.push(`− Lieferskonto ${sk} % = ${eur(ska)} €`);if(bk)L.push(`+ Bezugskosten = ${eur(bk)} €`);L.push(`= Bezugspreis ${eur(bp)} €`,`+ Gemeinkosten ${zt} % = ${eur(gk)} €`,`= Selbstkosten ${eur(sko)} €`,`Rückwärts: Bruttoverkaufspreis ${eur(br)} € ÷ 1,19 = ${eur(lvp)} €`);if(kr)L.push(`− Kundenrabatt ${kr} % = ${eur(kra)} €`);L.push(`= Barverkaufspreis ${eur(bvp)} €`,`Gewinn = ${eur(bvp)} − ${eur(sko)} = ${eur(ge)} € (${gp.toLocaleString('de-DE')} % der Selbstkosten)`);
-   return{t:`Der Hersteller schreibt für das Zubehörteil „${P}“ einen Verkaufspreis von ${eur(br)} € brutto vor`+(kr?`, Neukunden bekommen davon ${kr} % Rabatt.`:'.')+`\nEinkauf: Listenpreis ${eur(lep)} €, ${r} % Rabatt`+(sk?`, ${sk} % Skonto`:'')+(bk?`, Bezugskosten ${eur(bk)} €.`:'.')+` Gemeinkostenzuschlag ${zt} %.\nWie viel Euro Gewinn bleiben je Stück?`,a:ge,u:'€',s:L.join('\n')}}}],
+   const tab=KSCH([['Listeneinkaufspreis','',lep],['Lieferantenrabatt',r+' %',ra],['Zieleinkaufspreis','',zep],['Lieferantenskonto',sk+' %',ska],['Bareinkaufspreis','',bep],['Bezugskosten','',bk],['Bezugspreis','',bp],['Gemeinkosten (Handlungskosten)',zt+' %',gk],['Selbstkosten','',sko],['Gewinn','',ge,1,gp],['Barverkaufspreis','',bvp],['Kundenrabatt',kr+' %',kra],['Nettoverkaufspreis','',lvp],['Umsatzsteuer','19 %',r2(br-lvp)],['Bruttoverkaufspreis','',br]]);
+   return{tab,ai:9,t:`Der Hersteller schreibt für das Zubehörteil „${P}“ einen Verkaufspreis von ${eur(br)} € brutto vor`+(kr?`, Neukunden bekommen davon ${kr} % Rabatt.`:'.')+`\nEinkauf: Listenpreis ${eur(lep)} €, ${r} % Rabatt`+(sk?`, ${sk} % Skonto`:'')+(bk?`, Bezugskosten ${eur(bk)} €.`:'.')+` Gemeinkostenzuschlag ${zt} %.\nWie viel Euro Gewinn bleiben je Stück, und wie viel Prozent der Selbstkosten sind das?`,a:ge,u:'€',s:L.join('\n')}}}],
  ['T1','Meldebestand',()=>{const tv=ri(4,30),lz=ri(3,12),mb=ri(2,12)*10,a=tv*lz+mb;return{t:`Tagesverbrauch ${tv} Stück, Lieferzeit ${lz} Tage, Mindestbestand ${mb} Stück. Bei welchem Bestand muss nachbestellt werden (Meldebestand)?`,a,u:'Stück',d:0,s:`Meldebestand = Tagesverbrauch × Lieferzeit + Mindestbestand\n${tv} × ${lz} + ${mb} = ${a} Stück`}}],
  ['T1','Skonto oder Zahlungsziel',()=>{const p=pick([2,3]),z=pick([30,45,60]),f=pick([8,10,14]),a=r2(p*360/(z-f));return{t:`Zahlungsbedingung: ${z} Tage netto oder ${p} % Skonto bei Zahlung innerhalb von ${f} Tagen. Welchem Jahreszinssatz entspricht der Verzicht auf Skonto (Näherung, in Prozent)?`,a,u:'%',s:`Kreditzeitraum = ${z} − ${f} = ${z-f} Tage\n${p} % × 360 / ${z-f} = ${eur(a)} %\nLiegt der Bankzins darunter, lohnt sich Skonto auch mit Kredit.`}}],
  ['KUP','Lagerzinsen',()=>{const lb=ri(40,200)*1000,ld=pick([30,36,45,60,72,90]),z=pick([6,8,9,10,12]),sz=z*ld/360,a=r2(lb*sz/100);return{t:`Ø Lagerbestand ${eur(lb,0)} €, Ø Lagerdauer ${ld} Tage, Jahreszinssatz ${z} %. Wie hoch sind die Lagerzinsen für eine Lagerperiode?`,a,u:'€',s:`Lagerzinssatz = ${z} % × ${ld} / 360 = ${eur(sz)} %\nLagerzinsen = ${eur(lb,0)} € × ${eur(sz)} % = ${eur(a)} €`}}],
@@ -2742,6 +2773,15 @@ let C=null;
 /* iPhone-Zifferntastatur hat kein Minus: Vorzeichen-Taste */
 const pmBtn=(id,cb)=>$('button',{class:'pmb','aria-label':'Vorzeichen wechseln',onclick:()=>{const el=document.getElementById(id);let v=el.value.trim();v=/^[-−]/.test(v)?v.replace(/^[-−]\s*/,''):'−'+v;el.value=v;if(cb)cb(v)}},'±');
 function newCalc(){const p=G.filter(g=>inArea(g[0])&&(F.topic==='Alle'||g[1]===F.topic));const g=pick(p);C=Object.assign(g[2](),{area:g[0],name:g[1],state:null})}
+/* Kalkulationsschema: Bezeichnungen und Prozentsätze stehen da, die Euro-Beträge (bei der Differenzkalkulation auch der Gewinn in %) werden eingetragen */
+const kNum=v=>{const t=String(v==null?'':v).trim();return t===''?NaN:num(t)};
+function kCheck(h){const tab=h.g?h.g.tab:h.tab,tv=h.tv||[],tp=h.tp||[];let n=0,ok=0;const res=tab.map((r,i)=>{const one=(x,want,t)=>{n++;let v=kNum(x);if(isNaN(v)&&want===0)v=0;const y=!isNaN(v)&&Math.abs(v-want)<=t;if(y)ok++;return y};
+    return{v:one(tv[i],r.v,0.051),p:r.pi?one(tp[i],r.pv,0.051):null}});return{res,ok,n}}
+function kSchema(h,done){const tab=h.g?h.g.tab:h.tab;h.tv=h.tv||tab.map(()=>'');h.tp=h.tp||tab.map(()=>'');const R_=done?kCheck(h).res:null;
+  const inp=(arr,i,lab,okv,want,unit)=>{const el=$('input',{type:'text',inputmode:'decimal',autocomplete:'off',class:'kin'+(R_?(okv?' ok':' no'):''),value:arr[i],'aria-label':lab,disabled:R_?'':null,oninput:e=>{arr[i]=e.target.value}});
+    return R_&&!okv?$('div',{class:'kcell'},el,$('span',{class:'kwant',text:eur(want)+' '+unit})):el};
+  return $('table',{class:'ksch'},$('thead',{},$('tr',{},$('th',{scope:'col',text:'Kalkulationsschema'}),$('th',{scope:'col',text:'% / €'}),$('th',{scope:'col',text:'€'}))),
+    $('tbody',{},tab.map((r,i)=>$('tr',{class:i===(h.g?h.g.ai:h.ai)?'kmain':''},$('th',{scope:'row',text:r.l}),$('td',{class:'kp'},r.pi?inp(h.tp,i,r.l+' in %',R_&&R_[i].p,r.pv,'%'):r.p),$('td',{},inp(h.tv,i,r.l+' in €',R_&&R_[i].v,r.v,'€'))))))}
 function vRechnen(){
   const types=['Alle',...G.filter(g=>inArea(g[0])).map(g=>g[1])];
   if(!C||!inArea(C.area)||(F.topic!=='Alle'&&C.name!==F.topic)){if(!types.includes(F.topic))F.topic='Alle';newCalc()}
@@ -2751,8 +2791,12 @@ function vRechnen(){
   R(areaChips(()=>{F.topic='Alle';C=null;vRechnen()}),
     $('div',{class:'row'},$('select',{id:'ctype','aria-label':'Aufgabentyp',onchange:e=>{F.topic=e.target.value;C=null;vRechnen()}},types.map(t=>$('option',{value:t,selected:t===F.topic?'':null},t==='Alle'?'Alle Aufgabentypen':t)))),
     $('div',{class:'sheet'},$('div',{class:'tag',text:AN(C.area)+' · '+C.name}),$('p',{style:'white-space:pre-line;font-size:17px',text:C.t}),
-      C.state?null:$('div',{class:'row'},$('input',{type:'text',id:'ans',inputmode:'decimal',autocomplete:'off',class:'grow',placeholder:'Ergebnis'+(C.u?' in '+C.u:''),'aria-label':'Dein Ergebnis',onkeydown:e=>{if(e.key==='Enter')check()}}),C.neg?pmBtn('ans'):null,$('button',{class:'primary',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')),
-      C.state?$('div',{class:'note '+(C.state==='ok'?'ok':C.state==='no'?'no':'')},$('b',{text:C.state==='ok'?'Richtig. ':C.state==='no'?'Nicht ganz. ':''}),'Ergebnis: '+eur(C.a,d)+(C.u?' '+C.u:'')):null,
+      C.tab&&C.state!=='show'?kSchema(C,!!C.state):null,
+      C.tab&&!C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{const r=kCheck(C);if(!C.tv.some(x=>String(x).trim()!=='')){document.querySelector('.kin')&&document.querySelector('.kin').focus();return}
+        const ok=r.res[C.ai].v&&(C.tab[C.ai].pi?r.res[C.ai].p:true);C.score=r.ok+' von '+r.n;C.state=ok?'ok':'no';S.calc[1]++;if(ok)S.calc[0]++;upd('cm',C.name,ok,3);save();vRechnen()}},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')):null,
+      C.state||C.tab?null:$('div',{class:'row'},$('input',{type:'text',id:'ans',inputmode:'decimal',autocomplete:'off',class:'grow',placeholder:'Ergebnis'+(C.u?' in '+C.u:''),'aria-label':'Dein Ergebnis',onkeydown:e=>{if(e.key==='Enter')check()}}),C.neg?pmBtn('ans'):null,$('button',{class:'primary',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')),
+      C.state?$('div',{class:'note '+(C.state==='ok'?'ok':C.state==='no'?'no':'')},$('b',{text:C.state==='ok'?'Richtig. ':C.state==='no'?'Nicht ganz. ':''}),'Ergebnis: '+eur(C.a,d)+(C.u?' '+C.u:''),C.tab&&C.score&&C.state!=='show'?$('span',{style:'display:block;margin-top:4px',text:C.score+' Feldern richtig'}):null):null,
+      C.tab&&C.state==='show'?(()=>{C.tv=C.tab.map(r=>eur(r.v));C.tp=C.tab.map(r=>r.pi?eur(r.pv):'');return kSchema(C,true)})():null,
       C.state?$('div',{class:'steps',text:C.s}):null,
       C.state?repLink(C.t+'\nErgebnis laut App: '+eur(C.a,d)+(C.u?' '+C.u:'')):null,
       C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{newCalc();vRechnen()}},'Nächste Aufgabe'),$('button',{onclick:()=>{go('wissen')}},'Formel nachschlagen')):null),
@@ -3197,14 +3241,14 @@ function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
     part.forEach((it,i)=>{it.bi=bi;it.label=X.mix?String(items.length+1):(bi+1)+'.'+(i+1);items.push(it)})});
   E={k,name:X.name,min:X.min,items,i:0,end:Date.now()+X.min*60000,done:false};EA=false;exTimer();exSave()}
 const zHits=it=>it.z.rows.reduce((n,_,i)=>n+(it.sel[i]===it.z.ans[i]?1:0),0);
-const exDone=it=>it.type==='z'?it.sel.every(x=>x!==null):it.type==='q'?it.sel!==null:it.type==='c'?it.val.trim()!=='':it.type==='o'?(it.seen||it.val.trim()!==''):Object.keys(it.place).length>0;
+const exDone=it=>it.type==='z'?it.sel.every(x=>x!==null):it.type==='q'?it.sel!==null:it.type==='c'?(it.g.tab?(it.tv||[]).some(x=>String(x).trim()!==''):it.val.trim()!==''):it.type==='o'?(it.seen||it.val.trim()!==''):Object.keys(it.place).length>0;
 function exOk(it){if(it.type==='z')return zHits(it)===it.z.rows.length;if(it.type==='q')return it.sel!==null&&it.o[it.sel].ok;
-  if(it.type==='c'){const v=num(it.val);return !isNaN(v)&&Math.abs(v-it.g.a)<=tol(it.g.d===undefined?2:it.g.d)}
+  if(it.type==='c'){if(it.g.tab){const r=kCheck(it);return r.ok===r.n}const v=num(it.val);return !isNaN(v)&&Math.abs(v-it.g.a)<=tol(it.g.d===undefined?2:it.g.d)}
   if(it.type==='o')return it.self!==null&&it.self>=it.pts;
   const want=n=>it.b[n].map(x=>x[0]).sort().join(),got=c=>Object.keys(it.place).filter(k=>it.place[k]===c).sort().join();return want(1)===got('S')&&want(2)===got('H')}
 /* Buchen wie bei der IHK: je richtig gesetztem Konto ein Punkt, falsch gesetzte Konten ziehen ab */
 const bHits=it=>{const all=[...it.b[1].map(x=>[x[0],'S']),...it.b[2].map(x=>[x[0],'H'])];const hit=all.filter(([k,c])=>it.place[k]===c).length,wrong=Object.keys(it.place).filter(k=>!all.some(([a,c])=>a===k&&it.place[k]===c)).length;return Math.max(0,hit-wrong)/all.length};
-const exPts=it=>it.type==='o'?(it.self||0):it.type==='z'?it.pts*zHits(it)/it.z.rows.length:it.type==='b'?it.pts*bHits(it):(exOk(it)?it.pts:0);
+const exPts=it=>it.type==='o'?(it.self||0):it.type==='z'?it.pts*zHits(it)/it.z.rows.length:it.type==='b'?it.pts*bHits(it):it.type==='c'&&it.g.tab?(()=>{const r=kCheck(it);return it.pts*r.ok/r.n})():(exOk(it)?it.pts:0);
 function scoreExam(){E.score=E.items.reduce((n,it)=>n+exPts(it),0);E.pct=Math.min(100,Math.round(E.score));const h={k:E.k,pct:E.pct,note:note(E.pct)[0],d:E.d};
   S.exams=[h,...(S.exams||[]).filter(x=>x.d!==E.d)].slice(0,6);save()}
 /* Pause: Uhr anhalten, Aufgaben ausblenden; beim Fortsetzen verschiebt sich das Ende um die Pausenzeit */
@@ -3225,7 +3269,7 @@ function vExam(){exSave();
   const txt=it=>it.type==='q'?it.q[1]:it.type==='c'?it.g.t:it.type==='z'?it.z.t:it.type==='o'?it.c[2]:it.b[0];
   if(E.done){const[z,w]=note(E.pct),unrated=E.items.filter(x=>x.type==='o'&&x.self===null).length;
     const side=(it,c)=>Object.keys(it.place).filter(k=>it.place[k]===c).sort().join(', ')||'–';
-    const mine=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+(it.sel[i]!==null?it.z.opts[it.sel[i]]:'–')).join('; '):it.type==='q'?(it.sel!==null?it.o[it.sel].t:'keine Antwort'):it.type==='c'?(it.val.trim()||'keine Antwort'):it.type==='o'?(it.val.trim()||(it.seen?'im Kopf beantwortet':'keine Antwort')):(Object.keys(it.place).length?'Soll '+side(it,'S')+' an Haben '+side(it,'H'):'keine Antwort');
+    const mine=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+(it.sel[i]!==null?it.z.opts[it.sel[i]]:'–')).join('; '):it.type==='q'?(it.sel!==null?it.o[it.sel].t:'keine Antwort'):it.type==='c'?(it.g.tab?(()=>{const r=kCheck(it);return r.ok+' von '+r.n+' Feldern richtig'})():(it.val.trim()||'keine Antwort')):it.type==='o'?(it.val.trim()||(it.seen?'im Kopf beantwortet':'keine Antwort')):(Object.keys(it.place).length?'Soll '+side(it,'S')+' an Haben '+side(it,'H'):'keine Antwort');
     const right=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+it.z.opts[it.z.ans[i]]).join('; '):it.type==='q'?it.o.find(o=>o.ok).t:it.type==='c'?eur(it.g.a,it.g.d===undefined?2:it.g.d)+(it.g.u?' '+it.g.u:''):it.type==='o'?it.c[3]:'Soll '+it.b[1].map(x=>x[0]+' '+D.konten[x[0]]+' '+eur(x[1])+' €').join(', ')+' an Haben '+it.b[2].map(x=>x[0]+' '+D.konten[x[0]]+' '+eur(x[1])+' €').join(', ');
     const why=it=>it.type==='q'?it.q[4]:it.type==='c'?it.g.s:it.type==='b'?it.b[3]:null;
     const rate=it=>$('div',{class:'row',role:'group','aria-label':'Eigene Bewertung'},[[0,'0 Punkte'],[it.pts/2,pt(it.pts/2)+' Punkte'],[it.pts,pt(it.pts)+' Punkte']].map(([v,l])=>$('button',{class:'chip','aria-pressed':String(it.self===v),onclick:()=>{const y=SCR.scrollTop;it.self=v;scoreExam();vExam();SCR.scrollTo(0,y)}},l)));
@@ -3234,7 +3278,7 @@ function vExam(){exSave();
       const o=it.type==='o',ok=exOk(it),cls=o?(it.self===null?'':it.self>=it.pts?'ok':it.self>0?'':'no'):(ok?'ok':'no');
       rows.push($('div',{class:'rev '+cls},$('b',{style:'white-space:pre-line',text:it.label+' '+txt(it)+' ('+pt(exPts(it))+' von '+pt(it.pts)+' P.)'}),
         $('span',{text:(ok&&!o?'Richtig: ':'Deine Antwort: ')+mine(it)}),(!ok||o)?$('span',{text:(o?'Musterlösung: ':'Lösung: ')+right(it)}):null,
-        why(it)?$('span',{class:it.type==='c'?'steps':'muted',text:why(it)}):null,o&&it.ai?$('span',{class:'kiwhy',text:'Claude: '+it.ai.t}):null,o?rate(it):null))});
+        it.type==='c'&&it.g.tab?kSchema(it,true):null,why(it)?$('span',{class:it.type==='c'?'steps':'muted',text:why(it)}):null,o&&it.ai?$('span',{class:'kiwhy',text:'Claude: '+it.ai.t}):null,o?rate(it):null))});
     R($('div',{class:'sheet'},$('div',{class:'tag',text:E.name}),
         $('div',{class:'row'},$('div',{class:'grade',text:'Note '+z}),$('div',{},$('p',{class:'qt',text:w+(E.pct>=50?' · bestanden':' · nicht bestanden')}),$('p',{class:'muted',text:pt(Math.round(E.score*10)/10)+' von 100 Punkten'}))),
         $('div',{class:'meter'},$('i',{style:'width:'+E.pct+'%'})),
@@ -3245,6 +3289,7 @@ function vExam(){exSave();
   const it=E.items[E.i],left=E.end-(E.pause||Date.now()),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
   let body;
   if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),it.o.map((o,i)=>$('button',{class:'opt'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t))];
+  else if(it.type==='c'&&it.g.tab)body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),$('p',{class:'muted',style:'margin:0',text:'Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.'}),kSchema(it,false),calcPad(it)];
   else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),
     $('input',{type:'text',id:'exans',inputmode:'decimal',autocomplete:'off',value:it.val,placeholder:'Ergebnis'+(it.g.u?' in '+it.g.u:''),'aria-label':'Dein Ergebnis',oninput:e=>{it.val=e.target.value}}),it.g.neg?pmBtn('exans',v=>{it.val=v}):null,calcPad(it)];
   else if(it.type==='o')body=[$('p',{class:'qt',text:it.c[2]}),
