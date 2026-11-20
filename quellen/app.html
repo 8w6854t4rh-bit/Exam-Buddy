@@ -414,6 +414,8 @@ details[open] summary{margin-bottom:10px}
 @media (min-width:560px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kc{font-size:13.5px}}
 .rund{margin:-4px 0 0;font-size:14px;font-weight:600;color:var(--muted)}
 .rund:before{content:'≈ ';color:var(--accent)}
+.ksch.knop th:first-child{width:58%}
+.kfix{display:block;padding:8px;font-weight:600;font-variant-numeric:tabular-nums}
 /* Eingabefelder nie unter 16 px, sonst vergrößert iOS die Seite beim Antippen und sie bleibt vergrößert */
 .dlab input,.dlab select{font-size:16px}
 .zrow select{font-size:16px}
@@ -452,7 +454,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='75';
+const APPV='76';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -681,7 +683,7 @@ const LFM=T1M?{
  LF5:{n:'LF 5',t:'Full-Service-Unfallabwicklung',g:'T1',top:[['T1','Unfall']],gen:['130-%-Grenze','Totalschaden im Haftpflichtfall'],qa:'T1'},
  WS:{n:'LF 5',t:'Werkstattprozesse und Service',g:'T1',top:[['T1','Werkstatt'],['T1','Technik'],['T1','Service und Recht'],['T1','Umwelt'],['T1','Betrieb und Energie']],gen:['Werkstattrechnung','Arbeitszeit aus Arbeitswerten','Energiekosten nach Fläche verteilen'],qa:'T1'}}:{
  LF2:{n:'LF 2',t:'Kaufmännisch steuern und kontrollieren',g:'KUP',top:[['KUP','Inventur und Bilanz'],['KUP','Konten und Abschluss'],['KUP','Umsatzsteuer'],['KUP','Buchen'],['KUP','Anlagen']],gen:['Reinvermögen','Zahllast','Lineare Abschreibung im ersten Jahr','Skonto zurückrechnen'],buch:1,qa:'KUP'},
- LF9:{n:'LF 9',t:'Personal',g:'KUP',top:[['KUP','Personal'],['WiSo','Arbeit']],gen:['Nettopersonalbedarf mit Personalveränderungen','Arbeitnehmeranteil Sozialversicherung','Geldwerter Vorteil Firmenwagen','Kündigungsfrist Arbeitgeber','Teilurlaub','Personalbedarf'],qa:'WiSo'},
+ LF9:{n:'LF 9',t:'Personal',g:'KUP',top:[['KUP','Personal'],['WiSo','Arbeit']],gen:['Nettopersonalbedarf mit Personalveränderungen','Arbeitnehmeranteil Sozialversicherung','Entgeltabrechnung (Nettoentgelt)','Geldwerter Vorteil Firmenwagen','Kündigungsfrist Arbeitgeber','Teilurlaub','Personalbedarf'],qa:'WiSo'},
  LF10:{n:'LF 10',t:'Wertschöpfung steuern',g:'KUP',top:[['KUP','KLR'],['KUP','Kennzahlen'],['KUP','Deckungsbeitrag'],['KUP','Kalkulation'],['KUP','Werkstatt'],['KUP','Rechnen']],gen:['Handelskalkulation vorwärts','Kalkulationszuschlag','Handelskalkulation rückwärts','Handelsspanne','Differenzkalkulation','Angebotspreis mit Kalkulationsfaktor','BAB: Umlage und Zuschlagssatz','Break-even-Menge','Deckungsbeitrag 3 (KER)','Bilanzkennzahl','Stundenverrechnungssatz aus Arbeitswerten','Soll-Lohnerlöse und Werkstattindex','Lagerdauer','Lagerzinsen','Bezugspreis im Angebotsvergleich'],qa:'KUP'},
  LF6:{n:'LF 6',t:'Neuwagen disponieren und verkaufen',g:'FF',top:[['FF','Neuwagen'],['FF','Vertrieb'],['FF','Vertrag']],gen:['Rohüberschuss Neuwagen','Kfz-Potenzial','Marktpotenzial Neuwagen','Planabsatz','Planzahl für ein Quartal','Verkäuferprovision','Umsatzveränderung','Standkosten in Prozent','Planabsatz aus dem Kfz-Potenzial','Sättigungsgrad','Modellanteil am Bestand','Neuwagen pro Monat aus dem Bestand','Zulassungen im Vorjahreszeitraum'],buch:1,qa:'FF'},
  LF7:{n:'LF 7',t:'Gebrauchtwagen',g:'FF',top:[['FF','GW']],gen:['Händlereinkaufspreis','Differenzbesteuerung','Kapitalbedarf GW','Erfolg aus GW-Geschäft','Eigenanteil im Garantiefall'],buch:1,qa:'FF'},
@@ -1074,7 +1076,7 @@ function vQuiz(){
 
 /* ---------- Rechnen ---------- */
 /* Kalkulationsschema wie in der IHK-Prüfung: Zeile = [Bezeichnung, Prozentangabe (Text), Betrag, Prozent selbst eintragen?, Prozentwert] */
-const KSCH=rows=>rows.map(r=>({l:r[0],p:r[1]||'',v:r[2],pi:!!r[3],pv:r[4]}));
+const KSCH=rows=>rows.map(r=>({l:r[0],p:r[1]||'',v:r[2],pi:!!r[3],pv:r[4],fx:!!r[5]}));
 /*GEN*/
 G.push(
  ['KUP','Nettopersonalbedarf mit Personalveränderungen',()=>{for(;;){const up=pick([true,false]),p=pick([10,20,25]),ist=p===25?ri(4,10)*4:ri(2,6)*10,soll=up?ist*(100+p)/100:ist*(100-p)/100,dep=pick(['Verkauf Neu- und Gebrauchtwagen','Serviceannahme','Teile und Zubehör']);
@@ -1189,6 +1191,14 @@ G.push(
  ['T1','Täglicher Verbrauch aus dem Meldebestand',()=>{const mb=ri(1,8)*5,lz=ri(2,7),vb=ri(2,15),mz=mb+vb*lz;return{t:`Mindestbestand ${mb} Stück, Lieferzeit ${lz} Tage, Meldebestand ${mz} Stück. Wie hoch ist der tägliche Verbrauch in Stück?`,a:vb,u:'Stück',d:0,s:`Verbrauch = (Meldebestand − Mindestbestand) / Lieferzeit\n= (${mz} − ${mb}) / ${lz} = ${vb} Stück`}}],
  ['T1','Listenpreis aus dem reduzierten Preis',()=>{const lp=ri(5,100)*20,rb=pick([10,20,25,30]),rp=lp*(100-rb)/100;return{t:`Ein Ersatzteil kostet nach ${rb} % Rabatt ${eur(rp)} €. Wie hoch war der Listenpreis?`,a:lp,u:'€',s:`Listenpreis = reduzierter Preis / (1 − Rabatt)\n= ${eur(rp)} / (1 − ${rb} %) = ${eur(lp)} €`}}],
  ['T1','Energiekosten nach Fläche verteilen',()=>{const k=ri(20,200)*100,f1=ri(2,9)*50,f2=ri(2,9)*50,f3=ri(2,9)*50,a=r2(k*f1/(f1+f2+f3));return{t:`Die Energiekosten betragen im Jahr ${eur(k)} €. Die drei Abteilungen haben ${f1} m², ${f2} m² und ${f3} m² Fläche. Welcher Betrag entfällt auf die Abteilung mit ${f1} m²?`,a,u:'€',s:`Gesamtfläche = ${f1+f2+f3} m²\nAnteil = ${eur(k)} × ${f1} / ${f1+f2+f3} = ${eur(a)} €`}}]);
+/* Entgeltabrechnung wie im IHK-Formular: Vorgaben stehen fest im Schema, gesucht sind die Zwischensummen, Kirchensteuer, Sozialversicherung und das Nettoentgelt */
+G.push(['KUP','Entgeltabrechnung (Nettoentgelt)',()=>{
+  const b=r2(ri(2600,4800)+ri(0,99)/100),vl=pick([0,0,0,6.65,13.29,26.59,40]),fb=pick([0,0,50,100,165,200]),zu=pick([2.5,2.9,3.1]),kl=pick([true,true,false]),ks=pick([8,9]),al=kl?ri(24,45):ri(26,45);
+  const svb=r2(b+vl),stp=r2(svb-fb),lst=r2((stp-1250)*ri(19,22)/100+ri(0,99)/100),kst=r2(lst*ks/100),kvs=(14.6+zu)/2,kv=r2(svb*kvs/100),pvs=kl?2.4:1.8,pv=r2(svb*pvs/100),rv=r2(svb*.093),av=r2(svb*.013),net=r2(svb-lst-kst-kv-pv-rv-av);
+  const tab=KSCH([['Tarif- und Grundgehalt','',b,0,0,1],['+ Arbeitgeberanteil zu VL','',vl,0,0,1],['= SV-pflichtiges Bruttogehalt','',svb],['− Steuerfreibetrag','',fb,0,0,1],['= Steuerpflichtiges Entgelt','',stp],['− Lohnsteuer','',lst,0,0,1],['− Solidaritätszuschlag','',0,0,0,1],['− Kirchensteuer','',kst],['− Krankenversicherung','',kv],['− Pflegeversicherung','',pv],['− Rentenversicherung','',rv],['− Arbeitslosen­versicherung','',av],['= Nettoentgelt','',net]]);
+  return{t:`Entgeltabrechnung für eine Mitarbeiterin, ${al} Jahre, ${kl?'kinderlos':'ein Kind'}, Steuerklasse 1, kirchensteuerpflichtig (${ks} %). Tarifgehalt ${eur(b)} €, Arbeitgeberanteil zu den vermögenswirksamen Leistungen ${eur(vl)} €, Steuerfreibetrag ${eur(fb)} €. Laut Lohnsteuertabelle: Lohnsteuer ${eur(lst)} €, Solidaritätszuschlag 0,00 €. Beitragssätze: Krankenversicherung 14,6 % + ${eur(zu,1)} % Zusatzbeitrag, Rentenversicherung 18,6 %, Arbeitslosenversicherung 2,6 %, Pflegeversicherung 3,6 % (Kinderlose ab 23 Jahren zahlen allein 0,6 % mehr). Ermittle das Nettoentgelt.`,
+    a:net,u:'€',tab,ai:12,kt:'Entgeltabrechnung',
+    s:`SV-Brutto: ${eur(b)} + ${eur(vl)} = ${eur(svb)} €\nSteuerpflichtig: ${eur(svb)} − ${eur(fb)} = ${eur(stp)} €\nKirchensteuer: ${eur(lst)} × ${ks} % = ${eur(kst)} €\nKV: ${eur(svb)} × ${eur(kvs)} % = ${eur(kv)} €\nPV: ${eur(svb)} × ${eur(pvs)} % = ${eur(pv)} €\nRV: ${eur(svb)} × 9,30 % = ${eur(rv)} €\nAV: ${eur(svb)} × 1,30 % = ${eur(av)} €\nNetto: ${eur(svb)} − ${eur(lst)} − ${eur(kst)} − ${eur(kv)} − ${eur(pv)} − ${eur(rv)} − ${eur(av)} = ${eur(net)} €`}}]);
 const T1X=['Kalkulationszuschlag','Handelsspanne','Angebotspreis mit Kalkulationsfaktor','Bezugspreis im Angebotsvergleich','Lagerdauer','Lagerzinsen'];
 if(T1M)G.push(...G.filter(g=>g[0]==='KUP'&&T1X.includes(g[1])).map(g=>['T1',g[1],g[2]]));
 /* Rundungshinweis unter jeder Rechenaufgabe, passend zur Genauigkeit, mit der geprüft wird */
@@ -1203,13 +1213,14 @@ const pmBtn=(id,cb)=>$('button',{class:'pmb','aria-label':'Vorzeichen wechseln',
 function newCalc(){const p=G.filter(g=>inArea(g[0])&&(F.topic==='Alle'||g[1]===F.topic));const g=pick(p);C=Object.assign(g[2](),{area:g[0],name:g[1],state:null})}
 /* Kalkulationsschema: Bezeichnungen und Prozentsätze stehen da, die Euro-Beträge (bei der Differenzkalkulation auch der Gewinn in %) werden eingetragen */
 const kNum=v=>{const t=String(v==null?'':v).trim();return t===''?NaN:num(t)};
-function kCheck(h){const tab=h.g?h.g.tab:h.tab,tv=h.tv||[],tp=h.tp||[];let n=0,ok=0;const res=tab.map((r,i)=>{const one=(x,want,t)=>{n++;let v=kNum(x);if(isNaN(v)&&want===0)v=0;const y=!isNaN(v)&&Math.abs(v-want)<=t;if(y)ok++;return y};
+function kCheck(h){const tab=h.g?h.g.tab:h.tab,tv=h.tv||[],tp=h.tp||[];let n=0,ok=0;const res=tab.map((r,i)=>{if(r.fx)return{v:true,p:null,fx:true};const one=(x,want,t)=>{n++;let v=kNum(x);if(isNaN(v)&&want===0)v=0;const y=!isNaN(v)&&Math.abs(v-want)<=t;if(y)ok++;return y};
     return{v:one(tv[i],r.v,0.051),p:r.pi?one(tp[i],r.pv,0.051):null}});return{res,ok,n}}
 function kSchema(h,done){const tab=h.g?h.g.tab:h.tab;h.tv=h.tv||tab.map(()=>'');h.tp=h.tp||tab.map(()=>'');const R_=done?kCheck(h).res:null;
   const inp=(arr,i,lab,okv,want,unit)=>{const el=$('input',{type:'text',inputmode:'decimal',autocomplete:'off',class:'kin'+(R_?(okv?' ok':' no'):''),value:arr[i],'aria-label':lab,disabled:R_?'':null,oninput:e=>{arr[i]=e.target.value}});
     return R_&&!okv?$('div',{class:'kcell'},el,$('span',{class:'kwant',text:eur(want)+' '+unit})):el};
-  return $('table',{class:'ksch'},$('thead',{},$('tr',{},$('th',{scope:'col',text:'Kalkulationsschema'}),$('th',{scope:'col',text:'% / €'}),$('th',{scope:'col',text:'€'}))),
-    $('tbody',{},tab.map((r,i)=>$('tr',{class:i===(h.g?h.g.ai:h.ai)?'kmain':''},$('th',{scope:'row',text:r.l}),$('td',{class:'kp'},r.pi?inp(h.tp,i,r.l+' in %',R_&&R_[i].p,r.pv,'%'):r.p),$('td',{},inp(h.tv,i,r.l+' in €',R_&&R_[i].v,r.v,'€'))))))}
+  const hasP=tab.some(r=>r.p||r.pi);
+  return $('table',{class:'ksch'+(hasP?'':' knop')},$('thead',{},$('tr',{},$('th',{scope:'col',text:(h.g||h).kt||'Kalkulationsschema'}),hasP?$('th',{scope:'col',text:'% / €'}):null,$('th',{scope:'col',text:'€'}))),
+    $('tbody',{},tab.map((r,i)=>$('tr',{class:i===(h.g?h.g.ai:h.ai)?'kmain':''},$('th',{scope:'row',text:r.l}),hasP?$('td',{class:'kp'},r.pi?inp(h.tp,i,r.l+' in %',R_&&R_[i].p,r.pv,'%'):r.p):null,$('td',{},r.fx?$('span',{class:'kfix',text:eur(r.v)}):inp(h.tv,i,r.l+' in €',R_&&R_[i].v,r.v,'€'))))))}
 function vRechnen(){
   const types=['Alle',...G.filter(g=>inArea(g[0])).map(g=>g[1])];
   if(!C||!inArea(C.area)||(F.topic!=='Alle'&&C.name!==F.topic)){if(!types.includes(F.topic))F.topic='Alle';newCalc()}
