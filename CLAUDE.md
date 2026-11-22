@@ -32,6 +32,7 @@ Code-Grundbausteine in `app.html`: `$()` baut Elemente, `R()` rendert in `#app`,
 - Karten-Fragen im IHK-Stil mit Operator in der Sie-Form („Nennen Sie …“, „Erklären Sie …“, „Unterscheiden Sie …“, „Beurteilen Sie …“), keine Stichwort-Fragen. Die Prüfungen nehmen ihre offenen Fragen direkt aus den Karten.
 - Gewichtung KUP-Testprüfung wie in den echten Prüfungen 2023–2025: Personal 25 (mit Entgeltabrechnung), Buchführung 30, Kalkulation/KLR/Werkstatt 30, Controlling 15.
 - „Kurz erklärt“ (Reiter im Wissen, Route `#kurz`): eine Folie pro Thema in `D.kurz` (`data.json`/`data_en.json` Schlüssel `kurz`, positionsgleich, nur anhängen). Felder: `t` Titel, `s` Untertitel, `g` Grundidee, `b`/`c` Beispiel und Rechnung, `op`/`f` IHK-Frage, `x` Prüfungsfalle, `a` Musterantwort, `m` Merkformel, `k` Karten-Positionen, `r` Rechenarten. Über `k` und `r` erscheint auf Karten und Rechenaufgaben der Knopf „Kurz erklärt“ (`kzPill`, `kurzSheet`). Nicht in Teil 1.
+- Laufende und abgegebene Prüfungen liegen unter `eb-exam` (bzw. `eb-exam-ap1`) und speichern ihre Blocknamen in `E.bl`. Neue Blockeinteilungen in `EX` sind damit unkritisch, ältere Prüfungen ohne `E.bl` nutzen `exBl()` mit Ersatznamen. Wirft `vExam` trotzdem einen Fehler, verwirft `route()` die gespeicherte Prüfung und zeigt die Auswahl mit Hinweis.
 - Der Hinweis „Neue Aufgaben verfügbar“ (`cvNow()`) reagiert nur auf neue Rechenarten oder Bildgeschichten. Neue Karten und Quizfragen landen automatisch in den Plan-Aufgaben.
 
 ## Testen
