@@ -492,7 +492,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='78';
+const APPV='79';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -2161,9 +2161,11 @@ const UI_EN={
 "Kostenrechnung": "Cost accounting",
 "Buchführung": "Bookkeeping",
 "Controlling": "Controlling",
-"Eine Folie pro Thema: Grundidee, Beispiel aus dem Autohaus, so fragt die IHK, Prüfungsfalle und Musterantwort. Zum Nachschlagen der Formeln gibt es den Reiter „Formeln“.": "One slide per topic: basic idea, example from the dealership, how the IHK asks, exam trap and model answer. To look up formulas, use the „Formulas“ tab."
-}
-;
+"Eine Folie pro Thema: Grundidee, Beispiel aus dem Autohaus, so fragt die IHK, Prüfungsfalle und Musterantwort. Zum Nachschlagen der Formeln gibt es den Reiter „Formeln“.": "One slide per topic: basic idea, example from the dealership, how the IHK asks, exam trap and model answer. To look up formulas, use the „Formulas“ tab.",
+"Die letzte Prüfung ließ sich nach einem Update nicht mehr öffnen. ": "Your last exam could not be opened after an update. ",
+"Dein Ergebnis steht unten in der Liste. Starte einfach eine neue Prüfung.": "Your result is in the list below. Just start a new exam.",
+"Starte einfach eine neue Prüfung.": "Just start a new exam."
+};
 /* Inhalte: Schlüssel (Bereich, Thema, Kontonummern, Lösungsindex) bleiben deutsch, nur angezeigte Texte werden getauscht */
 const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
   konten:Object.fromEntries(Object.entries(d.konten).map(([k,v])=>[k,e.konten[k]||v])),
@@ -2453,7 +2455,7 @@ function goTask(si,ti){const t=S.plan.sessions[si].tasks[ti];PT={si,ti};let h;
   else if(t.k==='story'){PF={st:t.st};h='bilder'}
   else if(t.k==='lf'){PF={wq:t.lf?LFM[t.lf].n+' ':''};h='lernfelder'}
   else if(t.k==='formeln'){PF={area:'Alle',wq:''};h='wissen'}
-  else if(t.k==='exam')h='pruefung';
+  else if(t.k==='exam'){if(E&&E.done){E=null;exClear()}h='pruefung'}
   if(location.hash==='#'+h)route();else go(h)}
 function toggleTask(si,ti,v){const t=S.plan.sessions[si].tasks[ti];t.done=v===undefined?!t.done:v;save()}
 const TV={karten:'karten',quiz:'quiz',rechnen:'rechnen',buchen:'buchen',story:'bilder',lf:'lernfelder',formeln:'wissen',exam:'pruefung'};
@@ -3394,7 +3396,7 @@ const EX={
   ['','',[['q','T1',9,100/14],['z',null,1,100/14],['c',null,4,100/14]]]]},
  mix:{name:'Kurztest gemischt',min:15,form:'15 Aufgaben quer durch alle Bereiche, kein IHK-Format',mix:true,blocks:[
   ['','',[['q',null,8,100/15],['c',null,4,100/15],['b',3,100/15]]]]}};
-let E=null, ET=null, EA=false;
+let E=null, ET=null, EA=false, EBAD=0;
 /* Laufende Prüfung auf dem Gerät mitspeichern (eigener Schlüssel, Lernstand bleibt unberührt) */
 const EKEY=()=>'eb-exam'+(T1M?'-ap1':'');
 function exSave(){try{if(E)localStorage.setItem(EKEY(),JSON.stringify(E))}catch(e){}}
@@ -3410,6 +3412,8 @@ const tol=d=>d===0?0.5:d===1?0.051:d===4?0.00011:0.011;
 const fmt=ms=>{const t=Math.max(0,Math.ceil(ms/1000));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0')};
 const note=p=>p>=92?[1,'sehr gut']:p>=81?[2,'gut']:p>=67?[3,'befriedigend']:p>=50?[4,'ausreichend']:p>=30?[5,'mangelhaft']:[6,'ungenügend'];
 const pt=x=>Number.isInteger(x)?String(x):eur(x,1);
+/* Aufgabenblock einer Prüfung: aus der Prüfung selbst (gespeichert beim Start), sonst aus EX; ältere Prüfungen mit inzwischen geänderter Blockeinteilung brechen so nicht */
+const exBl=i=>(E&&E.bl&&E.bl[i])||(EX[E.k].blocks[i])||['Teil '+(i+1),''];
 function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
   X.blocks.forEach((bl,bi)=>{let part=[];
     for(const sp of bl[2]){
@@ -3420,7 +3424,7 @@ function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
       else{shuffle(D.karten.filter((c,i)=>sp[1].includes(c[1])&&!usedC.has(c[2]))).slice(0,sp[2]).forEach(c=>{usedC.add(c[2]);part.push({type:'o',pts:sp[3],c,val:'',seen:false,self:null})})}}
     if(X.mix)part=shuffle(part);
     part.forEach((it,i)=>{it.bi=bi;it.label=X.mix?String(items.length+1):(bi+1)+'.'+(i+1);items.push(it)})});
-  E={k,name:X.name,min:X.min,items,i:0,end:Date.now()+X.min*60000,done:false};EA=false;exTimer();exSave()}
+  E={k,name:X.name,min:X.min,items,bl:X.blocks.map(b=>[b[0],b[1]]),i:0,end:Date.now()+X.min*60000,done:false};EA=false;exTimer();exSave()}
 const zHits=it=>it.z.rows.reduce((n,_,i)=>n+(it.sel[i]===it.z.ans[i]?1:0),0);
 const exDone=it=>it.type==='z'?it.sel.every(x=>x!==null):it.type==='q'?it.sel!==null:it.type==='c'?(it.g.tab?(it.tv||[]).some(x=>String(x).trim()!==''):it.val.trim()!==''):it.type==='o'?(it.seen||it.val.trim()!==''):Object.keys(it.place).length>0;
 function exOk(it){if(it.type==='z')return zHits(it)===it.z.rows.length;if(it.type==='q')return it.sel!==null&&it.o[it.sel].ok;
@@ -3441,7 +3445,7 @@ function finishExam(){if(!E||E.done)return;clearInterval(ET);E.done=true;E.d=Dat
 function vExam(){exSave();
   if(!E){const hist=S.exams||[];
     const card=(k,ihk)=>{const x=EX[k];return $('button',{class:'sheet pick',onclick:()=>{startExam(k);vExam();SCR.scrollTo(0,0)}},$('b',{text:x.name}),x.lf?$('span',{class:'tag',text:x.lf}):null,$('span',{class:'muted',text:x.min+' Minuten · '+(ihk?'100 Punkte · ':'')+x.form}),$('span',{class:'pgo','aria-hidden':'true',text:(ihk?'Prüfung starten':'Test starten')+' ›'}))};
-    R($('div',{class:'sheet'},$('p',{class:'qt',text:'Prüfung nach IHK-Schema'}),
+    const bad=EBAD;EBAD=0;R(bad?$('div',{class:'note'},$('b',{text:'Die letzte Prüfung ließ sich nach einem Update nicht mehr öffnen. '}),bad===2?'Dein Ergebnis steht unten in der Liste. Starte einfach eine neue Prüfung.':'Starte einfach eine neue Prüfung.'):null,$('div',{class:'sheet'},$('p',{class:'qt',text:'Prüfung nach IHK-Schema'}),
         $('p',{text:T1M?'Teil 1 der Zwischenprüfung: Warenwirtschafts- und Werkstattprozesse mit 90 Minuten, 100 Punkten und gebundenen Aufgaben, Note nach IHK-Schlüssel.':'Die drei schriftlichen Bereiche der Abschlussprüfung Teil 2, jeweils mit ihren Lernfeldern: gleiche Bearbeitungszeit, 100 Punkte je Bereich, Situationsaufgaben mit Teilaufgaben und Punktangaben, Note nach IHK-Schlüssel.'}),
         $('p',{class:'muted',text:'Die Uhr läuft, Lösungen gibt es erst nach der Abgabe. Rechen-, '+(T1M?'Zuordnungs':'Buchungs')+'- und Ankreuzaufgaben werden automatisch bewertet. Offene Fragen bewertest du danach selbst anhand der Musterlösung, so wie der Prüfer mit dem Lösungsbogen.'})),
       ...(T1M?[card('T1',1),$('h2',{text:'Wenig Zeit?'}),card('t1k',0)]:[card('KUP',1),card('WiSo',1),card('FF',1),$('h2',{text:'Wenig Zeit?'}),card('mix',0)]),
@@ -3456,7 +3460,7 @@ function vExam(){exSave();
     const why=it=>it.type==='q'?it.q[4]:it.type==='c'?it.g.s:it.type==='b'?it.b[3]:null;
     const rate=it=>$('div',{class:'row',role:'group','aria-label':'Eigene Bewertung'},[[0,'0 Punkte'],[it.pts/2,pt(it.pts/2)+' Punkte'],[it.pts,pt(it.pts)+' Punkte']].map(([v,l])=>$('button',{class:'chip','aria-pressed':String(it.self===v),onclick:()=>{const y=SCR.scrollTop;it.self=v;scoreExam();vExam();SCR.scrollTo(0,y)}},l)));
     const rows=[];let lb=-1;
-    E.items.forEach(it=>{if(!X.mix&&it.bi!==lb){lb=it.bi;rows.push($('div',{class:'tag',style:'margin-top:6px',text:'Aufgabe '+(it.bi+1)+' · '+X.blocks[it.bi][0]}))}
+    E.items.forEach(it=>{if(!X.mix&&it.bi!==lb){lb=it.bi;rows.push($('div',{class:'tag',style:'margin-top:6px',text:'Aufgabe '+(it.bi+1)+' · '+exBl(it.bi)[0]}))}
       const o=it.type==='o',ok=exOk(it),cls=o?(it.self===null?'':it.self>=it.pts?'ok':it.self>0?'':'no'):(ok?'ok':'no');
       rows.push($('div',{class:'rev '+cls},$('b',{style:'white-space:pre-line',text:it.label+' '+txt(it)+' ('+pt(exPts(it))+' von '+pt(it.pts)+' P.)'}),
         $('span',{text:(ok&&!o?'Richtig: ':'Deine Antwort: ')+mine(it)}),(!ok||o)?$('span',{text:(o?'Musterlösung: ':'Lösung: ')+right(it)}):null,
@@ -3468,7 +3472,7 @@ function vExam(){exSave();
         E.pt>=60000?$('p',{class:'muted',style:'margin:0',text:'Pausiert: '+Math.round(E.pt/60000)+' Min'}):null,
         $('div',{class:'row'},$('button',{class:'primary',onclick:()=>{E=null;exClear();vExam();SCR.scrollTo(0,0)}},'Neue Prüfung'),$('button',{onclick:()=>{E=null;exClear();go('start')}},'Zur Startseite'))),
       PV?kiGradeBox():null,$('h2',{text:'Auswertung'}),$('div',{class:'sheet'},rows));return}
-  const it=E.items[E.i],left=E.end-(E.pause||Date.now()),open=E.items.filter(x=>!exDone(x)).length,bl=X.blocks[it.bi];
+  const it=E.items[E.i],left=E.end-(E.pause||Date.now()),open=E.items.filter(x=>!exDone(x)).length,bl=exBl(it.bi);
   let body;
   if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),it.o.map((o,i)=>$('button',{class:'opt'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t)),qCalc(it.q)?calcPad(it,1):null];
   else if(it.type==='c'&&it.g.tab)body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),rundP(it.g),$('p',{class:'muted',style:'margin:0',text:'Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.'}),kSchema(it,false),calcPad(it)];
@@ -3487,7 +3491,7 @@ function vExam(){exSave();
       $('button',{class:'primary',onclick:resumeExam},'Weiter mit der Prüfung')));return}
   R($('div',{class:'exbar'},$('span',{class:'muted',text:X.mix?'Aufgabe '+it.label+' von '+n:'Teilaufgabe '+(E.i+1)+' von '+n}),$('div',{class:'exctl'},tmr,pbtn)),
     $('div',{class:'meter'},$('i',{style:'width:'+((n-open)/n*100)+'%'})),
-    X.mix?null:$('div',{class:'note'},$('b',{text:'Aufgabe '+(it.bi+1)+' · '+bl[0]}),$('p',{style:'margin-top:4px',text:'Situation: '+bl[1]})),
+    X.mix?null:$('div',{class:'note'},$('b',{text:'Aufgabe '+(it.bi+1)+' · '+bl[0]}),bl[1]?$('p',{style:'margin-top:4px',text:'Situation: '+bl[1]}):null),
     $('div',{class:'sheet'},$('div',{class:'tag',text:(X.mix?'Aufgabe ':'')+it.label+' · '+(X.mix?'ca. ':'')+pt(Math.round(it.pts))+' Punkte'}),body),
     $('div',{class:'row'},$('button',{class:'grow',disabled:E.i===0?'':null,onclick:()=>{E.i--;EA=false;vExam();SCR.scrollTo(0,0)}},'Zurück'),
       E.i<n-1?$('button',{class:'primary grow',onclick:()=>{E.i++;EA=false;vExam();SCR.scrollTo(0,0)}},'Weiter'):$('button',{class:'primary grow',onclick:()=>{EA=true;vExam()}},'Zur Abgabe')),
@@ -3793,7 +3797,7 @@ if(PV){TITLE.start=!BER?'Willkommen':{auto:'Automobilkaufleute',vk:'Verkäufer/-
 function route(){let h=(location.hash||'#start').slice(1);if(!PV&&/^(gemeinsam|freigabe)$/.test(h))h='start';if(PV&&!BER&&!/^(einstellungen|recht|mitmachen)$/.test(h))h='start';else if(AB&&!/^(start|wissen|lernfelder|einstellungen|recht|mitmachen|gemeinsam|freigabe)$/.test(h))h='start';if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'||v==='bilder'||v==='kurz'?'wissen':v==='einstellungen'||v==='plan'||v==='recht'||v==='mitmachen'||v==='gemeinsam'||v==='freigabe'?'start':v;F.topic='Alle';if(PF){if(PF.area)F.area=PF.area;if(PF.topic)F.topic=PF.topic;if(PF.st!=null)BST=PF.st;PFW=1}else if(PFW){PFW=0;F.area='Alle';WQ='';BST=null}if(v==='start'||v==='plan')PT=null;if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':v==='bilder'?'bilder':v==='kurz'?'kurz':'formeln';if(g!=='kurz')KZ=null;if(g!==WSEG){WSEG=g}if(PF&&PF.wq!==undefined)WQ=PF.wq}KSET=PF&&PF.ks!=null?PF.ks:v==='karten'?KSET:null;PF=null;
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'||v==='recht'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+m)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-  V[v]();if(PV&&BER&&(v==='start'||v==='einstellungen')){const c=kiCards(),a=app;if(v==='start')a.insertBefore(c,a.children[1]||null);else{const m=a.querySelector('.mitcta');m?m.after(c):a.append(c)}}pbar(v);SCR.scrollTo(0,0)}
+  try{V[v]()}catch(err){if(v!=='pruefung'||!E)throw err;console.error(err);EBAD=E.done?2:1;E=null;exClear();vExam()}if(PV&&BER&&(v==='start'||v==='einstellungen')){const c=kiCards(),a=app;if(v==='start')a.insertBefore(c,a.children[1]||null);else{const m=a.querySelector('.mitcta');m?m.after(c):a.append(c)}}pbar(v);SCR.scrollTo(0,0)}
 /* Doppeltipp-Zoom verhindern (iOS), Zwei-Finger-Zoom bleibt erlaubt */
 (()=>{let lt=0;document.addEventListener('touchend',e=>{const now=Date.now();
   if(now-lt<320&&e.touches.length===0&&e.changedTouches.length===1&&!e.target.closest('button,a,input,textarea,select,label,summary,[role=button],[contenteditable]'))e.preventDefault();
