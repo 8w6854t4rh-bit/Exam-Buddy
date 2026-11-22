@@ -416,6 +416,38 @@ details[open] summary{margin-bottom:10px}
 .rund:before{content:'≈ ';color:var(--accent)}
 .ksch.knop th:first-child{width:58%}
 .kfix{display:block;padding:8px;font-weight:600;font-variant-numeric:tabular-nums}
+.ks{display:flex;flex-direction:column;gap:10px}
+.kshero{background:var(--surface);border-radius:18px;padding:16px;border:1px solid var(--line)}
+.kshero small{font-size:12px;font-weight:600;color:var(--accent)}
+.kshero h2{font-family:var(--display);font-size:30px;line-height:1.05;margin:4px 0 6px}
+.kshero p{margin:0;color:var(--muted)}
+.ksbox{background:var(--surface);border-radius:16px;padding:12px 14px;border:1px solid var(--line)}
+.ksbox h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px}
+.ksbox p{margin:0;line-height:1.45}
+.ksic{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-weight:700;background:var(--raise);color:var(--accent);flex:none}
+.ksterms{display:grid;grid-template-columns:minmax(96px,34%) 1fr;gap:6px;font-size:14.5px}
+.ksterms b{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-radius:8px;padding:7px 9px}
+.ksterms span{background:var(--raise);border-radius:8px;padding:7px 9px}
+.ksex{border-left:4px solid var(--accent)}
+.kscalc{font-size:14px;font-variant-numeric:tabular-nums;background:var(--raise);border-radius:8px;padding:8px 10px;margin:8px 0 0;line-height:1.5;display:flex;flex-direction:column;gap:2px}
+.kstask{border-left:4px solid var(--ink)}
+.ksop{display:inline-block;background:var(--ink);color:var(--surface);font-size:11.5px;font-weight:700;border-radius:6px;padding:2px 8px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.kstrap{border-left:4px solid var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--surface))}
+.kstrap .ksic{color:var(--bad)}
+.ksans{border-left:4px solid var(--good);background:color-mix(in srgb,var(--good) 10%,var(--surface))}
+.ksans .ksic{color:var(--good)}
+.ksans ul{margin:0;padding-left:18px;line-height:1.45}
+.ksrev{border:1.5px dashed var(--good);color:var(--good);background:var(--surface);font-weight:600}
+.ksmerk{margin:0;font-size:13.5px;color:var(--muted);padding:0 4px}
+.ksmerk b{color:var(--ink)}
+.kskart{color:var(--c-karten);border-color:var(--c-karten)}
+.ksrech{color:var(--c-rechnen);border-color:var(--c-rechnen)}
+.kzrow{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;width:100%}
+.kzrow span{color:var(--muted);font-weight:400;font-size:14px}
+.kzpill{align-self:flex-start;background:color-mix(in srgb,var(--c-wissen) 14%,var(--surface));color:var(--c-wissen);border:0;border-radius:999px;font-weight:600;font-size:14px;padding:9px 14px;text-align:left}
+.kzset{background:var(--raise);border-radius:12px;padding:6px 6px 6px 12px;font-size:14px;font-weight:600}
+.kzov .dssh{max-height:92vh}
+.kzov .dsbody{padding-bottom:16px}
 /* Eingabefelder nie unter 16 px, sonst vergrößert iOS die Seite beim Antippen und sie bleibt vergrößert */
 .dlab input,.dlab select{font-size:16px}
 .zrow select{font-size:16px}
@@ -454,7 +486,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='76';
+const APPV='77';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -499,12 +531,14 @@ const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
   quiz:d.quiz.map((q,i)=>{const x=e.quiz[i];return x?[q[0],x[0],x[1],q[3],x[2]]:q}),
   vier:e.vier||d.vier,
   wissen:d.wissen.map((w,i)=>{const x=e.wissen[i];return x?[w[0],x[0],x[1]]:w}),
-  lf:d.lf.map((l,i)=>{const x=e.lf[i];return x?[x[0],x[1],l[2]]:l}),zu:d.zu.map((z,i)=>{const x=e.zu[i];return x?{...z,t:x.t,rows:x.rows,opts:x.opts}:z})}})():D_DE;
+  lf:d.lf.map((l,i)=>{const x=e.lf[i];return x?[x[0],x[1],l[2]]:l}),kurz:(d.kurz||[]).map((k,i)=>e.kurz&&e.kurz[i]?{...k,...e.kurz[i]}:k),zu:d.zu.map((z,i)=>{const x=e.zu[i];return x?{...z,t:x.t,rows:x.rows,opts:x.opts}:z})}})():D_DE;
 if(T1M){D.karten.push(...D.karten.filter(c=>c[0]==='KUP'&&c[1]==='Kalkulation').map(c=>['T1',c[1],c[2],c[3]]));
   const ws=D.wissen.filter(w=>w[0]==='KUP'&&/^(Prozent|Percent|Handelskalkulation|Trade pricing)/.test(w[1])).map(w=>['T1',w[1],w[2].map(x=>x.k==='f'?{k:'f',rows:x.rows.filter(r=>!/25a|Altteil|old.part|old-part/i.test(r[0]+r[1]))}:x)]);D.wissen.splice(D.wissen.findIndex(w=>w[0]==='T1'),0,...ws)}
 /* Oberfläche: Texte werden beim Anzeigen übersetzt (exakt, mit Zahlen-Platzhaltern {0}, Mustern und Teilstücken mit „ · “) */
 const TT=x=>trCore(x)??x;
 const UI_RX=[
+ [/^Kurz erklärt: (.+) ›$/,m=>'In brief: '+m[1]+' ›'],
+ [/^Nur Karten zu: (.+)$/,m=>'Only cards on: '+m[1]],
  [/^(\d{4}) (.+), noch nicht zugeordnet$/,m=>m[1]+' '+m[2]+', not assigned yet'],
  [/^(\d{4}) (.+), liegt im Soll$/,m=>m[1]+' '+m[2]+', on the debit side'],
  [/^(\d{4}) (.+), liegt im Haben$/,m=>m[1]+' '+m[2]+', on the credit side'],
@@ -568,7 +602,7 @@ const ICON={
 const svg=n=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('viewBox','0 0 24 24');s.setAttribute('fill','none');s.setAttribute('stroke','currentColor');s.setAttribute('stroke-width','2');s.setAttribute('stroke-linecap','round');s.setAttribute('stroke-linejoin','round');s.setAttribute('aria-hidden','true');s.innerHTML=ICON[n];return s};
 const MODES=[['start','Start'],['karten','Karten'],['quiz','Quiz'],['rechnen','Rechnen'],['buchen','Buchen'],['wissen','Wissen']];
 if(AB||(PV&&!BER))MODES.splice(0,MODES.length,['start','Start'],['wissen','Lernfelder']);
-const TITLE={mitmachen:'Mitmachen',start:'Start',karten:'Karteikarten',quiz:'Quiz',rechnen:'Rechnen',buchen:'Buchen',wissen:'Wissen',lernfelder:'Lernfelder',bilder:'In Bildern erklärt',pruefung:'Testprüfung',einstellungen:'Einstellungen',plan:'Lernplan',recht:'Rechtliches'};
+const TITLE={mitmachen:'Mitmachen',start:'Start',karten:'Karteikarten',quiz:'Quiz',rechnen:'Rechnen',buchen:'Buchen',wissen:'Wissen',lernfelder:'Lernfelder',bilder:'In Bildern erklärt',kurz:'Kurz erklärt',pruefung:'Testprüfung',einstellungen:'Einstellungen',plan:'Lernplan',recht:'Rechtliches'};
 document.getElementById('nav').append(...MODES.filter(([m])=>!(T1M&&m==='buchen')).map(([m,n])=>$('a',{href:'#'+m,style:'--c:var(--c-'+m+')'},$('i',{},svg(m)),n)));document.getElementById('nav').style.gridTemplateColumns='repeat('+MODES.filter(([m])=>!(T1M&&m==='buchen')).length+',1fr)';
 let S={box:{},quiz:[0,0],calc:[0,0],buch:[0,0]};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
@@ -994,7 +1028,8 @@ function tutUi(){const el=document.getElementById('tut');if(!el)return;el.queryS
 
 /* ---------- Karteikarten ---------- */
 let cur=null, shown=false;
-function cardPool(){return D.karten.map((c,i)=>({c,i})).filter(x=>inArea(x.c[0])&&(F.topic==='Alle'||x.c[1]===F.topic))}
+let KSET=null;
+function cardPool(){const ks=KSET!=null&&D.kurz[KSET]?D.kurz[KSET].k:null;return D.karten.map((c,i)=>({c,i})).filter(x=>ks?ks.includes(x.i):inArea(x.c[0])&&(F.topic==='Alle'||x.c[1]===F.topic))}
 function nextCard(){KT='';KR=null;const p=cardPool();if(!p.length){cur=null;return}
   const min=Math.min(...p.map(x=>S.box[x.i]||0));let c=p.filter(x=>(S.box[x.i]||0)===min);
   if(c.length>1&&cur)c=c.filter(x=>x.i!==cur.i);cur=pick(c);shown=false}
@@ -1036,6 +1071,7 @@ function vKarten(){
   R(areaChips(()=>{cur=null;vKarten()}),
     $('div',{class:'row'},sel,$('span',{class:'muted',text:sure+' von '+p.length+' sicher'})),
     $('div',{class:'meter'},$('i',{style:'width:'+(p.length?sure/p.length*100:0)+'%'})),
+    KSET!=null&&D.kurz[KSET]?$('div',{class:'row kzset'},$('span',{class:'grow',text:'Nur Karten zu: '+D.kurz[KSET].t}),$('button',{class:'chip',onclick:()=>{KSET=null;cur=null;vKarten()}},'Alle Karten')):null,
     $('button',{class:'ktog','aria-pressed':String(typ),onclick:()=>{S.kType=!typ;save();KR=null;vKarten()}},$('i'),'Antwort eintippen und abgleichen'),
     cur?(typ&&!shown?$('div',{class:'sheet card ktype'},$('div',{},$('div',{class:'tag',text:AN(cur.c[0])+' · '+cur.c[1]}),$('p',{class:'q',text:cur.c[2]})),
         $('textarea',{id:'kans',rows:'4',placeholder:'Deine Antwort in Stichpunkten','aria-label':'Deine Antwort',oninput:e=>{KT=e.target.value}},KT),
@@ -1043,6 +1079,7 @@ function vKarten(){
       :$('div',{class:'sheet card',tabindex:'0',role:'button','aria-label':'Karte umdrehen',onclick:typ?null:flip,onkeydown:e=>{if(!typ&&(e.key==='Enter'||e.key===' ')){e.preventDefault();flip()}}},
         $('div',{},$('div',{class:'tag',text:AN(cur.c[0])+' · '+cur.c[1]}),$('p',{class:'q',text:cur.c[2]})),
         shown?$('p',{class:'a'},KR?kmark(cur.c[3],KR.hits):cur.c[3]):$('p',{class:'muted',text:'Antwort überlegen, dann tippen zum Umdrehen'}))):$('p',{text:'Keine Karten in dieser Auswahl.'}),
+    cur?kzPill(kzFor(cur.i)):null,
     res,
     cur&&shown?$('div',{class:'row'},$('button',{class:'bad grow'+(sug<0?' sug':''),onclick:()=>mark(-1)},'Noch nicht'),$('button',{class:'good grow'+(sug>0?' sug':''),onclick:()=>mark(1)},'Wusste ich')):null,
     $('p',{class:'muted',text:'Karten, die du noch nicht kannst, kommen zuerst wieder. Nach zweimal „Wusste ich“ gilt eine Karte als sicher.'}));
@@ -1229,7 +1266,7 @@ function vRechnen(){
     const ok=Math.abs(v-C.a)<=(d===0?0.5:d===1?0.051:d===4?0.00011:0.011);C.state=ok?'ok':'no';S.calc[1]++;if(ok)S.calc[0]++;upd('cm',C.name,ok,3);save();vRechnen()};
   R(areaChips(()=>{F.topic='Alle';C=null;vRechnen()}),
     $('div',{class:'row'},$('select',{id:'ctype','aria-label':'Aufgabentyp',onchange:e=>{F.topic=e.target.value;C=null;vRechnen()}},types.map(t=>$('option',{value:t,selected:t===F.topic?'':null},t==='Alle'?'Alle Aufgabentypen':t)))),
-    $('div',{class:'sheet'},$('div',{class:'tag',text:AN(C.area)+' · '+C.name}),$('p',{style:'white-space:pre-line;font-size:17px',text:C.t}),rundP(C),
+    $('div',{class:'sheet'},$('div',{class:'tag',text:AN(C.area)+' · '+C.name}),$('p',{style:'white-space:pre-line;font-size:17px',text:C.t}),rundP(C),kzPill(kzGen(C.name)),
       C.tab&&C.state!=='show'?kSchema(C,!!C.state):null,
       C.tab&&!C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{const r=kCheck(C);if(!C.tv.some(x=>String(x).trim()!=='')){document.querySelector('.kin')&&document.querySelector('.kin').focus();return}
         const ok=r.res[C.ai].v&&(C.tab[C.ai].pi?r.res[C.ai].p:true);C.score=r.ok+' von '+r.n;C.state=ok?'ok':'no';S.calc[1]++;if(ok)S.calc[0]++;upd('cm',C.name,ok,3);save();vRechnen()}},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')):null,
@@ -1586,11 +1623,46 @@ function wissenList(){
   }
   box.replaceChildren(...(out.length||!q?out:[$('p',{class:'muted',text:'Nichts gefunden. Anderes Stichwort probieren, zum Beispiel „Liquidität“ oder „Skonto“.'})]));
 }
+/* ---------- Kurz erklärt: eine Folie pro Thema (Grundidee, Beispiel, IHK-Frage, Prüfungsfalle, Musterantwort) ---------- */
+let KZ=null;
+const kzOn=()=>!T1M&&!AB&&Array.isArray(D.kurz)&&D.kurz.length>0;
+const kzFor=i=>kzOn()?D.kurz.findIndex(z=>z.k.includes(i)):-1;
+const kzGen=n=>kzOn()?D.kurz.findIndex(z=>(z.r||[]).includes(n)):-1;
+function kSlide(i,inSheet){const z=D.kurz[i],n=D.kurz.length;let open=false;
+  const ans=$('div',{class:'ksbox ksans',hidden:''},$('h3',{},$('i',{class:'ksic',text:'✓'}),'So beantwortest du es'),$('ul',{},z.a.map(t=>$('li',{text:t}))));
+  const rev=$('button',{class:'ksrev',onclick:e=>{open=!open;ans.hidden=!open;e.currentTarget.textContent=T(open?'Musterantwort verbergen':'Musterantwort aufdecken');e.currentTarget.setAttribute('aria-expanded',String(open))},'aria-expanded':'false'},'Musterantwort aufdecken');
+  const go2=(pf,h)=>{document.querySelectorAll('.dsov.kzov').forEach(o=>o.remove());PF=pf;if(h==='karten')cur=null;if(h==='rechnen')C=null;go(h)};
+  return $('section',{class:'ks','aria-label':z.t},
+    $('div',{class:'kshero'},$('small',{text:z.lf+' · '+z.th+(inSheet?'':' · '+(i+1)+' von '+n)}),$('h2',{text:z.t}),$('p',{text:z.s})),
+    $('div',{class:'ksbox'},$('h3',{},$('i',{class:'ksic',text:'≡'}),'Die Grundidee'),$('div',{class:'ksterms'},z.g.flatMap(([a,b])=>[$('b',{text:a}),$('span',{text:b})]))),
+    $('div',{class:'ksbox ksex'},$('h3',{},$('i',{class:'ksic',text:'€'}),'Beispiel aus dem Autohaus'),$('p',{text:z.b}),z.c?$('div',{class:'kscalc'},z.c.split('\n').map(l=>$('div',{text:l.replace(/ {2,}/g,' ').trim()}))):null),
+    $('div',{class:'ksbox kstask'},$('span',{class:'ksop',text:z.op}),$('p',{},$('b',{text:'So fragt die IHK: '}),z.f)),
+    $('div',{class:'ksbox kstrap'},$('h3',{},$('i',{class:'ksic',text:'!'}),'Prüfungsfalle'),$('p',{text:z.x})),
+    rev,ans,
+    $('p',{class:'ksmerk'},$('b',{text:'Merkformel: '}),z.m),
+    $('div',{class:'row'},z.k.length?$('button',{class:'kskart grow',onclick:()=>go2({area:'Alle',topic:'Alle',ks:i},'karten')},z.k.length+' Karten dazu'):null,
+      z.r&&z.r.length?$('button',{class:'ksrech grow',onclick:()=>go2({area:'Alle',topic:z.r[0]},'rechnen')},'Rechnen üben'):null))}
+function vKurz(){const n=D.kurz.length;
+  if(KZ!=null&&D.kurz[KZ])return[
+    $('div',{class:'row'},$('button',{class:'chip',onclick:()=>{KZ=null;vWissen();SCR.scrollTo(0,0)}},'‹ Alle Themen'),$('span',{class:'muted grow',style:'text-align:right',text:(KZ+1)+' von '+n})),
+    kSlide(KZ),
+    $('div',{class:'row'},$('button',{class:'grow',disabled:KZ===0?'':null,onclick:()=>{KZ--;vWissen();SCR.scrollTo(0,0)}},'‹ Zurück'),$('button',{class:'primary grow',disabled:KZ===n-1?'':null,onclick:()=>{KZ++;vWissen();SCR.scrollTo(0,0)}},'Weiter ›'))];
+  const groups=[...new Set(D.kurz.map(z=>z.th))];
+  return[$('p',{class:'muted',style:'margin:0',text:'Eine Folie pro Thema: Grundidee, Beispiel aus dem Autohaus, so fragt die IHK, Prüfungsfalle und Musterantwort. Zum Nachschlagen der Formeln gibt es den Reiter „Formeln“.'}),
+    ...groups.flatMap(g=>[$('h2',{class:'shit',text:g}),...D.kurz.map((z,i)=>[z,i]).filter(([z])=>z.th===g).map(([z,i])=>
+      $('button',{class:'sheet kzrow',onclick:()=>{KZ=i;vWissen();SCR.scrollTo(0,0)}},$('b',{text:z.t}),$('span',{text:z.s})))])]}
+function kurzSheet(i){const close=()=>ov.remove();
+  const ov=$('div',{class:'dsov kzov',role:'dialog','aria-modal':'true','aria-label':D.kurz[i].t,onclick:ev=>{if(ev.target===ov)close()}},
+    $('div',{class:'dssh'},$('div',{class:'dshd'},$('b',{text:'Kurz erklärt'}),$('button',{class:'dsx','aria-label':'Schließen',onclick:close},'✕')),
+      $('div',{class:'dsbody'},kSlide(i,true))));
+  document.body.append(ov);ov.querySelector('.dsx').focus()}
+const kzPill=i=>i<0?null:$('button',{class:'kzpill',onclick:()=>kurzSheet(i)},'Kurz erklärt: '+D.kurz[i].t+' ›');
 function vWissen(){
   const seg=(k,n)=>$('button',{class:'chip grow','aria-pressed':String(WSEG===k),onclick:()=>{if(k==='bilder')BST=null;go(k==='formeln'?'wissen':k)}},n);
-  const segs=$('div',{class:'row',role:'group','aria-label':'Ansicht'},seg('formeln','Formeln'),seg('lernfelder','Lernfelder'),T1M?null:seg('bilder','In Bildern'));
+  const segs=$('div',{class:'row',role:'group','aria-label':'Ansicht'},kzOn()?seg('kurz','Kurz erklärt'):null,seg('formeln','Formeln'),seg('lernfelder','Lernfelder'),T1M?null:seg('bilder','In Bildern'));
   const inp=$('input',{type:'search',id:'wq',placeholder:'Überall suchen: Formeln, Lernfelder'+(T1M?'':', Bilder'),value:WQ,'aria-label':'Suchen',autocomplete:'off',oninput:e=>{WQ=e.target.value;wissenList()}});
   const list=$('div',{id:'wlist',style:'display:flex;flex-direction:column;gap:14px'});const ask=PV?kiAsk():null;
+  if(WSEG==='kurz'&&kzOn())return R(segs,...vKurz());
   if(WSEG==='bilder'&&!T1M)R(segs,inp,ask,list,$('div',{id:'wbase',style:'display:flex;flex-direction:column;gap:14px'},vBilder()));
   else R(segs,inp,ask,WSEG==='formeln'?$('div',{id:'wac'},areaChips(vWissen,true)):null,list,
     WSEG==='lernfelder'?$('p',{id:'wnote',class:'muted',text:'Die Lernfelder fassen die Kann-Listen in Stichpunkten zusammen, geordnet nach den Prüfungen, in denen sie drankommen.'}):null,
@@ -1631,12 +1703,11 @@ function vAufbauLF(){const lfs=ehLfs(),B=BERUFE[BER];
 /* ---------- Testprüfung nach IHK-Schema ---------- */
 /* Teil: ['o',Themen,Anzahl,Punkte] offene Frage · ['c',Aufgabentypen,Anzahl,Punkte] Rechnen · ['b',Anzahl,Punkte] Buchen · ['q',Bereich,Anzahl,Punkte] Ankreuzen */
 const EX={
- KUP:{name:'Kaufmännische Unterstützungsprozesse',min:90,lf:'Lernfelder 2, 9, 10 · 25 % der Gesamtnote',form:'5 Situationsaufgaben mit Teilaufgaben, Kontenplan',blocks:[
-  ['Personalwirtschaft','Sie arbeiten in der Personalabteilung der Autohaus Nordring GmbH und unterstützen die Personalleiterin.',[['z','Personal',1,4],['c',['Nettopersonalbedarf mit Personalveränderungen'],1,6],['o',['Personal'],2,5]]],
-  ['Buchführung','In der Buchhaltung bearbeiten Sie Belege und den Kontoauszug. Verwenden Sie die Konten aus dem Kontenplan. Die Punktzahl zeigt, wie viele Konten der Buchungssatz hat.',[['b',4,'n',12],['o',['Inventur und Bilanz','Konten und Abschluss','Umsatzsteuer'],1,4],['c',['Skonto zurückrechnen','Differenzbesteuerung','Zahllast','Reinvermögen'],1,4]]],
-  ['Kalkulation und Kostenrechnung','Der Teile- und Zubehörverkauf soll neu kalkuliert werden. Die Geschäftsleitung bittet Sie um Berechnungen und Erläuterungen.',[['c',['Handelskalkulation vorwärts','Handelskalkulation rückwärts','Differenzkalkulation'],1,8],['c',['Angebotspreis mit Kalkulationsfaktor','Kalkulationszuschlag','Handelsspanne','BAB: Umlage und Zuschlagssatz','Bezugspreis im Angebotsvergleich'],1,4],['z','Kosten',1,4],['o',['KLR','Kalkulation'],1,4]]],
-  ['Deckungsbeitrag und Werkstatt','Für die Planung des nächsten Geschäftsjahres werten Sie Zahlen aus Service und Verkauf aus.',[['c',['Break-even-Menge','Deckungsbeitrag 3 (KER)','Stundenverrechnungssatz aus Arbeitswerten','Soll-Lohnerlöse und Werkstattindex'],2,6],['o',['Deckungsbeitrag','Werkstatt'],2,4]]],
-  ['Controlling','Die Hausbank verlangt für ein Kreditgespräch aktuelle Kennzahlen des Autohauses.',[['c',['Bilanzkennzahl','Lagerdauer','Lagerzinsen','Lineare Abschreibung im ersten Jahr'],2,6],['o',['Kennzahlen','Anlagen'],2,4]]]]},
+ KUP:{name:'Kaufmännische Unterstützungsprozesse',min:90,lf:'Lernfelder 2, 9, 10 · 25 % der Gesamtnote',form:'4 Situationsaufgaben mit Teilaufgaben, Kontenplan',blocks:[
+  ['Personalwirtschaft','Sie arbeiten in der Personalabteilung der Autohaus Nordring GmbH und unterstützen die Personalleiterin.',[['z','Personal',1,4],['c',['Nettopersonalbedarf mit Personalveränderungen'],1,6],['c',['Entgeltabrechnung (Nettoentgelt)'],1,7],['o',['Personal'],2,4]]],
+  ['Buchführung','In der Buchhaltung bearbeiten Sie Belege und den Kontoauszug. Verwenden Sie die Konten aus dem Kontenplan. Die Punktzahl zeigt, wie viele Konten der Buchungssatz hat.',[['b',5,'n',15],['o',['Inventur und Bilanz','Konten und Abschluss','Umsatzsteuer'],1,5],['c',['Skonto zurückrechnen','Differenzbesteuerung','Zahllast','Reinvermögen'],2,5]]],
+  ['Kalkulation, Kostenrechnung und Werkstatt','Für das nächste Geschäftsjahr sollen die Teilepreise neu kalkuliert und die Zahlen aus Service und Verkauf ausgewertet werden. Die Geschäftsleitung bittet Sie um Berechnungen und Erläuterungen.',[['c',['Handelskalkulation vorwärts','Handelskalkulation rückwärts','Differenzkalkulation'],1,8],['c',['Angebotspreis mit Kalkulationsfaktor','Kalkulationszuschlag','Handelsspanne','BAB: Umlage und Zuschlagssatz','Bezugspreis im Angebotsvergleich'],1,4],['c',['Break-even-Menge','Deckungsbeitrag 3 (KER)','Stundenverrechnungssatz aus Arbeitswerten','Soll-Lohnerlöse und Werkstattindex'],1,5],['z','Kosten',1,4],['o',['KLR','Kalkulation','Deckungsbeitrag','Werkstatt'],3,3]]],
+  ['Controlling','Die Hausbank verlangt für ein Kreditgespräch aktuelle Kennzahlen des Autohauses.',[['c',['Bilanzkennzahl','Lagerdauer','Lagerzinsen','Lineare Abschreibung im ersten Jahr'],1,5],['o',['Kennzahlen','Anlagen'],2,5]]]]},
  WiSo:{name:'Wirtschafts- und Sozialkunde',min:60,lf:'Lernfelder 1, 9, 11 · 10 % der Gesamtnote',form:'33 Ankreuz- und Rechenaufgaben',mix:true,blocks:[
   ['','',[['q','WiSo',28,100/33],['c',['BIP nach Verwendung','Lohnquote','Gleichgewichtspreis','Kündigungsfrist Arbeitgeber','Teilurlaub'],5,100/33]]]]},
  FF:{name:'Fahrzeugvertriebsprozesse und Finanzdienstleistungen',min:90,lf:'Lernfelder 6, 7, 8 · 25 % der Gesamtnote',form:'5 Situationsaufgaben mit Teilaufgaben',blocks:[
@@ -2044,11 +2115,11 @@ function kiCards(){return kiSlot(()=>{if(!KI.geladen)return null;const n=KI.inh.
   return [o&&KI.owner?$('a',{class:'sheet mitcta kiwait',href:'#freigabe'},$('b',{text:o+' Einsendung'+(o>1?'en warten':' wartet')+' auf deine Freigabe ›'}),$('span',{text:'Claude hat sie geprüft. Du entscheidest, was übernommen wird.'})):null,
     n?$('a',{class:'sheet bwopt',href:'#gemeinsam'},$('b',{text:'Aus euren Unterlagen: '+n+' Aufgabe'+(n>1?'n':'')}),$('span',{text:'Von Azubis eingeschickt, von Claude erstellt, von Jérôme freigegeben'})):null]})}
 
-const V={start:()=>{vStart();app.append($('a',{class:'sheet mitcta',href:'#mitmachen'},$('b',{text:'Bau Exam Buddy mit'}),$('span',{text:'Schick deine Mitschriften. Wir machen daraus Karten und Aufgaben für alle.'})))},karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,bilder:vWissen,pruefung:vExam,einstellungen:vSettings,plan:vPlan,recht:vRecht,mitmachen:vMitmachen};
+const V={start:()=>{vStart();app.append($('a',{class:'sheet mitcta',href:'#mitmachen'},$('b',{text:'Bau Exam Buddy mit'}),$('span',{text:'Schick deine Mitschriften. Wir machen daraus Karten und Aufgaben für alle.'})))},karten:vKarten,quiz:vQuiz,rechnen:vRechnen,buchen:vBuchen,wissen:vWissen,lernfelder:vWissen,bilder:vWissen,kurz:vWissen,pruefung:vExam,einstellungen:vSettings,plan:vPlan,recht:vRecht,mitmachen:vMitmachen};
 V.gemeinsam=vGemeinsam;V.freigabe=vFreigabe;TITLE.gemeinsam='Aus euren Unterlagen';TITLE.freigabe='Freigabe';
 if(PV&&!BER)V.start=vBerufWahl;else if(AB){V.start=vAufbau;V.wissen=V.lernfelder=vAufbauLF}
 if(PV){TITLE.start=!BER?'Willkommen':{auto:'Automobilkaufleute',vk:'Verkäufer/-in',ke:'Kaufleute im Einzelhandel'}[BER];if(AB)TITLE.wissen=TITLE.lernfelder='Lernfelder'}
-function route(){let h=(location.hash||'#start').slice(1);if(!PV&&/^(gemeinsam|freigabe)$/.test(h))h='start';if(PV&&!BER&&!/^(einstellungen|recht|mitmachen)$/.test(h))h='start';else if(AB&&!/^(start|wissen|lernfelder|einstellungen|recht|mitmachen|gemeinsam|freigabe)$/.test(h))h='start';if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'||v==='bilder'?'wissen':v==='einstellungen'||v==='plan'||v==='recht'||v==='mitmachen'||v==='gemeinsam'||v==='freigabe'?'start':v;F.topic='Alle';if(PF){if(PF.area)F.area=PF.area;if(PF.topic)F.topic=PF.topic;if(PF.st!=null)BST=PF.st;PFW=1}else if(PFW){PFW=0;F.area='Alle';WQ='';BST=null}if(v==='start'||v==='plan')PT=null;if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':v==='bilder'?'bilder':'formeln';if(g!==WSEG){WSEG=g}if(PF&&PF.wq!==undefined)WQ=PF.wq}PF=null;
+function route(){let h=(location.hash||'#start').slice(1);if(!PV&&/^(gemeinsam|freigabe)$/.test(h))h='start';if(PV&&!BER&&!/^(einstellungen|recht|mitmachen)$/.test(h))h='start';else if(AB&&!/^(start|wissen|lernfelder|einstellungen|recht|mitmachen|gemeinsam|freigabe)$/.test(h))h='start';if(h==='kannliste')h='lernfelder';const v=V[h]?h:'start',m=v==='lernfelder'||v==='bilder'||v==='kurz'?'wissen':v==='einstellungen'||v==='plan'||v==='recht'||v==='mitmachen'||v==='gemeinsam'||v==='freigabe'?'start':v;F.topic='Alle';if(PF){if(PF.area)F.area=PF.area;if(PF.topic)F.topic=PF.topic;if(PF.st!=null)BST=PF.st;PFW=1}else if(PFW){PFW=0;F.area='Alle';WQ='';BST=null}if(v==='start'||v==='plan')PT=null;if(m==='wissen'){const g=v==='lernfelder'?'lernfelder':v==='bilder'?'bilder':v==='kurz'?'kurz':'formeln';if(g!=='kurz')KZ=null;if(g!==WSEG){WSEG=g}if(PF&&PF.wq!==undefined)WQ=PF.wq}KSET=PF&&PF.ks!=null?PF.ks:v==='karten'?KSET:null;PF=null;
   document.body.dataset.mode=m;document.getElementById('htitle').textContent=TITLE[v];const hb=document.getElementById('home'),gb=document.getElementById('gear');v==='start'?hb.setAttribute('aria-current','page'):hb.removeAttribute('aria-current');v==='einstellungen'||v==='recht'?gb.setAttribute('aria-current','page'):gb.removeAttribute('aria-current');
   document.querySelectorAll('#nav a').forEach(a=>{if(a.getAttribute('href')==='#'+m)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
   V[v]();if(PV&&BER&&(v==='start'||v==='einstellungen')){const c=kiCards(),a=app;if(v==='start')a.insertBefore(c,a.children[1]||null);else{const m=a.querySelector('.mitcta');m?m.after(c):a.append(c)}}pbar(v);SCR.scrollTo(0,0)}
