@@ -1634,5 +1634,19 @@
 "Eine Folie pro Thema: Grundidee, Beispiel aus dem Autohaus, so fragt die IHK, Prüfungsfalle und Musterantwort. Zum Nachschlagen der Formeln gibt es den Reiter „Formeln“.": "One slide per topic: basic idea, example from the dealership, how the IHK asks, exam trap and model answer. To look up formulas, use the „Formulas“ tab.",
 "Die letzte Prüfung ließ sich nach einem Update nicht mehr öffnen. ": "Your last exam could not be opened after an update. ",
 "Dein Ergebnis steht unten in der Liste. Starte einfach eine neue Prüfung.": "Your result is in the list below. Just start a new exam.",
-"Starte einfach eine neue Prüfung.": "Just start a new exam."
+"Starte einfach eine neue Prüfung.": "Just start a new exam.",
+"Produktive Löhne der Werkstatt im Quartal {0} €, Gemeinkostenzuschlag laut BAB {1} %, Gewinnzuschlag {2} %, Wagniszuschlag {3} %. Ermitteln Sie den Soll-Werkstattindex.": "Productive wages of the workshop in the quarter {0} €, overhead rate from the cost allocation sheet {1} %, profit mark-up {2} %, risk mark-up {3} %. Determine the target workshop index.",
+"Produktive Löhne der Werkstatt im Quartal {0} €. Geplant war ein Soll-Werkstattindex von {1}. Tatsächlich wurden Lohnerlöse von {2} € erzielt. Ermitteln Sie den Ist-Werkstattindex.": "Productive wages of the workshop in the quarter {0} €. A target workshop index of {1} was planned. Actual labour revenue was {2} €. Determine the actual workshop index.",
+"Gemeinkosten = {0} € × {1} % = {2} €": "Overheads = {0} € × {1} % = {2} €",
+"Selbstkosten = {0} + {1} = {2} €": "Cost = {0} + {1} = {2} €",
+"+ Gewinn {0} % von {1} € = {2} €": "+ profit {0} % of {1} € = {2} €",
+"+ Wagnis {0} % von {1} € = {2} €": "+ risk {0} % of {1} € = {2} €",
+"= Soll-Lohnerlöse {0} €": "= target labour revenue {0} €",
+"Soll-Index = {0} / {1} = {2}": "Target index = {0} / {1} = {2}",
+"Gewinn und Wagnis beide auf die Selbstkosten, also {0} × {1} = {2}": "Profit and risk are both calculated on cost, so {0} × {1} = {2}",
+"Ist-Index = Ist-Lohnerlöse / produktive Löhne": "Actual index = actual labour revenue / productive wages",
+"Unter dem Soll-Index von {0}: Die Werkstatt hat weniger erlöst als geplant.": "Below the target index of {0}: the workshop earned less than planned.",
+"Über dem Soll-Index von {0}: Die Werkstatt hat mehr erlöst als geplant.": "Above the target index of {0}: the workshop earned more than planned.",
+"Handelskalkulation im Überblick": "Trade pricing at a glance",
+"1 Karte dazu": "1 card on this"
 }

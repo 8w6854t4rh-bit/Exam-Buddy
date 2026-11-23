@@ -486,7 +486,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='79';
+const APPV='80';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1626,6 +1626,7 @@ function wissenList(){
 /* ---------- Kurz erklärt: eine Folie pro Thema (Grundidee, Beispiel, IHK-Frage, Prüfungsfalle, Musterantwort) ---------- */
 let KZ=null;
 const kzOn=()=>!T1M&&!AB&&Array.isArray(D.kurz)&&D.kurz.length>0;
+const kzOrd=()=>{const g=[...new Set(D.kurz.map(z=>z.th))];return D.kurz.map((z,i)=>i).sort((a,b)=>g.indexOf(D.kurz[a].th)-g.indexOf(D.kurz[b].th)||a-b)};
 const kzFor=i=>kzOn()?D.kurz.findIndex(z=>z.k.includes(i)):-1;
 const kzGen=n=>kzOn()?D.kurz.findIndex(z=>(z.r||[]).includes(n)):-1;
 const kzNb=v=>typeof v==='string'?v.replace(/(\d) (?=%|T?€|Std\b|h\b)/g,'$1\u00a0'):Array.isArray(v)?v.map(kzNb):v&&typeof v==='object'?Object.fromEntries(Object.entries(v).map(([k,x])=>[k,kzNb(x)])):v;
@@ -1634,20 +1635,20 @@ function kSlide(i,inSheet){const z=kzNb(D.kurz[i]),n=D.kurz.length;let open=fals
   const rev=$('button',{class:'ksrev',onclick:e=>{open=!open;ans.hidden=!open;e.currentTarget.textContent=T(open?'Musterantwort verbergen':'Musterantwort aufdecken');e.currentTarget.setAttribute('aria-expanded',String(open))},'aria-expanded':'false'},'Musterantwort aufdecken');
   const go2=(pf,h)=>{document.querySelectorAll('.dsov.kzov').forEach(o=>o.remove());PF=pf;if(h==='karten')cur=null;if(h==='rechnen')C=null;go(h)};
   return $('section',{class:'ks','aria-label':z.t},
-    $('div',{class:'kshero'},$('small',{text:z.lf+' · '+z.th+(inSheet?'':' · '+(i+1)+' von '+n)}),$('h2',{text:z.t}),$('p',{text:z.s})),
+    $('div',{class:'kshero'},$('small',{text:z.lf+' · '+z.th+(inSheet?'':' · '+(kzOrd().indexOf(i)+1)+' von '+n)}),$('h2',{text:z.t}),$('p',{text:z.s})),
     $('div',{class:'ksbox'},$('h3',{},$('i',{class:'ksic',text:'≡'}),'Die Grundidee'),$('div',{class:'ksterms'},z.g.map(([a,b])=>$('div',{class:'kst'},$('b',{text:a}),$('span',{text:b}))))),
     $('div',{class:'ksbox ksex'},$('h3',{},$('i',{class:'ksic',text:'€'}),'Beispiel aus dem Autohaus'),$('p',{text:z.b}),z.c?$('div',{class:'kscalc'},z.c.split('\n').map(l=>$('div',{text:l.replace(/ {2,}/g,' ').trim()}))):null),
     $('div',{class:'ksbox kstask'},$('span',{class:'ksop',text:z.op}),$('p',{},$('b',{text:'So fragt die IHK: '}),z.f)),
     $('div',{class:'ksbox kstrap'},$('h3',{},$('i',{class:'ksic',text:'!'}),'Prüfungsfalle'),$('p',{text:z.x})),
     rev,ans,
     $('p',{class:'ksmerk'},$('b',{text:'Merkformel: '}),z.m),
-    $('div',{class:'row'},z.k.length?$('button',{class:'kskart grow',onclick:()=>go2({area:'Alle',topic:'Alle',ks:i},'karten')},z.k.length+' Karten dazu'):null,
+    $('div',{class:'row'},z.k.length?$('button',{class:'kskart grow',onclick:()=>go2({area:'Alle',topic:'Alle',ks:i},'karten')},(z.k.length===1?'1 Karte dazu':z.k.length+' Karten dazu')):null,
       z.r&&z.r.length?$('button',{class:'ksrech grow',onclick:()=>go2({area:'Alle',topic:z.r[0]},'rechnen')},'Rechnen üben'):null))}
-function vKurz(){const n=D.kurz.length;
+function vKurz(){const n=D.kurz.length,O=kzOrd(),p=O.indexOf(KZ);
   if(KZ!=null&&D.kurz[KZ])return[
-    $('div',{class:'row'},$('button',{class:'chip',onclick:()=>{KZ=null;vWissen();SCR.scrollTo(0,0)}},'‹ Alle Themen'),$('span',{class:'muted grow',style:'text-align:right',text:(KZ+1)+' von '+n})),
+    $('div',{class:'row'},$('button',{class:'chip',onclick:()=>{KZ=null;vWissen();SCR.scrollTo(0,0)}},'‹ Alle Themen'),$('span',{class:'muted grow',style:'text-align:right',text:(p+1)+' von '+n})),
     kSlide(KZ),
-    $('div',{class:'row'},$('button',{class:'grow',disabled:KZ===0?'':null,onclick:()=>{KZ--;vWissen();SCR.scrollTo(0,0)}},'‹ Zurück'),$('button',{class:'primary grow',disabled:KZ===n-1?'':null,onclick:()=>{KZ++;vWissen();SCR.scrollTo(0,0)}},'Weiter ›'))];
+    $('div',{class:'row'},$('button',{class:'grow',disabled:p<=0?'':null,onclick:()=>{KZ=O[p-1];vWissen();SCR.scrollTo(0,0)}},'‹ Zurück'),$('button',{class:'primary grow',disabled:p>=n-1?'':null,onclick:()=>{KZ=O[p+1];vWissen();SCR.scrollTo(0,0)}},'Weiter ›'))];
   const groups=[...new Set(D.kurz.map(z=>z.th))];
   return[$('p',{class:'muted',style:'margin:0',text:'Eine Folie pro Thema: Grundidee, Beispiel aus dem Autohaus, so fragt die IHK, Prüfungsfalle und Musterantwort. Zum Nachschlagen der Formeln gibt es den Reiter „Formeln“.'}),
     ...groups.flatMap(g=>[$('h2',{class:'shit',text:g}),...D.kurz.map((z,i)=>[z,i]).filter(([z])=>z.th===g).map(([z,i])=>
