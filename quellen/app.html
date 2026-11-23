@@ -414,7 +414,7 @@ details[open] summary{margin-bottom:10px}
 @media (min-width:560px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}.kc{font-size:13.5px}}
 .rund{margin:-4px 0 0;font-size:14px;font-weight:600;color:var(--muted)}
 .rund:before{content:'≈ ';color:var(--accent)}
-.ksch.knop th:first-child{width:58%}
+.ksch.knop th:first-child{width:58%}.babwrap{overflow-x:auto;margin:4px 0;padding:0;-webkit-overflow-scrolling:touch}.ksch.bab{width:auto;min-width:100%;font-size:14px}.ksch.bab tbody th{width:auto;min-width:118px;max-width:140px;position:sticky;left:0;background:var(--surface);z-index:1}.ksch.bab thead th:first-child{position:sticky;left:0;z-index:2}.ksch.bab td{min-width:98px}.ksch.bab .bgs{display:block;font-size:12px;font-weight:400;color:var(--muted);margin-top:2px}.babhint{font-size:13px;margin:6px 0 0}@media (min-width:900px){.babhint{display:none}}.ksch.bab td.bfix{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.ksch.bab td.bx{background:var(--raise)}.ksch.bab .kin{min-width:92px;padding:6px 7px}.ksch.bab thead th{white-space:nowrap}
 .kfix{display:block;padding:8px;font-weight:600;font-variant-numeric:tabular-nums}
 .ks{display:flex;flex-direction:column;gap:10px}
 .kshero{background:var(--surface);border-radius:18px;padding:16px;border:1px solid var(--line)}
@@ -486,7 +486,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='80';
+const APPV='81';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -1153,7 +1153,19 @@ G.push(
  ['KUP','Lagerzinsen',()=>{const lb=ri(40,200)*1000,ld=pick([30,36,45,60,72,90]),z=pick([6,8,9,10,12]),sz=z*ld/360,a=r2(lb*sz/100);return{t:`Ø Lagerbestand ${eur(lb,0)} €, Ø Lagerdauer ${ld} Tage, Jahreszinssatz ${z} %. Wie hoch sind die Lagerzinsen für eine Lagerperiode?`,a,u:'€',s:`Lagerzinssatz = ${z} % × ${ld} / 360 = ${eur(sz)} %\nLagerzinsen = ${eur(lb,0)} € × ${eur(sz)} % = ${eur(a)} €`}}],
  ['KUP','Bezugspreis im Angebotsvergleich',()=>{const lp=ri(20,300)*10,ra=pick([5,10,12,15,20]),sk=pick([2,3]),bz=ri(2,30)*5,ze=r2(lp*(1-ra/100)),be=r2(ze*(1-sk/100)),a=r2(be+bz);return{t:`Angebot: Listenpreis ${eur(lp)} €, ${ra} % Rabatt, ${sk} % Skonto, Bezugskosten ${eur(bz)} €. Wie hoch ist der Bezugspreis?`,a,u:'€',s:`Zieleinkaufspreis = ${eur(lp)} − ${ra} % = ${eur(ze)} €\nBareinkaufspreis = ${eur(ze)} − ${sk} % = ${eur(be)} €\nBezugspreis = ${eur(be)} + ${eur(bz)} = ${eur(a)} €`}}],
  ['KUP','Arbeitnehmeranteil Sozialversicherung',()=>{const b=ri(22,48)*100,zu=pick([2.5,2.9,3.1]),kl=pick([true,false]),kv=r2(b*(14.6+zu)/200),rv=r2(b*.093),av=r2(b*.013),pv=r2(b*(kl?.024:.018)),a=r2(kv+rv+av+pv);return{t:`Bruttogehalt ${eur(b)} €, ${kl?'kinderlos, über 23 Jahre':'ein Kind'}. Beitragssätze: Krankenversicherung 14,6 % + ${zu.toLocaleString('de-DE')} % Zusatzbeitrag, Rentenversicherung 18,6 %, Arbeitslosenversicherung 2,6 %, Pflegeversicherung 3,6 % (Kinderlose zusätzlich 0,6 %). Wie hoch ist der Arbeitnehmeranteil insgesamt?`,a,u:'€',s:`KV: ${eur(b)} × ${eur((14.6+zu)/2)} % = ${eur(kv)} €\nRV: ${eur(b)} × 9,30 % = ${eur(rv)} €\nAV: ${eur(b)} × 1,30 % = ${eur(av)} €\nPV: ${eur(b)} × ${kl?'2,40':'1,80'} % = ${eur(pv)} €\nSumme = ${eur(a)} €`}}],
- ['KUP','Geldwerter Vorteil Firmenwagen',()=>{const lp=ri(250,600)*100,km=ri(5,40),a=r2(lp*.01+lp*.0003*km);return{t:`Firmenwagen mit Bruttolistenpreis ${eur(lp)} €, auch privat genutzt. Entfernung Wohnung–Arbeit ${km} km. Wie hoch ist der monatliche geldwerte Vorteil (1-%-Methode)?`,a,u:'€',s:`Privatfahrten: ${eur(lp)} × 1 % = ${eur(lp*.01)} €\nArbeitsweg: ${eur(lp)} × 0,03 % × ${km} km = ${eur(r2(lp*.0003*km))} €\nSumme = ${eur(a)} €`}}],
+ ['KUP','Geldwerter Vorteil Firmenwagen',()=>{const lp=ri(250,600)*100,km=ri(5,40),a=r2(lp*.01+lp*.0003*km);return{t:`Firmenwagen mit Bruttolistenpreis ${eur(lp)} €, auch privat genutzt. Entfernung Wohnung–Arbeit ${km} km. Wie hoch ist der monatliche geldwerte Vorteil (1-%-Methode)?`,a,u:'€',s:`Privatfahrten: ${eur(lp)} € × 1 % = ${eur(lp)} × 0,01 = ${eur(lp*.01)} €\nArbeitsweg: ${eur(lp)} € × 0,03 % × ${km} km = ${eur(lp)} × 0,0003 × ${km} = ${eur(r2(lp*.0003*km))} €\nSumme = ${eur(a)} €\nIm Taschenrechner Prozent immer durch 100 teilen: 1 % = 0,01 und 0,03 % = 0,0003.`}}],
+ ['KUP','BAB vollständig (IHK-Schema)',()=>{const h5=(a,b)=>ri(a,b)*500,sum=a=>a.reduce((x,y)=>x+y,0),rat=()=>{for(;;){const r=[ri(1,4),ri(2,6),ri(1,4),ri(3,12)];if(new Set(r).size>2)return r}};
+  const lo=[h5(180,300),h5(60,120),h5(10,30),h5(240,400)],so=lo.map(x=>Math.round(x*pick([.18,.2,.21])/500)*500),fb=[1000,ri(0,2)*500,0,ri(10,30)*500],af=[ri(2,4)*500,ri(0,2)*500,ri(1,3)*500,ri(12,30)*500];
+  const fl=[ri(2,6)*25,ri(12,24)*25,ri(4,10)*25,ri(10,20)*25],qm=ri(6,12)*10,mi=fl.map(x=>x*qm),er=rat(),ef=ri(10,30)*100,en=er.map(x=>x*ef),dr=rat(),df=ri(10,30)*100,ent=dr.map(x=>x*df);
+  const ur=pick([[3,2,5],[4,1,5],[5,2,3],[2,1,2],[6,1,3],[3,1,4]]),us=sum(ur);let bm=ri(2,8)*500;const v0=lo[0]+so[0]+fb[0]+af[0]+bm+mi[0]+en[0]+ent[0];bm+=(us*100-v0%(us*100))%(us*100);
+  const dist=pick([[0,1],[0,2],[1,2],[0,1,2]]),dl=[['Miete','Fläche '+fl.join(' : ')+' m²',mi,fl,qm],['Energiekosten',er.join(' : '),en,er,ef],['Entsorgungskosten',dr.join(' : '),ent,dr,df]];
+  const rows=[['Löhne und Gehälter (unproduktiv)','Lohn- und Gehaltsliste',lo],['Gesetzliche soziale Aufwendungen','Gehaltsliste',so],[0],['Fortbildungskosten','nach Belegen',fb],[1],['Büromaterial, Telefon','auf Verwaltung',[bm,0,0,0]],['Abschreibungen','nach Anlagedatei',af],[2]].map(r=>r.length===1?(()=>{const d=dl[r[0]];return{l:d[0],g:d[1],tot:sum(d[2]),c:d[2].map(v=>({v,i:dist.includes(r[0])}))}})():{l:r[0],g:r[1],tot:sum(r[2]),c:r[2].map(v=>({v}))});
+  const cs=[0,1,2,3].map(j=>sum(rows.map(r=>r.c[j].v))),um=ur.map(x=>cs[0]/us*x),s2=[1,2,3].map(j=>cs[j]+um[j-1]),bs=[ri(12,30)*100000,ri(2,6)*100000,ri(40,90)*1000],zs=s2.map((x,j)=>r2(x/bs[j]*100));
+  const grid=[...rows,{l:'Summe',sum:1,tot:sum(cs),c:cs.map(v=>({v,i:1}))},{l:'Umlage Verwaltungskosten',g:'Verkaufserlöse '+ur.join(' : '),c:[{x:'→'},...um.map(v=>({v,i:1}))]},{l:'Summe nach Umlage',sum:1,c:[null,...s2.map(v=>({v,i:1}))]},
+    {l:'Zuschlagsgrundlage',g:'VAK bzw. produktive Löhne',c:[null,...bs.map(v=>({v}))]},{l:'Zuschlagssatz in %',sum:1,c:[null,...zs.map(v=>({v,i:1,p:1}))]}];
+  const K=['Neuwagen','Teile','Werkstatt'],L=dist.map(k=>{const d=dl[k],n=sum(d[3]),je=d[2][0]/d[3][0];return`${d[0]}: ${eur(sum(d[2]),0)} € ÷ ${eur(n,0)} ${k===0?'m²':'Teile'} = ${eur(je,0)} € je ${k===0?'m²':'Teil'}, verteilt ${d[2].map(v=>eur(v,0)).join(' | ')}`});
+  L.push(`Summen: Verwaltung ${eur(cs[0],0)} | Neuwagen ${eur(cs[1],0)} | Teile ${eur(cs[2],0)} | Werkstatt ${eur(cs[3],0)}`,`Umlage: ${eur(cs[0],0)} € ÷ ${us} Teile = ${eur(cs[0]/us,0)} € je Teil, verteilt ${um.map(v=>eur(v,0)).join(' | ')}`,`Summe nach Umlage: ${s2.map(v=>eur(v,0)).join(' | ')}`,...K.map((k,j)=>`Zuschlagssatz ${k}: ${eur(s2[j],0)} ÷ ${eur(bs[j],0)} × 100 = ${eur(zs[j])} %`));
+  return{bab:grid,a:zs[2],u:'%',t:`Vervollständigen Sie den Betriebsabrechnungsbogen (BAB) des Autohauses.\n1. Verteilen Sie die Kosten in den leeren Zeilen nach dem angegebenen Schlüssel.\n2. Bilden Sie die Summen der Kostenstellen.\n3. Legen Sie die Verwaltung als Hilfskostenstelle im Verhältnis der Verkaufserlöse ${ur.join(' : ')} auf Neuwagen, Teile und Werkstatt um.\n4. Ermitteln Sie die Gemeinkostenzuschlagssätze auf die verrechneten Anschaffungskosten (VAK) bzw. bei der Werkstatt auf die produktiven Löhne.`,s:L.join('\n')}},'nox'],
  ['WiSo','Teilurlaub',()=>{const u=pick([24,30]),m=pick([2,4]),a=u*m/12;return{t:`Jahresurlaub laut Vertrag ${u} Tage. Ein neuer Mitarbeiter scheidet nach ${m} vollen Monaten wieder aus (Wartezeit nicht erfüllt). Wie viele Urlaubstage stehen ihm zu?`,a,u:'Tage',d:0,s:`Je vollem Monat 1/12 des Jahresurlaubs\n${u} / 12 × ${m} = ${a} Tage`}}],
  ['FF','GAP-Versicherung',()=>{const ab=ri(150,320)*100,d=ri(15,60)*100,w=ab-d;return{t:`Totalschaden an einem Leasingfahrzeug. Ablösewert des Leasingvertrags ${eur(ab)} €, die Vollkasko ersetzt den Wiederbeschaffungswert von ${eur(w)} €. Welchen Betrag übernimmt die GAP-Versicherung?`,a:d,u:'€',s:`Lücke = Ablösewert − Wiederbeschaffungswert\n${eur(ab)} − ${eur(w)} = ${eur(d)} €`}}],
  ['T1','130-%-Grenze',()=>{const w=ri(60,200)*100,a=r2(w*1.3);return{t:`Haftpflichtschaden: Der Wiederbeschaffungswert beträgt ${eur(w)} €. Bis zu welchen Reparaturkosten darf der Kunde sein Fahrzeug nach der 130-%-Regel noch reparieren lassen?`,a,u:'€',s:`${eur(w)} × 130 % = ${eur(a)} €\nVoraussetzung: fachgerechte, vollständige Reparatur und Weiternutzung.`}}],
@@ -1240,6 +1252,7 @@ const T1X=['Kalkulationszuschlag','Handelsspanne','Angebotspreis mit Kalkulation
 if(T1M)G.push(...G.filter(g=>g[0]==='KUP'&&T1X.includes(g[1])).map(g=>['T1',g[1],g[2]]));
 /* Rundungshinweis unter jeder Rechenaufgabe, passend zur Genauigkeit, mit der geprüft wird */
 function rundTxt(g){if(!g||/Nachkommastelle/.test(g.t||''))return null;
+  if(g.bab)return 'Beträge auf volle Euro, Zuschlagssätze auf 2 Nachkommastellen runden.';
   if(g.tab)return g.tab.some(r=>r.pi)?'Beträge und Prozentsatz auf 2 Nachkommastellen runden.':'Alle Beträge auf 2 Nachkommastellen runden.';
   const d=g.d===undefined?2:g.d;
   return d===0?'Ergebnis als ganze Zahl angeben, ohne Nachkommastellen.':d===1?'Ergebnis auf 1 Nachkommastelle runden.':'Ergebnis auf '+d+' Nachkommastellen runden.'}
@@ -1258,6 +1271,15 @@ function kSchema(h,done){const tab=h.g?h.g.tab:h.tab;h.tv=h.tv||tab.map(()=>'');
   const hasP=tab.some(r=>r.p||r.pi);
   return $('table',{class:'ksch'+(hasP?'':' knop')},$('thead',{},$('tr',{},$('th',{scope:'col',text:(h.g||h).kt||'Kalkulationsschema'}),hasP?$('th',{scope:'col',text:'% / €'}):null,$('th',{scope:'col',text:'€'}))),
     $('tbody',{},tab.map((r,i)=>$('tr',{class:i===(h.g?h.g.ai:h.ai)?'kmain':''},$('th',{scope:'row',text:r.l}),hasP?$('td',{class:'kp'},r.pi?inp(h.tp,i,r.l+' in %',R_&&R_[i].p,r.pv,'%'):r.p):null,$('td',{},r.fx?$('span',{class:'kfix',text:eur(r.v)}):inp(h.tv,i,r.l+' in €',R_&&R_[i].v,r.v,'€'))))))}
+/* BAB im IHK-Schema: Raster mit Kostenarten und Kostenstellen, leere Felder werden eingetragen (Euro auf ±0,50, Prozent auf ±0,01) */
+const BABK=['Verwaltung','Neuwagen','Teile','Werkstatt'];
+function babCheck(h){h.bv=h.bv||{};let n=0,ok=0;const res={};h.bab.forEach((r,i)=>r.c.forEach((c,j)=>{if(!c||!c.i)return;n++;const k=i+'_'+j,v=kNum(h.bv[k]),y=!isNaN(v)&&Math.abs(v-c.v)<=(c.p?0.011:0.51);res[k]=y;if(y)ok++}));return{res,ok,n}}
+function babGrid(h,done){h.bv=h.bv||{};const R_=done?babCheck(h).res:null;
+  const cell=(c,i,j,lab)=>{if(!c)return $('td',{class:'bx'});if(c.x)return $('td',{class:'bfix',text:c.x});if(!c.i)return $('td',{class:'bfix',text:eur(c.v,c.p?2:0)});const k=i+'_'+j,okv=R_&&R_[k];
+    const el=$('input',{type:'text',inputmode:'decimal',autocomplete:'off',class:'kin'+(R_?(okv?' ok':' no'):''),value:h.bv[k]||'','aria-label':lab+', '+BABK[j]+(c.p?' in %':' in €'),disabled:R_?'':null,oninput:e=>{h.bv[k]=e.target.value}});
+    return $('td',{},R_&&!okv?$('div',{class:'kcell'},el,$('span',{class:'kwant',text:eur(c.v,c.p?2:0)+(c.p?' %':' €')})):el)};
+  return [$('p',{class:'muted babhint',text:'Die Tabelle lässt sich zur Seite wischen.'}),$('div',{class:'babwrap'},$('table',{class:'ksch bab'},$('thead',{},$('tr',{},$('th',{scope:'col',text:'Kostenarten'}),$('th',{scope:'col',text:'€ gesamt'}),BABK.map(k=>$('th',{scope:'col',text:k})))),
+    $('tbody',{},h.bab.map((r,i)=>$('tr',{class:r.sum?'kmain':''},$('th',{scope:'row'},r.l,r.g?$('small',{class:'bgs',text:r.g}):null),$('td',{class:'bfix',text:r.tot!=null?eur(r.tot,0):''}),r.c.map((c,j)=>cell(c,i,j,r.l)))))))]}
 function vRechnen(){
   const types=['Alle',...G.filter(g=>inArea(g[0])).map(g=>g[1])];
   if(!C||!inArea(C.area)||(F.topic!=='Alle'&&C.name!==F.topic)){if(!types.includes(F.topic))F.topic='Alle';newCalc()}
@@ -1268,11 +1290,15 @@ function vRechnen(){
     $('div',{class:'row'},$('select',{id:'ctype','aria-label':'Aufgabentyp',onchange:e=>{F.topic=e.target.value;C=null;vRechnen()}},types.map(t=>$('option',{value:t,selected:t===F.topic?'':null},t==='Alle'?'Alle Aufgabentypen':t)))),
     $('div',{class:'sheet'},$('div',{class:'tag',text:AN(C.area)+' · '+C.name}),$('p',{style:'white-space:pre-line;font-size:17px',text:C.t}),rundP(C),kzPill(kzGen(C.name)),
       C.tab&&C.state!=='show'?kSchema(C,!!C.state):null,
+      C.bab&&C.state!=='show'?babGrid(C,!!C.state):null,
+      C.bab&&!C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{if(!Object.values(C.bv||{}).some(x=>String(x).trim()!=='')){document.querySelector('.bab .kin')&&document.querySelector('.bab .kin').focus();return}const r=babCheck(C);
+        const ok=r.ok===r.n;C.score=r.ok+' von '+r.n;C.state=ok?'ok':'no';S.calc[1]++;if(ok)S.calc[0]++;upd('cm',C.name,ok,3);save();vRechnen()}},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')):null,
       C.tab&&!C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{const r=kCheck(C);if(!C.tv.some(x=>String(x).trim()!=='')){document.querySelector('.kin')&&document.querySelector('.kin').focus();return}
         const ok=r.res[C.ai].v&&(C.tab[C.ai].pi?r.res[C.ai].p:true);C.score=r.ok+' von '+r.n;C.state=ok?'ok':'no';S.calc[1]++;if(ok)S.calc[0]++;upd('cm',C.name,ok,3);save();vRechnen()}},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')):null,
-      C.state||C.tab?null:$('div',{class:'row'},$('input',{type:'text',id:'ans',inputmode:'decimal',autocomplete:'off',class:'grow',placeholder:'Ergebnis'+(C.u?' in '+C.u:''),'aria-label':'Dein Ergebnis',onkeydown:e=>{if(e.key==='Enter')check()}}),C.neg?pmBtn('ans'):null,$('button',{class:'primary',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')),
-      C.state?$('div',{class:'note '+(C.state==='ok'?'ok':C.state==='no'?'no':'')},$('b',{text:C.state==='ok'?'Richtig. ':C.state==='no'?'Nicht ganz. ':''}),'Ergebnis: '+eur(C.a,d)+(C.u?' '+C.u:''),C.tab&&C.score&&C.state!=='show'?$('span',{style:'display:block;margin-top:4px',text:C.score+' Feldern richtig'}):null):null,
+      C.state||C.tab||C.bab?null:$('div',{class:'row'},$('input',{type:'text',id:'ans',inputmode:'decimal',autocomplete:'off',class:'grow',placeholder:'Ergebnis'+(C.u?' in '+C.u:''),'aria-label':'Dein Ergebnis',onkeydown:e=>{if(e.key==='Enter')check()}}),C.neg?pmBtn('ans'):null,$('button',{class:'primary',onclick:check},'Prüfen'),$('button',{onclick:()=>{planTick('rechnen');C.state='show';vRechnen()}},'Lösung zeigen')),
+      C.state?$('div',{class:'note '+(C.state==='ok'?'ok':C.state==='no'?'no':'')},$('b',{text:C.state==='ok'?'Richtig. ':C.state==='no'?'Nicht ganz. ':''}),(C.bab?'Zuschlagssatz Werkstatt: ':'Ergebnis: ')+eur(C.a,d)+(C.u?' '+C.u:''),(C.tab||C.bab)&&C.score&&C.state!=='show'?$('span',{style:'display:block;margin-top:4px',text:C.score+' Feldern richtig'}):null):null,
       C.tab&&C.state==='show'?(()=>{C.tv=C.tab.map(r=>eur(r.v));C.tp=C.tab.map(r=>r.pi?eur(r.pv):'');return kSchema(C,true)})():null,
+      C.bab&&C.state==='show'?(()=>{C.bv={};C.bab.forEach((r,i)=>r.c.forEach((c,j)=>{if(c&&c.i)C.bv[i+'_'+j]=eur(c.v,c.p?2:0)}));return babGrid(C,true)})():null,
       C.state?$('div',{class:'steps',text:C.s}):null,
       C.state?repLink(C.t+'\nErgebnis laut App: '+eur(C.a,d)+(C.u?' '+C.u:'')):null,
       C.state?$('div',{class:'row'},$('button',{class:'primary',onclick:()=>{newCalc();vRechnen()}},'Nächste Aufgabe'),$('button',{onclick:()=>{go('wissen')}},'Formel nachschlagen')):null),
@@ -1747,7 +1773,7 @@ function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
   X.blocks.forEach((bl,bi)=>{let part=[];
     for(const sp of bl[2]){
       if(sp[0]==='q'){shuffle(qpool().filter(q=>sp[1]?q[0]===sp[1]:ina(q[0]))).slice(0,sp[2]).forEach(q=>part.push({type:'q',pts:sp[3],q,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]}))),sel:null}))}
-      else if(sp[0]==='c'){const gp=shuffle(G.filter(g=>sp[1]?sp[1].includes(g[1])&&(!T1M||g[0]==='T1'):ina(g[0])));for(let i=0;i<sp[2];i++){const g=gp[i%gp.length];part.push({type:'c',pts:sp[3],g:g[2](),area:g[0],name:g[1],val:''})}}
+      else if(sp[0]==='c'){const gp=shuffle(G.filter(g=>sp[1]?sp[1].includes(g[1])&&(!T1M||g[0]==='T1'):ina(g[0])&&g[3]!=='nox'));for(let i=0;i<sp[2];i++){const g=gp[i%gp.length];part.push({type:'c',pts:sp[3],g:g[2](),area:g[0],name:g[1],val:''})}}
       else if(sp[0]==='z'){shuffle(D.zu.filter(u=>(u.g||null)===sp[1])).slice(0,sp[2]).forEach(u=>part.push({type:'z',pts:sp[3],z:u,sel:u.rows.map(()=>null)}))}
       else if(sp[0]==='b'){const nA=b=>b[1].length+b[2].length;let sel=shuffle(D.buchungen).slice(0,sp[1]);if(sp[2]==='n'&&sp[3]){for(let t=0;t<800;t++){const c=shuffle(D.buchungen).slice(0,sp[1]);if(c.reduce((a,b)=>a+nA(b),0)===sp[3]){sel=c;break}}}sel.forEach(b=>{const need=[...b[1],...b[2]].map(x=>x[0]);const others=shuffle(Object.keys(D.konten).filter(x=>!need.includes(x))).slice(0,Math.max(3,8-need.length));part.push({type:'b',pts:sp[2]==='n'?nA(b):sp[2],b,list:shuffle([...need,...others]),place:{},pick:null,state:null,exam:true})})}
       else{shuffle(D.karten.filter((c,i)=>sp[1].includes(c[1])&&!usedC.has(c[2]))).slice(0,sp[2]).forEach(c=>{usedC.add(c[2]);part.push({type:'o',pts:sp[3],c,val:'',seen:false,self:null})})}}
