@@ -1696,5 +1696,8 @@
 "Privatfahrten: {0} € × {1} % = {2} × {3} = {4} €": "Private trips: {0} € × {1} % = {2} × {3} = {4} €",
 "Arbeitsweg: {0} € × {1} % × {2} km = {3} × {4} × {5} = {6} €": "Commute: {0} € × {1} % × {2} km = {3} × {4} × {5} = {6} €",
 "Summe = {0} €": "Total = {0} €",
-"Im Taschenrechner Prozent immer durch {0} teilen: {1} % = {2} und {3} % = {4}.": "On the calculator always divide percentages by {0}: {1} % = {2} and {3} % = {4}."
+"Im Taschenrechner Prozent immer durch {0} teilen: {1} % = {2} und {3} % = {4}.": "On the calculator always divide percentages by {0}: {1} % = {2} and {3} % = {4}.",
+"Unternehmensbeschreibung": "Company profile",
+"33 Aufgaben: 27 Ankreuz-, 3 Zuordnungs- und 3 Rechenaufgaben": "33 tasks: 27 multiple-choice, 3 matching and 3 calculation tasks",
+"Mehrere Aufgaben beziehen sich auf die Autohaus Nordring GmbH. Die Unternehmensbeschreibung lässt sich bei diesen Aufgaben aufklappen.": "Several tasks refer to Autohaus Nordring GmbH. The company profile can be expanded in these tasks."
 }
