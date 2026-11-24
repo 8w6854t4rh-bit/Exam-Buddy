@@ -486,7 +486,7 @@ details[open] summary{margin-bottom:10px}
 /* Quizfragen, die ohne Taschenrechner kaum lösbar sind: nur noch im Rechnen-Bereich (dort gibt es dieselben Aufgabentypen mit Zufallszahlen) */
 const QRECH=new Set([237,241,242,243,244,266]);
 const qpool=()=>D.quiz.filter((q,i)=>!QRECH.has(i));
-const APPV='82';
+const APPV='83';
 const SCR=document.getElementById('scr');
 /* iOS-Home-Bildschirm-App: dort meldet iOS die Fensterhöhe teils um die Statusleiste zu kurz. Dann volle Bildschirmhöhe nehmen */
 (()=>{const sa=navigator.standalone===true||matchMedia('(display-mode: standalone)').matches;if(!sa||!/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent)||!('ontouchend' in document))return;
@@ -528,7 +528,7 @@ const D=LANG==='en'?(()=>{const d=D_DE,e=D_EN;return{
   konten:Object.fromEntries(Object.entries(d.konten).map(([k,v])=>[k,e.konten[k]||v])),
   buchungen:d.buchungen.map((b,i)=>{const x=e.buchungen[i];return x?[x[0],b[1],b[2],x[1]]:b}),
   karten:d.karten.map((c,i)=>{const x=e.karten[i];return x?[c[0],c[1],x[0],x[1]]:c}),
-  quiz:d.quiz.map((q,i)=>{const x=e.quiz[i];return x?(q[5]?[q[0],x[0],x[1],q[3],x[2],{...q[5],...(x[3]||{})}]:[q[0],x[0],x[1],q[3],x[2]]):q}),firma:e.firma||d.firma,
+  quiz:d.quiz.map((q,i)=>{const x=e.quiz[i];return x?(q[5]?[q[0],x[0],x[1],q[3],x[2],{...q[5],...(x[3]||{})}]:[q[0],x[0],x[1],q[3],x[2]]):q}),firma:e.firma||d.firma,ffs:(d.ffs||[]).map((x,i)=>{const y=e.ffs&&e.ffs[i];return y?{...x,t:y.t,s:y.s,p:x.p.map((q,j)=>({...q,...(y.p[j]||{})}))}:x}),
   vier:e.vier||d.vier,
   wissen:d.wissen.map((w,i)=>{const x=e.wissen[i];return x?[w[0],x[0],x[1]]:w}),
   lf:d.lf.map((l,i)=>{const x=e.lf[i];return x?[x[0],x[1],l[2]]:l}),kurz:(d.kurz||[]).map((k,i)=>e.kurz&&e.kurz[i]?{...k,...e.kurz[i]}:k),zu:d.zu.map((z,i)=>{const x=e.zu[i];return x?{...z,t:x.t,rows:x.rows,opts:x.opts}:z})}})():D_DE;
@@ -1757,12 +1757,7 @@ const EX={
   ['Controlling','Die Hausbank verlangt für ein Kreditgespräch aktuelle Kennzahlen des Autohauses.',[['c',['Bilanzkennzahl','Lagerdauer','Lagerzinsen','Lineare Abschreibung im ersten Jahr'],1,5],['o',['Kennzahlen','Anlagen'],2,5]]]]},
  WiSo:{name:'Wirtschafts- und Sozialkunde',min:60,lf:'Lernfelder 1, 9, 11 · 10 % der Gesamtnote',form:'33 Aufgaben: 27 Ankreuz-, 3 Zuordnungs- und 3 Rechenaufgaben',mix:true,blocks:[
   ['','Mehrere Aufgaben beziehen sich auf die Autohaus Nordring GmbH. Die Unternehmensbeschreibung lässt sich bei diesen Aufgaben aufklappen.',[['q','WiSo',27,100/33,{maxCalc:2}],['z','WiSo',3,100/33],['c',['BIP nach Verwendung','Lohnquote','Gleichgewichtspreis','Kündigungsfrist Arbeitgeber','Teilurlaub'],3,100/33]]]]},
- FF:{name:'Fahrzeugvertriebsprozesse und Finanzdienstleistungen',min:90,lf:'Lernfelder 6, 7, 8 · 25 % der Gesamtnote',form:'5 Situationsaufgaben mit Teilaufgaben',blocks:[
-  ['Vertrieb und Neuwagen','Sie sind im Neuwagenverkauf der Autohaus Nordring GmbH eingesetzt, einem Vertragshändler der Marke Nova.',[['o',['Vertrieb','Neuwagen'],3,4],['c',['Händlereinkaufspreis','Rohüberschuss Neuwagen','Umsatzveränderung'],2,5]]],
-  ['Gebrauchtwagen','Der Gebrauchtwagenbestand soll überprüft und neu ausgerichtet werden.',[['o',['GW'],2,4],['c',['Standkosten in Prozent','Kapitalbedarf GW'],2,5]]],
-  ['Kaufvertrag und Reklamation','Ein Kunde hat einen Neuwagen bestellt, eine Kundin reklamiert einen Mangel an ihrem Fahrzeug.',[['o',['Vertrag','Neuwagen'],3,4],['c',['Verkäuferprovision','Planabsatz','Kfz-Potenzial','Marktpotenzial Neuwagen','Planabsatz aus dem Kfz-Potenzial','Neuwagen pro Monat aus dem Bestand','Planzahl für ein Quartal'],2,4]]],
-  ['Finanzierung und Leasing','Eine Kundin möchte ihr neues Fahrzeug nicht bar bezahlen. Sie beraten sie zu Finanzierung und Leasing.',[['z','FFF',1,4],['o',['Finanzierung','Leasing'],2,4],['c',['Drei-Wege-Finanzierung','Leasingrate','Erfolg aus einem Leasingvertrag'],2,5]]],
-  ['Versicherung und Garantie','Zum Fahrzeug bieten Sie passende Absicherungen an.',[['z','FFV',1,4],['o',['Versicherung'],1,4],['c',['Kaskoleistung bei Totalschaden','Eigenanteil im Garantiefall','GAP-Versicherung'],2,5]]]]},
+ FF:{name:'Fahrzeugvertriebsprozesse und Finanzdienstleistungen',min:90,lf:'Lernfelder 6, 7, 8 · 25 % der Gesamtnote',form:'5 Situationsaufgaben mit Teilaufgaben, Unternehmensbeschreibung und Unterlagen',scen:['A','B','C','D','E'],blocks:[]},
  T1:{name:'Warenwirtschafts- und Werkstattprozesse',min:90,lf:'Zwischenprüfung (Teil 1) · Lernfelder 3, 4, 5 · 20 % der Gesamtnote',form:'Gebundene Aufgaben: 20 Ankreuzaufgaben, 6 Zuordnungsaufgaben und 4 Rechenaufgaben',blocks:[
   ['Warenwirtschaft und Werkstatt','Sie sind Auszubildende(r) der Autohaus Nordring GmbH, einem Vertragshändler der Marke Nova. Sie arbeiten im Teile- und Zubehörlager, im Zubehörverkauf und in der Serviceannahme. Kreuzen Sie die richtige Antwort an oder ordnen Sie zu, wo es verlangt wird.',[['q','T1',20,2.5],['z',null,6,20/6]]],
   ['Rechenaufgaben','Im Lager, im Einkauf und bei der Werkstattabrechnung fallen Berechnungen an. Tragen Sie die Ergebnisse ein.',[['c',null,4,7.5]]]]},
@@ -1788,7 +1783,12 @@ const note=p=>p>=92?[1,'sehr gut']:p>=81?[2,'gut']:p>=67?[3,'befriedigend']:p>=5
 const pt=x=>Number.isInteger(x)?String(x):eur(x,1);
 /* Aufgabenblock einer Prüfung: aus der Prüfung selbst (gespeichert beim Start), sonst aus EX; ältere Prüfungen mit inzwischen geänderter Blockeinteilung brechen so nicht */
 const exBl=i=>(E&&E.bl&&E.bl[i])||(EX[E.k].blocks[i])||['Teil '+(i+1),''];
-function startExam(k){const X=EX[k],items=[],usedQ=new Set(),usedC=new Set();
+/* FF wie im IHK-Aufgabensatz: je Bereich eine Situationsaufgabe aus D.ffs (A Neuwagen 20, B Vertrieb 12, C Gebrauchtwagen 18, D Finanzierung/Leasing 30, E Versicherung/Garantie 20 Punkte) */
+function scenItems(X){const items=[],bl=[];X.scen.forEach((g,bi)=>{const sc=pick((D.ffs||[]).filter(x=>x.g===g));if(!sc)return;bl.push([sc.t,sc.s]);
+  sc.p.forEach((p,j)=>{const base={pts:p.p,bi,label:(bi+1)+'.'+(j+1),f:p.f||null,firma:1,sid:sc.id};
+    items.push(p.k==='c'?{...base,type:'c',g:{t:p.q,a:p.a,u:p.u||'',d:p.d,s:p.s},area:'FF',name:sc.t,val:''}:{...base,type:'o',c:['FF',sc.t,p.q,p.a],val:'',seen:false,self:null})})});return{items,bl}}
+function startExam(k){const X=EX[k],usedQ=new Set(),usedC=new Set();let items=[];
+  if(X.scen){const r=scenItems(X);E={k,name:X.name,min:X.min,items:r.items,bl:r.bl,i:0,end:Date.now()+X.min*60000,done:false};EA=false;exTimer();exSave();return}
   X.blocks.forEach((bl,bi)=>{let part=[];
     for(const sp of bl[2]){
       if(sp[0]==='q'){let qp=shuffle(qpool().filter(q=>sp[1]?q[0]===sp[1]:ina(q[0])));if(sp[4]&&sp[4].maxCalc!=null){let n=0;qp=qp.filter(q=>!qCalc(q)||n++<sp[4].maxCalc)}qp.slice(0,sp[2]).forEach(q=>part.push({type:'q',pts:sp[3],q,o:shuffle(q[2].map((t,i)=>({t,ok:i===q[3]}))),sel:null}))}
@@ -1832,7 +1832,7 @@ function vExam(){exSave();
     const mine=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+(it.sel[i]!==null?it.z.opts[it.sel[i]]:'–')).join('; '):it.type==='q'?(it.sel!==null?it.o[it.sel].t:'keine Antwort'):it.type==='c'?(it.g.tab?(()=>{const r=kCheck(it);return r.ok+' von '+r.n+' Feldern richtig'})():(it.val.trim()||'keine Antwort')):it.type==='o'?(it.val.trim()||(it.seen?'im Kopf beantwortet':'keine Antwort')):(Object.keys(it.place).length?'Soll '+side(it,'S')+' an Haben '+side(it,'H'):'keine Antwort');
     const right=it=>it.type==='z'?it.z.rows.map((r,i)=>r+': '+it.z.opts[it.z.ans[i]]).join('; '):it.type==='q'?it.o.find(o=>o.ok).t:it.type==='c'?eur(it.g.a,it.g.d===undefined?2:it.g.d)+(it.g.u?' '+it.g.u:''):it.type==='o'?it.c[3]:'Soll '+it.b[1].map(x=>x[0]+' '+D.konten[x[0]]+' '+eur(x[1])+' €').join(', ')+' an Haben '+it.b[2].map(x=>x[0]+' '+D.konten[x[0]]+' '+eur(x[1])+' €').join(', ');
     const why=it=>it.type==='q'?it.q[4]:it.type==='c'?it.g.s:it.type==='b'?it.b[3]:null;
-    const rate=it=>$('div',{class:'row',role:'group','aria-label':'Eigene Bewertung'},[[0,'0 Punkte'],[it.pts/2,pt(it.pts/2)+' Punkte'],[it.pts,pt(it.pts)+' Punkte']].map(([v,l])=>$('button',{class:'chip','aria-pressed':String(it.self===v),onclick:()=>{const y=SCR.scrollTop;it.self=v;scoreExam();vExam();SCR.scrollTo(0,y)}},l)));
+    const rate=it=>$('div',{class:'row',role:'group','aria-label':'Eigene Bewertung'},(Number.isInteger(it.pts)&&it.pts<=8?[...Array(it.pts+1).keys()].map(v=>[v,v+(v===1?' Punkt':' Punkte')]):[[0,'0 Punkte'],[it.pts/2,pt(it.pts/2)+' Punkte'],[it.pts,pt(it.pts)+' Punkte']]).map(([v,l])=>$('button',{class:'chip','aria-pressed':String(it.self===v),onclick:()=>{const y=SCR.scrollTop;it.self=v;scoreExam();vExam();SCR.scrollTo(0,y)}},l)));
     const rows=[];let lb=-1;
     E.items.forEach(it=>{if(!X.mix&&it.bi!==lb){lb=it.bi;rows.push($('div',{class:'tag',style:'margin-top:6px',text:'Aufgabe '+(it.bi+1)+' · '+exBl(it.bi)[0]}))}
       const o=it.type==='o',ok=exOk(it),cls=o?(it.self===null?'':it.self>=it.pts?'ok':it.self>0?'':'no'):(ok?'ok':'no');
@@ -1850,9 +1850,9 @@ function vExam(){exSave();
   let body;
   if(it.type==='q')body=[$('p',{class:'qt',text:it.q[1]}),qFig(it.q),$('div',{class:'qopts'},it.o.map((o,i)=>$('button',{class:'opt qo'+(it.sel===i?' sel':''),'aria-pressed':String(it.sel===i),onclick:()=>{it.sel=it.sel===i?null:i;vExam()}},o.t))),qCalc(it.q)?calcPad(it,1):null];
   else if(it.type==='c'&&it.g.tab)body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),rundP(it.g),$('p',{class:'muted',style:'margin:0',text:'Füllen Sie alle Felder des Kalkulationsschemas aus. Jedes richtige Feld gibt Punkte.'}),kSchema(it,false),calcPad(it)];
-  else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),rundP(it.g),
+  else if(it.type==='c')body=[$('p',{style:'white-space:pre-line;font-size:17px',text:it.g.t}),it.f?qFig([0,0,0,0,0,{f:it.f}]):null,rundP(it.g),
     $('input',{type:'text',id:'exans',inputmode:'decimal',autocomplete:'off',value:it.val,placeholder:'Ergebnis'+(it.g.u?' in '+it.g.u:''),'aria-label':'Dein Ergebnis',oninput:e=>{it.val=e.target.value}}),it.g.neg?pmBtn('exans',v=>{it.val=v}):null,calcPad(it)];
-  else if(it.type==='o')body=[$('p',{class:'qt',text:it.c[2]}),
+  else if(it.type==='o')body=[$('p',{class:'qt',text:it.c[2]}),it.f?qFig([0,0,0,0,0,{f:it.f}]):null,
     $('textarea',{id:'exans',rows:'5','aria-label':'Deine Antwort',placeholder:'Antwort in Stichpunkten',oninput:e=>{it.val=e.target.value}},it.val),
     $('div',{class:'row'},$('button',{class:'chip','aria-pressed':String(it.seen),onclick:()=>{it.seen=!it.seen;vExam()}},'Im Kopf beantwortet, ohne zu tippen'))];
   else if(it.type==='z'){const zSel=(i)=>{const sl=$('select',{'aria-label':it.z.rows[i],onchange:e=>{it.sel[i]=e.target.value===''?null:+e.target.value;vExam()}},$('option',{value:'',text:'– bitte wählen –'}),...it.z.opts.map((o,j)=>$('option',{value:String(j),text:o})));sl.value=it.sel[i]===null?'':String(it.sel[i]);return sl};
@@ -1865,7 +1865,7 @@ function vExam(){exSave();
       $('button',{class:'primary',onclick:resumeExam},'Weiter mit der Prüfung')));return}
   R($('div',{class:'exbar'},$('span',{class:'muted',text:X.mix?'Aufgabe '+it.label+' von '+n:'Teilaufgabe '+(E.i+1)+' von '+n}),$('div',{class:'exctl'},tmr,pbtn)),
     $('div',{class:'meter'},$('i',{style:'width:'+((n-open)/n*100)+'%'})),
-    X.mix?null:$('div',{class:'note'},$('b',{text:'Aufgabe '+(it.bi+1)+' · '+bl[0]}),bl[1]?$('p',{style:'margin-top:4px',text:'Situation: '+bl[1]}):null),
+    X.mix?null:$('div',{class:'note'},$('b',{text:'Aufgabe '+(it.bi+1)+' · '+bl[0]}),bl[1]?$('p',{style:'margin-top:4px',text:'Situation: '+bl[1]}):null,it.firma?qFig([0,0,0,0,0,{firma:1}]):null),
     $('div',{class:'sheet'},$('div',{class:'tag',text:(X.mix?'Aufgabe ':'')+it.label+' · '+(X.mix?'ca. ':'')+pt(Math.round(it.pts))+' Punkte'}),body),
     $('div',{class:'row'},$('button',{class:'grow',disabled:E.i===0?'':null,onclick:()=>{E.i--;EA=false;vExam();SCR.scrollTo(0,0)}},'Zurück'),
       E.i<n-1?$('button',{class:'primary grow',onclick:()=>{E.i++;EA=false;vExam();SCR.scrollTo(0,0)}},'Weiter'):$('button',{class:'primary grow',onclick:()=>{EA=true;vExam()}},'Zur Abgabe')),
